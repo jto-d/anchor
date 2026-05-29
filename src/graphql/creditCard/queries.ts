@@ -4,9 +4,10 @@ import { prisma } from "@/lib/prisma"
 builder.queryFields((t) => ({
     creditCards: t.prismaField({
         type: ["CreditCard"],
-        resolve: (query) =>
+        resolve: (query, root, args, ctx, info) =>
             prisma.creditCard.findMany({
-                ...query
+                ...query,
+                where: { userId: ctx.userId},
             }),
     }),
 }));

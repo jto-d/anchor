@@ -43,3 +43,7 @@ next-env.d.ts
 # graphql codegen artifacts
 /src/gql/
 /schema.graphql
+
+# claude code
+.claude/settings.local.json
+.claude/worktrees/
