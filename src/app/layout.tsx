@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Ledger',
-  description: 'Personal ledger built on Next.js + GraphQL + urql + Prisma + Neon',
+  title: 'Anchor',
+  description: 'Personal finance application built on Next.js + GraphQL + urql + Prisma + Neon',
 }
 
 export default function RootLayout({

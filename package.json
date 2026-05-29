@@ -1,5 +1,5 @@
 {
-  "name": "ledger",
+  "name": "anchor",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -23,7 +23,6 @@
     "@prisma/client": "^7.8.0",
     "@urql/next": "^2.0.0",
     "graphql": "^16.14.0",
-    "graphql-scalars": "^1.25.0",
     "graphql-yoga": "^5.21.0",
     "next": "16.2.6",
     "react": "19.2.4",

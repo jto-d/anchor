@@ -1,7 +1,7 @@
 import { builder } from './builder'
-import './user'
-import './account'
-import './transaction'
-import './query'
+
+import './user/type'
+import './user/queries'
+import './creditCard/type'
 
 export const schema = builder.toSchema()

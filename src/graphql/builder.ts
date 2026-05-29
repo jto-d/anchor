@@ -7,6 +7,7 @@ import { prisma } from '@/lib/prisma'
 export const builder = new SchemaBuilder<{
   PrismaTypes: PrismaTypes
   DefaultFieldNullability: false
+  Context: { userId: string }
 }>({
   defaultFieldNullability: false,
   plugins: [PrismaPlugin],
