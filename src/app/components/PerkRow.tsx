@@ -1,8 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import { Icon } from './Icons'
-import { Button, Chip, Progress } from './Primitives'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Collapse from '@mui/material/Collapse'
+import IconButton from '@mui/material/IconButton'
+import LinearProgress from '@mui/material/LinearProgress'
+import Typography from '@mui/material/Typography'
+import AddIcon from '@mui/icons-material/Add'
+import CheckIcon from '@mui/icons-material/Check'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import ScheduleOutlinedIcon from '@mui/icons-material/ScheduleOutlined'
+import { StatusChip } from './Primitives'
 import {
   capturedYTD, annualValue, perkPct, perkStatus, periodLabel,
   fmt, fmt2, fmtDate, MONTHS, type Perk,
@@ -19,84 +28,110 @@ export function PerkRow({ perk, onLog }: PerkRowProps) {
   const annual = annualValue(perk)
   const pct = perkPct(perk)
   const status = perkStatus(perk)
-  const statusIcon = status.key === 'captured' ? 'check' : status.key === 'expiring' ? 'clock' : undefined
+  const statusIcon =
+    status.key === 'captured' ? <CheckIcon /> : status.key === 'expiring' ? <ScheduleOutlinedIcon /> : undefined
   const startMonthLabel = MONTHS[(perk.periodStartMonth - 1 + 12) % 12]
 
   return (
-    <div style={{ borderBottom: '1px solid var(--border)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '15px 4px' }}>
-        <button
+    <Box sx={{ borderBottom: 1, borderColor: 'divider', '&:last-of-type': { borderBottom: 0 } }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.75, py: '15px', px: '4px' }}>
+        <IconButton
+          size="small"
           onClick={() => setOpen(!open)}
-          style={{
-            background: 'none', border: 'none', cursor: 'pointer', padding: 0, flex: 'none',
-            color: 'var(--fg4)', display: 'grid', placeItems: 'center',
-            transform: open ? 'rotate(90deg)' : 'none',
-            transition: 'transform var(--dur) var(--ease)',
-          }}
+          sx={{ p: 0, color: 'text.disabled', transform: open ? 'rotate(90deg)' : 'none', transition: 'transform 180ms' }}
         >
-          <Icon name="chevronRight" size={17} />
-        </button>
+          <ChevronRightIcon sx={{ fontSize: 20 }} />
+        </IconButton>
 
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '14px', fontWeight: 600, letterSpacing: '-0.01em', color: 'var(--fg1)' }}>{perk.name}</span>
-            <Chip status={status.key} icon={statusIcon}>{status.label}</Chip>
-          </div>
-          <div style={{ fontSize: '12px', color: 'var(--fg3)', marginTop: '3px' }}>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+            <Typography sx={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.01em' }}>{perk.name}</Typography>
+            <StatusChip status={status.key} label={status.label} icon={statusIcon} />
+          </Box>
+          <Typography sx={{ fontSize: 12, color: 'grey.500', mt: '3px' }}>
             {periodLabel(perk.period)} · {fmt2(parseFloat(perk.totalAmount))}
             {perk.period === 'MONTHLY' ? ' / mo' : perk.period === 'ANNUAL' ? ' / yr' : ''} · resets {startMonthLabel}
-          </div>
-        </div>
+          </Typography>
+        </Box>
 
-        <div style={{ width: '150px', flex: 'none' }}>
-          <Progress value={pct} />
-          <div style={{ fontSize: '11px', color: 'var(--fg3)', marginTop: '5px', fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}>
-            <span style={{ fontWeight: 600, color: pct >= 1 ? 'var(--anchor-700)' : 'var(--fg1)' }}>{fmt(captured)}</span>
-            {' '}of {fmt(annual)}
-          </div>
-        </div>
+        <Box sx={{ width: 150, flex: 'none' }}>
+          <LinearProgress
+            variant="determinate"
+            value={pct * 100}
+            sx={{ height: 8, bgcolor: 'grey.100', '& .MuiLinearProgress-bar': { bgcolor: 'primary.main' } }}
+          />
+          <Typography
+            sx={{ fontSize: 11, color: 'grey.500', mt: '5px', fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}
+          >
+            <Box component="span" sx={{ fontWeight: 600, color: pct >= 1 ? 'primary.main' : 'text.primary' }}>
+              {fmt(captured)}
+            </Box>{' '}
+            of {fmt(annual)}
+          </Typography>
+        </Box>
 
-        <Button variant="ghost" size="sm" icon="plus" onClick={() => onLog(perk)} style={{ flex: 'none' }}>Log</Button>
-      </div>
+        <Button
+          size="small"
+          startIcon={<AddIcon />}
+          onClick={() => onLog(perk)}
+          sx={{ flex: 'none', color: 'text.secondary', '&:hover': { bgcolor: 'grey.100', color: 'text.primary' } }}
+        >
+          Log
+        </Button>
+      </Box>
 
-      {open && (
-        <div style={{ padding: '0 4px 14px 36px', animation: 'anchorFade 150ms var(--ease)' }}>
-          {perk.notes && (
-            <p style={{ margin: '0 0 10px', fontSize: '12px', color: 'var(--fg3)' }}>{perk.notes}</p>
-          )}
+      <Collapse in={open} unmountOnExit>
+        <Box sx={{ pl: '36px', pr: '4px', pb: '14px' }}>
+          {perk.notes && <Typography sx={{ mb: 1.25, fontSize: 12, color: 'grey.500' }}>{perk.notes}</Typography>}
           {perk.perkCredits.length === 0 ? (
-            <div style={{
-              fontSize: '13px', color: 'var(--fg3)', padding: '11px 14px',
-              background: 'var(--bg-subtle)', borderRadius: '10px', border: '1px solid var(--border)',
-            }}>
+            <Box
+              sx={{
+                fontSize: 13,
+                color: 'grey.500',
+                p: '11px 14px',
+                bgcolor: 'background.default',
+                borderRadius: '10px',
+                border: 1,
+                borderColor: 'divider',
+              }}
+            >
               No credits logged this period.{' '}
-              <span
-                style={{ color: 'var(--anchor-700)', fontWeight: 600, cursor: 'pointer' }}
+              <Box
+                component="span"
                 onClick={() => onLog(perk)}
+                sx={{ color: 'primary.main', fontWeight: 600, cursor: 'pointer' }}
               >
                 Log the first one →
-              </span>
-            </div>
+              </Box>
+            </Box>
           ) : (
-            <ul style={{ listStyle: 'none', margin: 0, padding: 0, borderLeft: '1px solid var(--border)' }}>
+            <Box component="ul" sx={{ listStyle: 'none', m: 0, p: 0, borderLeft: 1, borderColor: 'divider' }}>
               {perk.perkCredits.map((c) => (
-                <li key={c.id} style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '7px 14px',
-                }}>
-                  <span style={{ fontSize: '13px', color: 'var(--fg2)' }}>
+                <Box
+                  component="li"
+                  key={c.id}
+                  sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: '14px', py: '7px' }}
+                >
+                  <Typography component="span" sx={{ fontSize: 13, color: 'text.secondary' }}>
                     {fmtDate(c.date)}
-                    {c.description && <span style={{ color: 'var(--fg4)', marginLeft: '10px' }}>{c.description}</span>}
-                  </span>
-                  <span style={{ fontSize: '13px', fontWeight: 500, fontVariantNumeric: 'tabular-nums', color: 'var(--anchor-700)' }}>
+                    {c.description && (
+                      <Box component="span" sx={{ color: 'text.disabled', ml: '10px' }}>
+                        {c.description}
+                      </Box>
+                    )}
+                  </Typography>
+                  <Typography
+                    component="span"
+                    sx={{ fontSize: 13, fontWeight: 500, fontVariantNumeric: 'tabular-nums', color: 'primary.main' }}
+                  >
                     +{fmt2(parseFloat(c.amount))}
-                  </span>
-                </li>
+                  </Typography>
+                </Box>
               ))}
-            </ul>
+            </Box>
           )}
-        </div>
-      )}
-    </div>
+        </Box>
+      </Collapse>
+    </Box>
   )
 }

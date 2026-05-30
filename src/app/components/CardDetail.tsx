@@ -1,7 +1,14 @@
 'use client'
 
-import { Icon } from './Icons'
-import { Button, Eyebrow } from './Primitives'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Paper from '@mui/material/Paper'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
+import AddIcon from '@mui/icons-material/Add'
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
+import { Eyebrow } from './Primitives'
 import { CardTile } from './CardTile'
 import { PerkRow } from './PerkRow'
 import { cardCaptured, cardAvailable, fmt, type Card, type Perk } from '../helpers'
@@ -18,46 +25,65 @@ export function CardDetail({ card, onBack, onLog, onAddPerk }: CardDetailProps) 
   const available = cardAvailable(card)
 
   return (
-    <div style={{ padding: '26px 30px', maxWidth: '980px' }}>
-      <button
+    <Box sx={{ p: '26px 30px', maxWidth: 980 }}>
+      <Button
         onClick={onBack}
-        style={{
-          display: 'inline-flex', alignItems: 'center', gap: '6px',
-          background: 'none', border: 'none', cursor: 'pointer',
-          color: 'var(--fg3)', fontSize: '13px', fontWeight: 500,
-          padding: '0 0 16px', fontFamily: 'var(--font-sans)',
+        startIcon={<ChevronLeftIcon />}
+        sx={{
+          color: 'grey.500',
+          fontSize: 13,
+          fontWeight: 500,
+          mb: 2,
+          px: 0,
+          minWidth: 0,
+          '&:hover': { bgcolor: 'transparent', color: 'text.primary' },
         }}
       >
-        <Icon name="chevronRight" size={14} style={{ transform: 'rotate(180deg)' }} />
         Back to dashboard
-      </button>
+      </Button>
 
-      <div style={{ display: 'flex', gap: '26px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+      <Box sx={{ display: 'flex', gap: '26px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
         <CardTile card={card} />
-        <div style={{ flex: 1, minWidth: '240px' }}>
+        <Box sx={{ flex: 1, minWidth: 240 }}>
           <Eyebrow>{card.issuer}</Eyebrow>
-          <h1 style={{ margin: '8px 0 0', fontSize: '28px', fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--fg1)' }}>
+          <Typography variant="h4" sx={{ fontSize: 28, mt: 1 }}>
             {card.name}
-          </h1>
-          <p style={{ margin: '6px 0 0', fontSize: '14px', color: 'var(--fg3)' }}>
-            <span style={{ fontWeight: 600, color: 'var(--anchor-700)' }}>{fmt(captured)}</span>
-            {' '}recovered of {fmt(available)} available · {card.perks.length} perks
-          </p>
-          <div style={{ marginTop: '16px', display: 'flex', gap: '10px' }}>
-            <Button variant="primary" icon="plus" onClick={onAddPerk}>Add a perk</Button>
-            <Button variant="secondary" icon="pencil">Edit card</Button>
-          </div>
-        </div>
-      </div>
+          </Typography>
+          <Typography sx={{ fontSize: 14, color: 'grey.500', mt: '6px' }}>
+            <Box component="span" sx={{ fontWeight: 600, color: 'primary.main' }}>
+              {fmt(captured)}
+            </Box>{' '}
+            recovered of {fmt(available)} available · {card.perks.length} perks
+          </Typography>
+          <Stack direction="row" spacing={1.25} sx={{ mt: 2 }}>
+            <Button variant="contained" startIcon={<AddIcon />} onClick={onAddPerk}>
+              Add a perk
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<EditOutlinedIcon />}
+              sx={{
+                borderColor: 'grey.300',
+                color: 'text.primary',
+                '&:hover': { borderColor: 'grey.400', bgcolor: 'grey.50' },
+              }}
+            >
+              Edit card
+            </Button>
+          </Stack>
+        </Box>
+      </Box>
 
-      <Eyebrow style={{ margin: '30px 0 6px' }}>Perks</Eyebrow>
-      <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '14px', padding: '4px 16px' }}>
+      <Eyebrow sx={{ mt: '30px', mb: '6px' }}>Perks</Eyebrow>
+      <Paper variant="outlined" sx={{ borderColor: 'divider', borderRadius: '14px', px: 2, py: '4px' }}>
         {card.perks.length === 0 ? (
-          <div style={{ padding: '18px 4px', fontSize: '14px', color: 'var(--fg3)' }}>No perks on this card yet.</div>
+          <Typography sx={{ py: '18px', px: '4px', fontSize: 14, color: 'grey.500' }}>
+            No perks on this card yet.
+          </Typography>
         ) : (
           card.perks.map((p) => <PerkRow key={p.id} perk={p} onLog={onLog} />)
         )}
-      </div>
-    </div>
+      </Paper>
+    </Box>
   )
 }

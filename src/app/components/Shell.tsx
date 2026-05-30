@@ -1,15 +1,40 @@
 'use client'
 
-import { useState } from 'react'
-import { Icon } from './Icons'
-import { Button } from './Primitives'
+import AppBar from '@mui/material/AppBar'
+import Avatar from '@mui/material/Avatar'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Divider from '@mui/material/Divider'
+import Drawer from '@mui/material/Drawer'
+import IconButton from '@mui/material/IconButton'
+import InputBase from '@mui/material/InputBase'
+import List from '@mui/material/List'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import Paper from '@mui/material/Paper'
+import Toolbar from '@mui/material/Toolbar'
+import Typography from '@mui/material/Typography'
+import type { SvgIconComponent } from '@mui/icons-material'
+import AddIcon from '@mui/icons-material/Add'
+import AnchorIcon from '@mui/icons-material/Anchor'
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
+import CardGiftcardOutlinedIcon from '@mui/icons-material/CardGiftcardOutlined'
+import CreditCardIcon from '@mui/icons-material/CreditCard'
+import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined'
+import SearchIcon from '@mui/icons-material/Search'
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
+import SpaceDashboardOutlinedIcon from '@mui/icons-material/SpaceDashboardOutlined'
+import { brand } from '@/lib/theme'
 
-const NAV_ITEMS = [
-  { key: 'dashboard', label: 'Dashboard', icon: 'layout' },
-  { key: 'cards',     label: 'Cards',     icon: 'creditCard' },
-  { key: 'perks',     label: 'Perks',     icon: 'gift' },
-  { key: 'calendar',  label: 'Calendar',  icon: 'calendar' },
-] as const
+export const SIDEBAR_WIDTH = 220
+
+const NAV_ITEMS: { key: string; label: string; Icon: SvgIconComponent }[] = [
+  { key: 'dashboard', label: 'Dashboard', Icon: SpaceDashboardOutlinedIcon },
+  { key: 'cards', label: 'Cards', Icon: CreditCardIcon },
+  { key: 'perks', label: 'Perks', Icon: CardGiftcardOutlinedIcon },
+  { key: 'calendar', label: 'Calendar', Icon: CalendarMonthOutlinedIcon },
+]
 
 interface SidebarProps {
   route: string
@@ -17,86 +42,104 @@ interface SidebarProps {
   onNavigate: (key: string) => void
 }
 
+const navItemSx = (active: boolean) => ({
+  borderRadius: '8px',
+  py: 1,
+  px: 1.25,
+  color: active ? 'primary.main' : 'text.secondary',
+  '&.Mui-selected, &.Mui-selected:hover': { bgcolor: brand.accentSoft },
+})
+
 export function Sidebar({ route, userEmail, onNavigate }: SidebarProps) {
   const initials = userEmail.slice(0, 2).toUpperCase()
 
   return (
-    <aside style={{
-      width: '220px', flex: 'none', borderRight: '1px solid var(--border)',
-      background: '#fff', display: 'flex', flexDirection: 'column',
-      padding: '18px 12px', height: '100%', boxSizing: 'border-box',
-    }}>
-      {/* Logo */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '9px', padding: '2px 8px 20px' }}>
-        <div style={{
-          width: '30px', height: '30px', borderRadius: '8px', background: 'var(--accent)',
-          display: 'grid', placeItems: 'center', flex: 'none',
-        }}>
-          <Icon name="anchor" size={16} stroke={2} style={{ color: '#fff' }} />
-        </div>
-        <span style={{ fontSize: '18px', fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--fg1)' }}>Anchor</span>
-      </div>
-
-      {/* Nav */}
-      <nav style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-        {NAV_ITEMS.map((item) => (
-          <NavItem
-            key={item.key}
-            label={item.label}
-            icon={item.icon}
-            active={route === item.key}
-            onClick={() => onNavigate(item.key)}
-          />
-        ))}
-      </nav>
-
-      {/* Bottom */}
-      <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-        <NavItem label="Settings" icon="settings" onClick={() => {}} />
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: '9px',
-          padding: '10px 10px', marginTop: '4px',
-          borderTop: '1px solid var(--border)', paddingTop: '12px',
-        }}>
-          <div style={{
-            width: '28px', height: '28px', borderRadius: '999px', background: 'var(--zinc-200)',
-            display: 'grid', placeItems: 'center', flex: 'none',
-            fontSize: '11px', fontWeight: 700, color: 'var(--fg2)',
-          }}>{initials}</div>
-          <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--fg1)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {userEmail.split('@')[0]}
-            </div>
-            <div style={{ fontSize: '11px', color: 'var(--fg4)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {userEmail}
-            </div>
-          </div>
-        </div>
-      </div>
-    </aside>
-  )
-}
-
-function NavItem({ label, icon, active = false, onClick }: { label: string; icon: string; active?: boolean; onClick: () => void }) {
-  const [hover, setHover] = useState(false)
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        display: 'flex', alignItems: 'center', gap: '10px', width: '100%',
-        padding: '8px 10px', borderRadius: '8px', border: 'none', cursor: 'pointer',
-        fontFamily: 'var(--font-sans)', fontSize: '14px', fontWeight: 500,
-        textAlign: 'left',
-        background: active ? 'var(--accent-soft)' : (hover ? 'var(--zinc-100)' : 'transparent'),
-        color: active ? 'var(--anchor-700)' : 'var(--fg2)',
-        transition: 'background var(--dur) var(--ease)',
+    <Drawer
+      variant="permanent"
+      sx={{
+        width: SIDEBAR_WIDTH,
+        flexShrink: 0,
+        '& .MuiDrawer-paper': {
+          width: SIDEBAR_WIDTH,
+          position: 'relative',
+          border: 0,
+          borderRight: 1,
+          borderColor: 'divider',
+          px: 1.5,
+          py: 2.25,
+          boxSizing: 'border-box',
+        },
       }}
     >
-      <Icon name={icon} size={17} stroke={active ? 2 : 1.7} />
-      {label}
-    </button>
+      {/* Logo */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.1, px: 1, pb: 2.5 }}>
+        <Box
+          sx={{
+            width: 30,
+            height: 30,
+            borderRadius: '8px',
+            bgcolor: 'primary.main',
+            display: 'grid',
+            placeItems: 'center',
+            flex: 'none',
+          }}
+        >
+          <AnchorIcon sx={{ fontSize: 16, color: '#fff' }} />
+        </Box>
+        <Typography sx={{ fontSize: 18, fontWeight: 600, letterSpacing: '-0.02em' }}>
+          Anchor
+        </Typography>
+      </Box>
+
+      {/* Nav */}
+      <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+        {NAV_ITEMS.map(({ key, label, Icon }) => {
+          const active = route === key
+          return (
+            <ListItemButton
+              key={key}
+              selected={active}
+              onClick={() => onNavigate(key)}
+              sx={navItemSx(active)}
+            >
+              <ListItemIcon sx={{ minWidth: 0, mr: 1.25, color: 'inherit' }}>
+                <Icon sx={{ fontSize: 19 }} />
+              </ListItemIcon>
+              <ListItemText
+                primary={label}
+                slotProps={{ primary: { sx: { fontSize: 14, fontWeight: active ? 600 : 500 } } }}
+              />
+            </ListItemButton>
+          )
+        })}
+      </List>
+
+      {/* Bottom */}
+      <Box sx={{ mt: 'auto' }}>
+        <ListItemButton onClick={() => {}} sx={navItemSx(false)}>
+          <ListItemIcon sx={{ minWidth: 0, mr: 1.25, color: 'inherit' }}>
+            <SettingsOutlinedIcon sx={{ fontSize: 19 }} />
+          </ListItemIcon>
+          <ListItemText primary="Settings" slotProps={{ primary: { sx: { fontSize: 14, fontWeight: 500 } } }} />
+        </ListItemButton>
+        <Divider sx={{ mt: 0.5, mb: 0.5 }} />
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.1, px: 1.25, py: 1, minWidth: 0 }}>
+          <Avatar
+            sx={{ width: 28, height: 28, fontSize: 11, fontWeight: 700, bgcolor: 'grey.200', color: 'text.secondary' }}
+          >
+            {initials}
+          </Avatar>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography noWrap sx={{ fontSize: 12, fontWeight: 600 }}>
+              {userEmail.split('@')[0]}
+            </Typography>
+            <Typography noWrap sx={{ fontSize: 11, color: 'text.disabled' }}>
+              {userEmail}
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+    </Drawer>
   )
 }
 
@@ -108,28 +151,65 @@ interface TopbarProps {
 
 export function Topbar({ title, subtitle, onAddCard }: TopbarProps) {
   return (
-    <div style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '18px 30px', borderBottom: '1px solid var(--border)',
-      background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(8px)',
-      position: 'sticky', top: 0, zIndex: 5,
-    }}>
-      <div>
-        <h1 style={{ margin: 0, fontSize: '21px', fontWeight: 600, letterSpacing: '-0.015em', color: 'var(--fg1)' }}>{title}</h1>
-        {subtitle && <p style={{ margin: '2px 0 0', fontSize: '13px', color: 'var(--fg3)' }}>{subtitle}</p>}
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: '8px', height: '36px', padding: '0 12px',
-          border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--fg4)',
-          width: '190px', background: '#fff',
-        }}>
-          <Icon name="search" size={15} />
-          <span style={{ fontSize: '13px' }}>Search perks…</span>
-        </div>
-        <Button variant="secondary" size="icon"><Icon name="bell" size={17} /></Button>
-        <Button variant="primary" icon="plus" onClick={onAddCard}>Add a card</Button>
-      </div>
-    </div>
+    <AppBar
+      position="sticky"
+      elevation={0}
+      color="inherit"
+      sx={{
+        bgcolor: 'rgba(255,255,255,0.85)',
+        backdropFilter: 'blur(8px)',
+        borderBottom: 1,
+        borderColor: 'divider',
+      }}
+    >
+      <Toolbar
+        disableGutters
+        sx={{ justifyContent: 'space-between', gap: 1.25, px: 3.75, py: 1.75, minHeight: 'unset' }}
+      >
+        <Box sx={{ minWidth: 0 }}>
+          <Typography variant="h5" noWrap sx={{ fontSize: 21 }}>
+            {title}
+          </Typography>
+          {subtitle && (
+            <Typography noWrap sx={{ fontSize: 13, color: 'grey.500', mt: '2px' }}>
+              {subtitle}
+            </Typography>
+          )}
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, flex: 'none' }}>
+          <Paper
+            variant="outlined"
+            sx={{
+              display: { xs: 'none', md: 'flex' },
+              alignItems: 'center',
+              gap: 1,
+              height: 36,
+              px: 1.5,
+              width: 190,
+              borderColor: 'divider',
+              borderRadius: '8px',
+            }}
+          >
+            <SearchIcon sx={{ fontSize: 15, color: 'text.disabled' }} />
+            <InputBase placeholder="Search perks…" sx={{ fontSize: 13, color: 'text.secondary', flex: 1 }} />
+          </Paper>
+          <IconButton
+            sx={{
+              border: 1,
+              borderColor: 'grey.300',
+              borderRadius: '8px',
+              width: 38,
+              height: 38,
+              color: 'text.secondary',
+            }}
+          >
+            <NotificationsNoneOutlinedIcon sx={{ fontSize: 18 }} />
+          </IconButton>
+          <Button variant="contained" startIcon={<AddIcon />} onClick={onAddCard} sx={{ height: 38, flex: 'none' }}>
+            Add a card
+          </Button>
+        </Box>
+      </Toolbar>
+    </AppBar>
   )
 }

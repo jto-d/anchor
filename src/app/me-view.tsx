@@ -3,11 +3,16 @@
 import { useState } from 'react'
 import { useQuery, useMutation } from '@urql/next'
 import { graphql } from '@/gql'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import CircularProgress from '@mui/material/CircularProgress'
+import Snackbar from '@mui/material/Snackbar'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { Sidebar, Topbar } from './components/Shell'
 import { Dashboard } from './components/Dashboard'
 import { CardDetail } from './components/CardDetail'
 import { LogCreditDialog } from './components/LogCreditDialog'
-import { Icon } from './components/Icons'
+import { brand } from '@/lib/theme'
 import type { Card, Perk } from './helpers'
 
 const MeDocument = graphql(`
@@ -65,7 +70,7 @@ export function MeView() {
   const selectedCard = cards.find((c) => c.id === selectedCardId) ?? null
 
   const livePerk: Perk | null = dialogPerk
-    ? (cards.flatMap((c) => c.perks).find((p) => p.id === dialogPerk.id) ?? dialogPerk) as Perk
+    ? ((cards.flatMap((c) => c.perks).find((p) => p.id === dialogPerk.id) ?? dialogPerk) as Perk)
     : null
 
   function openCard(card: Card) {
@@ -79,27 +84,28 @@ export function MeView() {
   }
 
   async function handleSaveCredit(perkId: string, amount: number, date: string, description: string) {
+    const perkName = livePerk?.name ?? 'perk'
     await logPerkCredit({ perkId, amount, date, description: description || undefined })
     reexecuteQuery({ requestPolicy: 'network-only' })
     setDialogPerk(null)
-    const perkName = livePerk?.name ?? 'perk'
     setToast(`Logged $${amount.toFixed(2)} to ${perkName}`)
-    setTimeout(() => setToast(null), 2600)
   }
 
   if (fetching) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', fontFamily: 'var(--font-sans)', color: 'var(--fg3)' }}>
-        Loading…
-      </div>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
     )
   }
 
   if (error) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', fontFamily: 'var(--font-sans)', color: 'var(--neg)' }}>
-        {error.message}
-      </div>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', p: 3 }}>
+        <Alert severity="error" variant="outlined">
+          {error.message}
+        </Alert>
+      </Box>
     )
   }
 
@@ -108,14 +114,17 @@ export function MeView() {
   const userEmail = data.me.email
 
   return (
-    <div style={{ display: 'flex', height: '100vh', background: 'var(--bg-subtle)', color: 'var(--fg1)', fontFamily: 'var(--font-sans)' }}>
+    <Box sx={{ display: 'flex', height: '100vh', bgcolor: 'background.default', color: 'text.primary' }}>
       <Sidebar
         route={route === 'card' ? 'cards' : route}
         userEmail={userEmail}
-        onNavigate={() => { setRoute('dashboard'); setSelectedCardId(null) }}
+        onNavigate={() => {
+          setRoute('dashboard')
+          setSelectedCardId(null)
+        }}
       />
 
-      <main style={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
+      <Box component="main" sx={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
         {route === 'card' && selectedCard ? (
           <>
             <Topbar
@@ -127,30 +136,39 @@ export function MeView() {
           </>
         ) : (
           <>
-            <Topbar
-              title="Dashboard"
-              subtitle="Track every perk before it expires."
-              onAddCard={() => {}}
-            />
+            <Topbar title="Dashboard" subtitle="Track every perk before it expires." onAddCard={() => {}} />
             <Dashboard cards={cards} onOpenCard={openCard} onLog={setDialogPerk} />
           </>
         )}
-      </main>
+      </Box>
 
       <LogCreditDialog perk={livePerk} onClose={() => setDialogPerk(null)} onSave={handleSaveCredit} />
 
-      {toast && (
-        <div style={{
-          position: 'fixed', bottom: '24px', left: '50%', transform: 'translateX(-50%)',
-          background: 'var(--zinc-900)', color: '#fff', padding: '11px 18px', borderRadius: '999px',
-          fontSize: '13px', fontWeight: 500, boxShadow: 'var(--shadow-lg)', zIndex: 60,
-          display: 'flex', alignItems: 'center', gap: '9px',
-          animation: 'anchorPop 200ms var(--ease)',
-        }}>
-          <Icon name="checkCircle" size={15} stroke={2} style={{ color: 'var(--anchor-300)' }} />
+      <Snackbar
+        open={!!toast}
+        autoHideDuration={2600}
+        onClose={() => setToast(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.1,
+            bgcolor: 'grey.900',
+            color: '#fff',
+            px: '18px',
+            py: '11px',
+            borderRadius: 999,
+            fontSize: 13,
+            fontWeight: 500,
+            boxShadow: brand.shadow.lg,
+          }}
+        >
+          <CheckCircleIcon sx={{ fontSize: 15, color: brand.anchor[300] }} />
           {toast}
-        </div>
-      )}
-    </div>
+        </Box>
+      </Snackbar>
+    </Box>
   )
 }

@@ -1,8 +1,14 @@
 'use client'
 
+import Box from '@mui/material/Box'
+import LinearProgress from '@mui/material/LinearProgress'
+import Paper from '@mui/material/Paper'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import { Eyebrow } from './Primitives'
 import { CardTile } from './CardTile'
 import { PerkRow } from './PerkRow'
+import { brand } from '@/lib/theme'
 import { cardCaptured, cardAvailable, perkStatus, fmt, type Card, type Perk } from '../helpers'
 
 interface DashboardProps {
@@ -25,72 +31,80 @@ export function Dashboard({ cards, onOpenCard, onLog }: DashboardProps) {
   )
 
   return (
-    <div style={{ padding: '26px 30px', maxWidth: '980px' }}>
+    <Box sx={{ p: '26px 30px', maxWidth: 980 }}>
       {/* Headline */}
-      <div style={{
-        background: 'var(--accent-soft)', borderRadius: '18px', padding: '22px 24px',
-        marginBottom: '22px', border: '1px solid var(--anchor-100)',
-      }}>
-        <Eyebrow style={{ color: 'var(--anchor-700)' }}>This year</Eyebrow>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginTop: '10px', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '42px', fontWeight: 600, letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums', color: 'var(--anchor-800)', lineHeight: 1 }}>
+      <Paper sx={{ bgcolor: brand.accentSoft, border: 1, borderColor: brand.anchor[100], borderRadius: '18px', p: '22px 24px', mb: '22px' }}>
+        <Eyebrow sx={{ color: 'primary.main' }}>This year</Eyebrow>
+        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5, mt: 1.25, flexWrap: 'wrap' }}>
+          <Typography
+            sx={{ fontSize: 42, fontWeight: 600, letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums', color: brand.anchor[800], lineHeight: 1 }}
+          >
             {fmt(captured)}
-          </span>
-          <span style={{ fontSize: '16px', color: 'var(--anchor-700)', fontWeight: 500 }}>
+          </Typography>
+          <Typography sx={{ fontSize: 16, color: 'primary.main', fontWeight: 500 }}>
             recovered of {fmt(available)} available
-          </span>
-        </div>
-        <div style={{ marginTop: '16px', maxWidth: '500px' }}>
-          <div style={{ height: '7px', background: 'rgba(11,99,96,0.15)', borderRadius: '999px', overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${Math.round(pct * 100)}%`, background: 'var(--accent)', borderRadius: '999px', transition: 'width 700ms var(--ease)' }} />
-          </div>
-          <div style={{ fontSize: '12px', color: 'var(--anchor-700)', marginTop: '7px', fontWeight: 500 }}>
+          </Typography>
+        </Box>
+        <Box sx={{ mt: 2, maxWidth: 500 }}>
+          <LinearProgress
+            variant="determinate"
+            value={Math.min(1, pct) * 100}
+            sx={{ height: 7, bgcolor: 'rgba(11,99,96,0.15)', '& .MuiLinearProgress-bar': { bgcolor: 'primary.main' } }}
+          />
+          <Typography sx={{ fontSize: 12, color: 'primary.main', mt: '7px', fontWeight: 500 }}>
             {Math.round(pct * 100)}% captured · {fmt(available - captured)} still on the table
-          </div>
-        </div>
-      </div>
+          </Typography>
+        </Box>
+      </Paper>
 
       {/* Stats */}
-      <div style={{ display: 'flex', gap: '14px', marginBottom: '28px' }}>
+      <Stack direction="row" spacing={1.75} sx={{ mb: '28px' }}>
         <StatCard label="Cards tracked" value={String(cards.length)} sub="Across all issuers" />
-        <StatCard label="Recovered" value={fmt(captured)} sub="Credits captured this year" accent="var(--anchor-700)" />
-        <StatCard label="On the table" value={fmt(available - captured)} sub={`${atRisk.length} perks need attention`} accent="var(--amber-700)" />
-      </div>
+        <StatCard label="Recovered" value={fmt(captured)} sub="Credits captured this year" accent="primary.main" />
+        <StatCard
+          label="On the table"
+          value={fmt(available - captured)}
+          sub={`${atRisk.length} perks need attention`}
+          accent="warning.main"
+        />
+      </Stack>
 
       {/* Card tiles */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-        <Eyebrow>Your cards</Eyebrow>
-      </div>
-      <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', marginBottom: '32px' }}>
-        {cards.map((c) => <CardTile key={c.id} card={c} compact onOpen={onOpenCard} />)}
-      </div>
+      <Eyebrow sx={{ mb: 1.5 }}>Your cards</Eyebrow>
+      <Box sx={{ display: 'flex', gap: 1.75, flexWrap: 'wrap', mb: 4 }}>
+        {cards.map((c) => (
+          <CardTile key={c.id} card={c} compact onOpen={onOpenCard} />
+        ))}
+      </Box>
 
       {/* Needs attention */}
-      <Eyebrow style={{ marginBottom: '4px' }}>Needs attention</Eyebrow>
-      <p style={{ margin: '0 0 8px', fontSize: '13px', color: 'var(--fg3)' }}>Perks with value still available this period.</p>
-      <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '14px', padding: '4px 16px' }}>
+      <Eyebrow sx={{ mb: '4px' }}>Needs attention</Eyebrow>
+      <Typography sx={{ mb: 1, fontSize: 13, color: 'grey.500' }}>
+        Perks with value still available this period.
+      </Typography>
+      <Paper variant="outlined" sx={{ borderColor: 'divider', borderRadius: '14px', px: 2, py: '4px' }}>
         {atRisk.length === 0 ? (
-          <div style={{ padding: '18px 4px', fontSize: '14px', color: 'var(--fg3)' }}>All caught up. Nothing on the table.</div>
+          <Typography sx={{ py: '18px', px: '4px', fontSize: 14, color: 'grey.500' }}>
+            All caught up. Nothing on the table.
+          </Typography>
         ) : (
           atRisk.slice(0, 6).map(({ perk }) => <PerkRow key={perk.id} perk={perk} onLog={onLog} />)
         )}
-      </div>
-    </div>
+      </Paper>
+    </Box>
   )
 }
 
 function StatCard({ label, value, sub, accent }: { label: string; value: string; sub?: string; accent?: string }) {
   return (
-    <div style={{
-      background: '#fff', border: '1px solid var(--border)', borderRadius: '14px',
-      padding: '16px 18px', flex: 1,
-    }}>
+    <Paper variant="outlined" sx={{ borderColor: 'divider', borderRadius: '14px', p: '16px 18px', flex: 1 }}>
       <Eyebrow>{label}</Eyebrow>
-      <div style={{
-        fontSize: '28px', fontWeight: 600, letterSpacing: '-0.025em', fontVariantNumeric: 'tabular-nums',
-        marginTop: '10px', color: accent ?? 'var(--fg1)', lineHeight: 1,
-      }}>{value}</div>
-      {sub && <div style={{ fontSize: '12px', color: 'var(--fg3)', marginTop: '5px' }}>{sub}</div>}
-    </div>
+      <Typography
+        sx={{ fontSize: 28, fontWeight: 600, letterSpacing: '-0.025em', fontVariantNumeric: 'tabular-nums', mt: 1.25, color: accent ?? 'text.primary', lineHeight: 1 }}
+      >
+        {value}
+      </Typography>
+      {sub && <Typography sx={{ fontSize: 12, color: 'grey.500', mt: '5px' }}>{sub}</Typography>}
+    </Paper>
   )
 }
