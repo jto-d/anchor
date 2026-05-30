@@ -4,7 +4,7 @@ import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
 import type { SxProps, Theme } from '@mui/material/styles'
 import { brand } from '@/lib/theme'
-import type { StatusKey } from '../helpers'
+import type { StatusKey } from '@/utils/types'
 
 /** Small uppercase section label (the old "Eyebrow"), now a themed Typography. */
 export function Eyebrow({

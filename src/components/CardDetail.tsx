@@ -11,7 +11,9 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import { Eyebrow } from './Primitives'
 import { CardTile } from './CardTile'
 import { PerkRow } from './PerkRow'
-import { cardCaptured, cardAvailable, fmt, type Card, type Perk } from '../helpers'
+import { cardCaptured, cardAvailable } from '@/utils/card'
+import { fmt } from '@/utils/format'
+import type { Card, Perk } from '@/utils/types'
 
 interface CardDetailProps {
   card: Card

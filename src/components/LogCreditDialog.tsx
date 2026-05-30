@@ -15,7 +15,9 @@ import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
 import { Eyebrow } from './Primitives'
 import { brand } from '@/lib/theme'
-import { annualValue, capturedYTD, fmt2, type Perk } from '../helpers'
+import { annualValue, capturedYTD } from '@/utils/perk'
+import { fmt2 } from '@/utils/format'
+import type { Perk } from '@/utils/types'
 
 interface LogCreditDialogProps {
   perk: Perk | null

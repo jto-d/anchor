@@ -8,12 +8,12 @@ import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import Snackbar from '@mui/material/Snackbar'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import { Sidebar, Topbar } from './components/Shell'
-import { Dashboard } from './components/Dashboard'
-import { CardDetail } from './components/CardDetail'
-import { LogCreditDialog } from './components/LogCreditDialog'
+import { Sidebar, Topbar } from '@/components/Shell'
+import { Dashboard } from '@/components/Dashboard'
+import { CardDetail } from '@/components/CardDetail'
+import { LogCreditDialog } from '@/components/LogCreditDialog'
 import { brand } from '@/lib/theme'
-import type { Card, Perk } from './helpers'
+import type { Card, Perk } from '@/utils/types'
 
 const MeDocument = graphql(`
   query Me {
