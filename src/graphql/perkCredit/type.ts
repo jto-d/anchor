@@ -11,7 +11,7 @@ builder.prismaObject("PerkCredit", {
             type: "String",
             resolve: (pc) => pc.date.toISOString(),
         }),
-        description: t.exposeString("descriptiion", { nullable: true }),
+        description: t.exposeString("description", { nullable: true }),
         createdAt: t.field({
             type: "String",
             resolve: (pc) => pc.createdAt.toISOString(),

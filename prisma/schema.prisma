@@ -56,7 +56,7 @@ model PerkCredit {
   perkId       String
   amount       Decimal  @db.Decimal(10, 2)
   date         DateTime @db.Date
-  descriptiion String?
+  description  String?
   createdAt    DateTime @default(now())
 
   perk Perk @relation(fields: [perkId], references: [id])

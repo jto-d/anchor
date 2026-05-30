@@ -11,42 +11,131 @@ const prisma = new PrismaClient({
 })
 
 async function main() {
+  await prisma.perkCredit.deleteMany()
+  await prisma.perk.deleteMany()
+  await prisma.creditCard.deleteMany()
   await prisma.user.deleteMany()
+
   const user = await prisma.user.create({
     data: {
-      email: 'demo@example.com',
-      accounts: {
+      email: 'demo@anchor.app',
+      creditCards: {
         create: [
           {
-            name: 'Checking',
-            transactions: {
+            name: 'Platinum Card',
+            issuer: 'American Express',
+            lastFour: '1009',
+            perks: {
               create: [
                 {
-                  amount: 1250.0,
-                  description: 'Paycheck',
-                  occurredAt: new Date('2026-05-01'),
+                  name: 'Airline fee credit',
+                  totalAmount: 200,
+                  period: 'ANNUAL',
+                  periodStartMonth: 1,
+                  notes: 'Select one airline each January.',
+                  perkCredit: {
+                    create: [{ amount: 200, date: new Date('2026-02-14'), description: 'United · baggage' }],
+                  },
                 },
                 {
-                  amount: -45.99,
-                  description: 'Groceries',
-                  occurredAt: new Date('2026-05-03'),
+                  name: 'Uber Cash',
+                  totalAmount: 15,
+                  period: 'MONTHLY',
+                  periodStartMonth: 1,
+                  notes: 'Adds to your Uber account on the 1st.',
+                  perkCredit: {
+                    create: [
+                      { amount: 15, date: new Date('2026-05-03'), description: 'Uber Eats' },
+                      { amount: 15, date: new Date('2026-04-02'), description: 'Uber ride' },
+                      { amount: 15, date: new Date('2026-03-09'), description: 'Uber Eats' },
+                    ],
+                  },
                 },
                 {
-                  amount: -12.5,
-                  description: 'Coffee',
-                  occurredAt: new Date('2026-05-04'),
+                  name: 'Saks Fifth Avenue',
+                  totalAmount: 50,
+                  period: 'SEMI_ANNUAL',
+                  periodStartMonth: 1,
+                  notes: 'Jan–Jun and Jul–Dec.',
+                  perkCredit: {
+                    create: [{ amount: 50, date: new Date('2026-03-21'), description: 'Saks.com' }],
+                  },
+                },
+                {
+                  name: 'Digital entertainment',
+                  totalAmount: 20,
+                  period: 'MONTHLY',
+                  periodStartMonth: 1,
+                  notes: 'NYT, Peacock, Audible, and more.',
+                },
+                {
+                  name: 'CLEAR Plus',
+                  totalAmount: 189,
+                  period: 'ANNUAL',
+                  periodStartMonth: 1,
+                  notes: 'Reimburses your CLEAR membership.',
                 },
               ],
             },
           },
           {
-            name: 'Savings',
-            transactions: {
+            name: 'Sapphire Reserve',
+            issuer: 'Chase',
+            lastFour: '4477',
+            perks: {
               create: [
                 {
-                  amount: 500.0,
-                  description: 'Transfer in',
-                  occurredAt: new Date('2026-05-02'),
+                  name: 'Travel credit',
+                  totalAmount: 300,
+                  period: 'ANNUAL',
+                  periodStartMonth: 1,
+                  notes: 'Applies automatically to travel.',
+                  perkCredit: {
+                    create: [{ amount: 300, date: new Date('2026-01-28'), description: 'Delta · airfare' }],
+                  },
+                },
+                {
+                  name: 'DoorDash credit',
+                  totalAmount: 25,
+                  period: 'MONTHLY',
+                  periodStartMonth: 1,
+                  notes: 'Restaurant + non-restaurant.',
+                  perkCredit: {
+                    create: [{ amount: 10, date: new Date('2026-05-11'), description: 'DoorDash' }],
+                  },
+                },
+                {
+                  name: 'Lyft credit',
+                  totalAmount: 10,
+                  period: 'MONTHLY',
+                  periodStartMonth: 1,
+                  notes: 'In-app Lyft credit.',
+                },
+              ],
+            },
+          },
+          {
+            name: 'Venture X',
+            issuer: 'Capital One',
+            lastFour: '8021',
+            perks: {
+              create: [
+                {
+                  name: 'Travel credit',
+                  totalAmount: 300,
+                  period: 'ANNUAL',
+                  periodStartMonth: 1,
+                  notes: 'Through Capital One Travel.',
+                  perkCredit: {
+                    create: [{ amount: 120, date: new Date('2026-04-19'), description: 'Hotel · Capital One Travel' }],
+                  },
+                },
+                {
+                  name: 'Anniversary miles',
+                  totalAmount: 100,
+                  period: 'ANNUAL',
+                  periodStartMonth: 1,
+                  notes: '10,000 bonus miles each year.',
                 },
               ],
             },
@@ -55,6 +144,7 @@ async function main() {
       },
     },
   })
+
   console.log(`Seeded user ${user.email}`)
 }
 

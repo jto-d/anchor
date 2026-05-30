@@ -1,26 +1,102 @@
+@import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Typeface */
+  --font-sans: 'Switzer', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', monospace;
+
+  /* Neutrals */
+  --zinc-50:  #FAFAFA;
+  --zinc-100: #F4F4F5;
+  --zinc-200: #E4E4E7;
+  --zinc-300: #D4D4D8;
+  --zinc-400: #A1A1AA;
+  --zinc-500: #71717A;
+  --zinc-600: #52525B;
+  --zinc-700: #3F3F46;
+  --zinc-800: #27272A;
+  --zinc-900: #18181B;
+  --zinc-950: #09090B;
+
+  /* Brand — Anchor Teal */
+  --anchor-50:  #E9F6F6;
+  --anchor-100: #CBEBEB;
+  --anchor-200: #97D8D7;
+  --anchor-300: #5BC1C0;
+  --anchor-400: #29A8A6;
+  --anchor-500: #119290;
+  --anchor-600: #0D7A78;
+  --anchor-700: #0B6360;
+  --anchor-800: #094F4D;
+  --anchor-900: #083E3C;
+
+  /* Semantic accents */
+  --amber-50:  #FEF6E7;
+  --amber-700: #A6630A;
+  --red-50:    #FDECEC;
+  --red-600:   #D03036;
+
+  /* Surfaces & text */
+  --bg:          #FFFFFF;
+  --bg-subtle:   var(--zinc-50);
+  --surface:     #FFFFFF;
+  --fg1:         var(--zinc-950);
+  --fg2:         var(--zinc-600);
+  --fg3:         var(--zinc-500);
+  --fg4:         var(--zinc-400);
+  --fg-on-accent:#FFFFFF;
+
+  --accent:        var(--anchor-700);
+  --accent-hover:  var(--anchor-800);
+  --accent-soft:   var(--anchor-50);
+  --border:        var(--zinc-200);
+  --border-strong: var(--zinc-300);
+
+  --pos:  var(--anchor-600);
+  --warn: var(--amber-700);
+  --neg:  var(--red-600);
+
+  /* Radii */
+  --r-sm:   8px;
+  --r-md:   11px;
+  --r-lg:   14px;
+  --r-xl:   18px;
+  --r-full: 999px;
+
+  /* Elevation */
+  --shadow-sm: 0 1px 2px rgba(16,24,32,.04), 0 1px 3px rgba(16,24,32,.06);
+  --shadow-md: 0 4px 14px -4px rgba(16,24,32,.10), 0 2px 6px -2px rgba(16,24,32,.06);
+  --shadow-lg: 0 18px 40px -12px rgba(16,24,32,.16);
+
+  /* Motion */
+  --ease:     cubic-bezier(0.2, 0.6, 0.2, 1);
+  --dur-fast: 120ms;
+  --dur:      180ms;
+  --dur-slow: 280ms;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --color-background: var(--bg);
+  --color-foreground: var(--fg1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-subtle);
+  color: var(--fg1);
+  font-family: var(--font-sans);
 }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--zinc-300); border-radius: 999px; border: 3px solid var(--bg-subtle); }
+::-webkit-scrollbar-thumb:hover { background: var(--zinc-400); }
+
+input[type="date"] { font-family: var(--font-sans); }
+
+@keyframes anchorFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes anchorPop { from { opacity: 0; transform: translateY(6px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }

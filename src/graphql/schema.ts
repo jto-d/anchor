@@ -7,5 +7,6 @@ import './creditCard/queries'
 import './perk/type'
 import './perk/queries'
 import './perkCredit/type'
+import './perkCredit/mutations'
 
 export const schema = builder.toSchema()
