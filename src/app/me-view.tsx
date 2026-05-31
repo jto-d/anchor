@@ -9,7 +9,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Snackbar from '@mui/material/Snackbar'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { Sidebar, Topbar } from '@/components/Shell'
-import { Dashboard } from '@/components/Dashboard'
+import { PerksDashboard } from '@/components/PerksDashboard'
 import { CardDetail } from '@/components/CardDetail'
 import { LogCreditDialog } from '@/components/LogCreditDialog'
 import { brand } from '@/lib/theme'
@@ -137,7 +137,7 @@ export function MeView() {
         ) : (
           <>
             <Topbar title="Dashboard" subtitle="Track every perk before it expires." onAddCard={() => {}} />
-            <Dashboard cards={cards} onOpenCard={openCard} onLog={setDialogPerk} />
+            <PerksDashboard cards={cards} onOpenCard={openCard} onLog={setDialogPerk} />
           </>
         )}
       </Box>

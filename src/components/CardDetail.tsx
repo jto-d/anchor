@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography'
 import AddIcon from '@mui/icons-material/Add'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
-import { Eyebrow } from './Primitives'
+import { Eyebrow } from './ui/Eyebrow'
 import { CardTile } from './CardTile'
 import { PerkRow } from './PerkRow'
 import { cardCaptured, cardAvailable } from '@/utils/card'
@@ -41,7 +41,7 @@ export function CardDetail({ card, onBack, onLog, onAddPerk }: CardDetailProps) 
           '&:hover': { bgcolor: 'transparent', color: 'text.primary' },
         }}
       >
-        Back to dashboard
+        Back to perks dashboard
       </Button>
 
       <Box sx={{ display: 'flex', gap: '26px', alignItems: 'flex-start', flexWrap: 'wrap' }}>

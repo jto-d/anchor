@@ -5,7 +5,7 @@ import LinearProgress from '@mui/material/LinearProgress'
 import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
-import { Eyebrow } from './Primitives'
+import { Eyebrow } from './ui/Eyebrow'
 import { CardTile } from './CardTile'
 import { PerkRow } from './PerkRow'
 import { brand } from '@/lib/theme'
@@ -14,13 +14,13 @@ import { perkStatus } from '@/utils/perk'
 import { fmt } from '@/utils/format'
 import type { Card, Perk } from '@/utils/types'
 
-interface DashboardProps {
+interface PerksDashboardProps {
   cards: Card[]
   onOpenCard: (card: Card) => void
   onLog: (perk: Perk) => void
 }
 
-export function Dashboard({ cards, onOpenCard, onLog }: DashboardProps) {
+export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps) {
   const captured = cards.reduce((s, c) => s + cardCaptured(c), 0)
   const available = cards.reduce((s, c) => s + cardAvailable(c), 0)
   const pct = available ? captured / available : 0
