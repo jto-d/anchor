@@ -32,6 +32,7 @@ model CreditCard {
   name     String
   issuer   String
   lastFour String?
+  design String? // slug e.g. "chase-sapphire-preferred"
 
   user  User   @relation(fields: [userId], references: [id])
   perks Perk[]

@@ -5,7 +5,7 @@ const yoga = createYoga({
   schema,
   graphqlEndpoint: '/api/graphql',
   fetchAPI: { Response },
-  context: () => ({ userId: 'cmpruax2c0000o7qosrc1oqwo' }),
+  context: () => ({ userId: 'cmpt6lg7p0000zjqo2zdnhywr' }),
 })
 
 async function handler(request: Request): Promise<Response> {

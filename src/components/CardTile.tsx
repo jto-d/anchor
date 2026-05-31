@@ -7,7 +7,7 @@ import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import AnchorIcon from '@mui/icons-material/Anchor'
 import { brand } from '@/lib/theme'
-import { cardCaptured, cardAvailable, cardTheme } from '@/utils/card'
+import { cardCaptured, cardAvailable, cardGradient } from '@/utils/card'
 import { fmt } from '@/utils/format'
 import type { Card } from '@/utils/types'
 
@@ -20,7 +20,7 @@ export function CardTile({ card, onOpen }: CardTileProps) {
   const captured = cardCaptured(card)
   const available = cardAvailable(card)
   const pct = available ? Math.min(1, captured / available) : 0
-  const theme = cardTheme(card.issuer)
+  console.log(card)
 
   const content = (
     <>
@@ -72,7 +72,7 @@ export function CardTile({ card, onOpen }: CardTileProps) {
     position: 'relative',
     overflow: 'hidden',
     borderRadius: '16px',
-    background: brand.cardGradient[theme],
+    background: cardGradient(card),
     boxShadow: brand.shadow.md,
   } as const
 

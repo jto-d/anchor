@@ -22,8 +22,9 @@ async function main() {
       creditCards: {
         create: [
           {
-            name: 'Platinum Card',
+            name: 'Gold Card',
             issuer: 'American Express',
+            design: 'amex-gold',
             lastFour: '1009',
             perks: {
               create: [
@@ -79,9 +80,10 @@ async function main() {
             },
           },
           {
-            name: 'Sapphire Reserve',
+            name: 'Sapphire Preferred',
             issuer: 'Chase',
             lastFour: '4477',
+            design: 'chase-sapphire-preferred',
             perks: {
               create: [
                 {
@@ -115,14 +117,42 @@ async function main() {
             },
           },
           {
-            name: 'Venture X',
-            issuer: 'Capital One',
+            name: 'United Quest',
+            issuer: 'Chase',
             lastFour: '8021',
+            design: 'united-quest',
             perks: {
               create: [
                 {
                   name: 'Travel credit',
                   totalAmount: 300,
+                  period: 'ANNUAL',
+                  periodStartMonth: 1,
+                  notes: 'Through Capital One Travel.',
+                  perkCredit: {
+                    create: [{ amount: 120, date: new Date('2026-04-19'), description: 'Hotel · Capital One Travel' }],
+                  },
+                },
+                {
+                  name: 'Anniversary miles',
+                  totalAmount: 100,
+                  period: 'ANNUAL',
+                  periodStartMonth: 1,
+                  notes: '10,000 bonus miles each year.',
+                },
+              ],
+            },
+          },
+          {
+            name: 'Platinum Card',
+            issuer: 'American Express',
+            lastFour: '6758',
+            design: 'amex-platinum',
+            perks: {
+              create: [
+                {
+                  name: 'Travel credit',
+                  totalAmount: 670,
                   period: 'ANNUAL',
                   periodStartMonth: 1,
                   notes: 'Through Capital One Travel.',

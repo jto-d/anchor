@@ -26,6 +26,7 @@ const MeDocument = graphql(`
         name
         issuer
         lastFour
+        design
         perks {
           id
           name

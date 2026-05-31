@@ -6,6 +6,7 @@ builder.prismaObject("CreditCard", {
         name: t.exposeString("name"),
         issuer: t.exposeString("issuer"),
         lastFour: t.exposeString("lastFour", { nullable: true }),
+        design: t.exposeString("design", { nullable: true }),
         user: t.relation("user"),
         perks: t.relation("perks"),
     })

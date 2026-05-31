@@ -42,7 +42,13 @@ export const brand = {
   red: { 50: '#FDECEC', 600: '#D03036' },
   accentSoft: anchor[50],
   cardGradient: {
-    ink: 'linear-gradient(150deg, #27272A, #09090B)',
+    'amex-gold': 'linear-gradient(150deg, #D2BF70, #A99941)',
+    'amex-platinum': 'linear-gradient(150deg, #F1F1F3, #BEBEC0)',
+    'bilt-palladium': 'linear-gradient(150deg, #006688, #01082E)',
+    'chase-aeroplan': 'linear-gradient(150deg, #006688, #01082E)',
+    'chase-sapphire-preferred': 'linear-gradient(150deg, #0671AC, #01082E)',
+    'united-explorer': 'linear-gradient(150deg, #0097A7, #01082E)',
+    'united-quest': 'linear-gradient(150deg, #461864, #33184A)',
     teal: 'linear-gradient(150deg, #0D7A78, #083E3C)',
   },
   shadow: {
