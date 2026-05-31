@@ -1,32 +1,20 @@
-'use client'
-
-import AppBar from '@mui/material/AppBar'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import Drawer from '@mui/material/Drawer'
-import IconButton from '@mui/material/IconButton'
-import InputBase from '@mui/material/InputBase'
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-import Paper from '@mui/material/Paper'
-import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import type { SvgIconComponent } from '@mui/icons-material'
-import AddIcon from '@mui/icons-material/Add'
 import AnchorIcon from '@mui/icons-material/Anchor'
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
 import CardGiftcardOutlinedIcon from '@mui/icons-material/CardGiftcardOutlined'
 import CreditCardIcon from '@mui/icons-material/CreditCard'
-import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined'
-import SearchIcon from '@mui/icons-material/Search'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import SpaceDashboardOutlinedIcon from '@mui/icons-material/SpaceDashboardOutlined'
+import type { SvgIconComponent } from '@mui/icons-material'
 import { brand } from '@/lib/theme'
-import { Tooltip } from './ui/Tooltip'
 
 export const SIDEBAR_WIDTH = 220
 
@@ -37,12 +25,6 @@ const NAV_ITEMS: { key: string; label: string; Icon: SvgIconComponent }[] = [
   { key: 'calendar', label: 'Calendar', Icon: CalendarMonthOutlinedIcon },
 ]
 
-interface SidebarProps {
-  route: string
-  userEmail: string
-  onNavigate: (key: string) => void
-}
-
 const navItemSx = (active: boolean) => ({
   borderRadius: '8px',
   py: 1,
@@ -50,6 +32,12 @@ const navItemSx = (active: boolean) => ({
   color: active ? 'primary.main' : 'text.secondary',
   '&.Mui-selected, &.Mui-selected:hover': { bgcolor: brand.accentSoft },
 })
+
+interface SidebarProps {
+  route: string
+  userEmail: string
+  onNavigate: (key: string) => void
+}
 
 export function Sidebar({ route, userEmail, onNavigate }: SidebarProps) {
   const initials = userEmail.slice(0, 2).toUpperCase()
@@ -141,78 +129,5 @@ export function Sidebar({ route, userEmail, onNavigate }: SidebarProps) {
         </Box>
       </Box>
     </Drawer>
-  )
-}
-
-interface TopbarProps {
-  title: string
-  subtitle?: string
-  onAddCard: () => void
-}
-
-export function Topbar({ title, subtitle, onAddCard }: TopbarProps) {
-  return (
-    <AppBar
-      position="sticky"
-      elevation={0}
-      color="inherit"
-      sx={{
-        bgcolor: 'rgba(255,255,255,0.85)',
-        backdropFilter: 'blur(8px)',
-        borderBottom: 1,
-        borderColor: 'divider',
-      }}
-    >
-      <Toolbar
-        disableGutters
-        sx={{ justifyContent: 'space-between', gap: 1.25, px: 3.75, py: 1.75, minHeight: 'unset' }}
-      >
-        <Box sx={{ minWidth: 0 }}>
-          <Typography variant="h5" noWrap sx={{ fontSize: 21 }}>
-            {title}
-          </Typography>
-          {subtitle && (
-            <Typography noWrap sx={{ fontSize: 13, color: 'grey.500', mt: '2px' }}>
-              {subtitle}
-            </Typography>
-          )}
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, flex: 'none' }}>
-          {/* <Paper
-            variant="outlined"
-            sx={{
-              display: { xs: 'none', md: 'flex' },
-              alignItems: 'center',
-              gap: 1,
-              height: 36,
-              px: 1.5,
-              width: 190,
-              borderColor: 'divider',
-              borderRadius: '8px',
-            }}
-          >
-            <SearchIcon sx={{ fontSize: 15, color: 'text.disabled' }} />
-            <InputBase placeholder="Search perks…" sx={{ fontSize: 13, color: 'text.secondary', flex: 1 }} />
-          </Paper> */}
-          <Tooltip title="Coming soon">
-            <IconButton
-              sx={{
-                border: 1,
-                borderColor: 'grey.300',
-                borderRadius: '8px',
-                width: 38,
-                height: 38,
-                color: 'text.secondary',
-              }}
-            >
-              <NotificationsNoneOutlinedIcon sx={{ fontSize: 18 }} />
-            </IconButton>
-          </Tooltip>
-          <Button variant="contained" startIcon={<AddIcon />} onClick={onAddCard} sx={{ height: 38, flex: 'none' }}>
-            Add a card
-          </Button>
-        </Box>
-      </Toolbar>
-    </AppBar>
   )
 }
