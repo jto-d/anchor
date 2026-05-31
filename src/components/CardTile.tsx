@@ -14,10 +14,9 @@ import type { Card } from '@/utils/types'
 interface CardTileProps {
   card: Card
   onOpen?: (card: Card) => void
-  compact?: boolean
 }
 
-export function CardTile({ card, onOpen, compact }: CardTileProps) {
+export function CardTile({ card, onOpen }: CardTileProps) {
   const captured = cardCaptured(card)
   const available = cardAvailable(card)
   const pct = available ? Math.min(1, captured / available) : 0
@@ -68,7 +67,7 @@ export function CardTile({ card, onOpen, compact }: CardTileProps) {
   )
 
   const surfaceSx = {
-    width: compact ? 290 : 'auto',
+    width: 312,
     color: '#fff',
     position: 'relative',
     overflow: 'hidden',

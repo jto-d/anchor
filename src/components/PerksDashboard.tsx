@@ -34,7 +34,7 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
   )
 
   return (
-    <Box sx={{ p: '26px 30px', maxWidth: 980 }}>
+    <Box sx={{ p: '26px 30px' }}>
       {/* Headline */}
       <Paper sx={{ bgcolor: brand.accentSoft, border: 1, borderColor: brand.anchor[100], borderRadius: '18px', p: '22px 24px', mb: '22px' }}>
         <Eyebrow sx={{ color: 'primary.main' }}>This year</Eyebrow>
@@ -76,7 +76,7 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
       <Eyebrow sx={{ mb: 1.5 }}>Your cards</Eyebrow>
       <Box sx={{ display: 'flex', gap: 1.75, flexWrap: 'wrap', mb: 4 }}>
         {cards.map((c) => (
-          <CardTile key={c.id} card={c} compact onOpen={onOpenCard} />
+          <CardTile key={c.id} card={c} onOpen={onOpenCard} />
         ))}
       </Box>
 
