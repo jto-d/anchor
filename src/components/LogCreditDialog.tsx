@@ -77,6 +77,7 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
               onChange={(e) => setAmount(e.target.value)}
               fullWidth
               size="small"
+              sx={{ mt: 2 }}
               slotProps={{
                 input: { startAdornment: <InputAdornment position="start">$</InputAdornment> },
                 inputLabel: { shrink: true },
