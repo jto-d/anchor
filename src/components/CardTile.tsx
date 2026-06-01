@@ -5,9 +5,11 @@ import CardActionArea from '@mui/material/CardActionArea'
 import LinearProgress from '@mui/material/LinearProgress'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
+import { alpha } from '@mui/material/styles'
 import AnchorIcon from '@mui/icons-material/Anchor'
 import { brand } from '@/lib/theme'
-import { cardCaptured, cardAvailable, cardGradient } from '@/utils/card'
+import { resolveCardDesign } from '@/lib/cardDesigns'
+import { cardCaptured, cardAvailable } from '@/utils/card'
 import { fmt } from '@/utils/format'
 import type { Card } from '@/utils/types'
 
@@ -20,7 +22,7 @@ export function CardTile({ card, onOpen }: CardTileProps) {
   const captured = cardCaptured(card)
   const available = cardAvailable(card)
   const pct = available ? Math.min(1, captured / available) : 0
-  console.log(card)
+  const design = resolveCardDesign(card.design)
 
   const content = (
     <>
@@ -42,7 +44,7 @@ export function CardTile({ card, onOpen }: CardTileProps) {
         <LinearProgress
           variant="determinate"
           value={pct * 100}
-          sx={{ height: 5, bgcolor: 'rgba(255,255,255,0.22)', '& .MuiLinearProgress-bar': { bgcolor: '#fff' } }}
+          sx={{ height: 5, bgcolor: alpha(design.text, 0.22), '& .MuiLinearProgress-bar': { bgcolor: design.text } }}
         />
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mt: 1.25 }}>
           <Box>
@@ -68,11 +70,11 @@ export function CardTile({ card, onOpen }: CardTileProps) {
 
   const surfaceSx = {
     width: 312,
-    color: '#fff',
+    color: design.text,
     position: 'relative',
     overflow: 'hidden',
     borderRadius: '16px',
-    background: cardGradient(card),
+    background: design.gradient,
     boxShadow: brand.shadow.md,
   } as const
 

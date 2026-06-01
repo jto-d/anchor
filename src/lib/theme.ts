@@ -32,7 +32,7 @@ const anchor = {
 
 /**
  * Raw brand values for the handful of spots that need them directly
- * (card gradients, the teal-soft headline panel, status-chip colors, shadows).
+ * (the teal-soft headline panel, status-chip colors, shadows).
  * Everything else flows through the MUI theme below.
  */
 export const brand = {
@@ -41,16 +41,6 @@ export const brand = {
   amber: { 50: '#FEF6E7', 700: '#A6630A' },
   red: { 50: '#FDECEC', 600: '#D03036' },
   accentSoft: anchor[50],
-  cardGradient: {
-    'amex-gold': 'linear-gradient(150deg, #D2BF70, #A99941)',
-    'amex-platinum': 'linear-gradient(150deg, #F1F1F3, #BEBEC0)',
-    'bilt-palladium': 'linear-gradient(150deg, #006688, #01082E)',
-    'chase-aeroplan': 'linear-gradient(150deg, #006688, #01082E)',
-    'chase-sapphire-preferred': 'linear-gradient(150deg, #0671AC, #01082E)',
-    'united-explorer': 'linear-gradient(150deg, #0097A7, #01082E)',
-    'united-quest': 'linear-gradient(150deg, #461864, #33184A)',
-    teal: 'linear-gradient(150deg, #0D7A78, #083E3C)',
-  },
   shadow: {
     sm: '0 1px 2px rgba(16,24,32,.04), 0 1px 3px rgba(16,24,32,.06)',
     md: '0 4px 14px -4px rgba(16,24,32,.10), 0 2px 6px -2px rgba(16,24,32,.06)',
