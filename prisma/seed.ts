@@ -151,21 +151,203 @@ async function main() {
             perks: {
               create: [
                 {
-                  name: 'Travel credit',
-                  totalAmount: 670,
+                  name: 'Airline incidental credit',
+                  totalAmount: 200,
                   period: 'ANNUAL',
                   periodStartMonth: 1,
-                  notes: 'Through Capital One Travel.',
+                  notes: 'Select one airline each January.',
+                },
+                {
+                  name: 'Hotel credit',
+                  totalAmount: 200,
+                  period: 'ANNUAL',
+                  periodStartMonth: 1,
+                  notes: 'Fine Hotels + Resorts or The Hotel Collection.',
                   perkCredit: {
-                    create: [{ amount: 120, date: new Date('2026-04-19'), description: 'Hotel · Capital One Travel' }],
+                    create: [{ amount: 200, date: new Date('2026-03-10'), description: 'Fine Hotels + Resorts' }],
                   },
                 },
                 {
-                  name: 'Anniversary miles',
+                  name: 'Uber Cash',
+                  totalAmount: 15,
+                  period: 'MONTHLY',
+                  periodStartMonth: 1,
+                  notes: '$15/month, $20 in December.',
+                  perkCredit: {
+                    create: [{ amount: 15, date: new Date('2026-05-04'), description: 'Uber Eats' }],
+                  },
+                },
+                {
+                  name: 'CLEAR Plus',
+                  totalAmount: 189,
+                  period: 'ANNUAL',
+                  periodStartMonth: 1,
+                  notes: 'Reimburses your CLEAR membership.',
+                  perkCredit: {
+                    create: [{ amount: 189, date: new Date('2026-01-15'), description: 'CLEAR Plus membership' }],
+                  },
+                },
+                {
+                  name: 'Global Entry / TSA PreCheck',
+                  totalAmount: 120,
+                  period: 'ANNUAL',
+                  periodStartMonth: 1,
+                  notes: 'Up to $120 every 4 years.',
+                },
+              ],
+            },
+          },
+          {
+            name: 'Customized Cash Rewards',
+            issuer: 'Bank of America',
+            lastFour: '3342',
+            design: 'bofa-customized-cash',
+            perks: {
+              create: [
+                {
+                  name: 'Online shopping credit',
+                  totalAmount: 25,
+                  period: 'QUARTERLY',
+                  periodStartMonth: 1,
+                  notes: '3% cash back on your chosen category, up to $2,500/quarter.',
+                  perkCredit: {
+                    create: [{ amount: 18, date: new Date('2026-04-30'), description: 'Amazon purchases' }],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            name: 'United Explorer',
+            issuer: 'Chase',
+            lastFour: '5513',
+            design: 'united-explorer',
+            perks: {
+              create: [
+                {
+                  name: 'United Club passes',
                   totalAmount: 100,
                   period: 'ANNUAL',
                   periodStartMonth: 1,
-                  notes: '10,000 bonus miles each year.',
+                  notes: '2 one-time United Club passes per year.',
+                  perkCredit: {
+                    create: [{ amount: 50, date: new Date('2026-02-20'), description: 'United Club · ORD' }],
+                  },
+                },
+                {
+                  name: 'Global Entry / TSA PreCheck',
+                  totalAmount: 120,
+                  period: 'ANNUAL',
+                  periodStartMonth: 1,
+                  notes: 'Up to $120 every 4 years.',
+                },
+              ],
+            },
+          },
+          {
+            name: 'United Gateway',
+            issuer: 'Chase',
+            lastFour: '7790',
+            design: 'united-gateway',
+            perks: {
+              create: [
+                {
+                  name: 'United purchase credit',
+                  totalAmount: 100,
+                  period: 'ANNUAL',
+                  periodStartMonth: 1,
+                  notes: '$100 statement credit on United purchases after $10,000 spend.',
+                },
+              ],
+            },
+          },
+          {
+            name: 'Aeroplan',
+            issuer: 'Chase',
+            lastFour: '2284',
+            design: 'chase-aeroplan',
+            perks: {
+              create: [
+                {
+                  name: 'Air Canada credit',
+                  totalAmount: 100,
+                  period: 'ANNUAL',
+                  periodStartMonth: 1,
+                  notes: 'Applies to Air Canada purchases.',
+                  perkCredit: {
+                    create: [{ amount: 100, date: new Date('2026-03-05'), description: 'Air Canada · YYZ' }],
+                  },
+                },
+                {
+                  name: 'DoorDash credit',
+                  totalAmount: 10,
+                  period: 'MONTHLY',
+                  periodStartMonth: 1,
+                  notes: 'Monthly DashPass credit.',
+                  perkCredit: {
+                    create: [{ amount: 10, date: new Date('2026-05-15'), description: 'DoorDash' }],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            name: 'Bilt Obsidian',
+            issuer: 'Bilt',
+            lastFour: '4417',
+            design: 'bilt-obsidian',
+            perks: {
+              create: [
+                {
+                  name: 'Rent day bonus',
+                  totalAmount: 0,
+                  period: 'MONTHLY',
+                  periodStartMonth: 1,
+                  notes: 'Double points on all purchases on the 1st of each month (except rent).',
+                },
+                {
+                  name: 'Travel credit',
+                  totalAmount: 100,
+                  period: 'ANNUAL',
+                  periodStartMonth: 1,
+                  notes: '$100 annual travel credit via Bilt Travel.',
+                  perkCredit: {
+                    create: [{ amount: 100, date: new Date('2026-02-10'), description: 'Bilt Travel · flight' }],
+                  },
+                },
+                {
+                  name: 'Lyft credit',
+                  totalAmount: 5,
+                  period: 'MONTHLY',
+                  periodStartMonth: 1,
+                  notes: '$5 Lyft credit after 5 rides.',
+                },
+              ],
+            },
+          },
+          {
+            name: 'Bilt Palladium',
+            issuer: 'Bilt',
+            lastFour: '9901',
+            design: 'bilt-palladium',
+            perks: {
+              create: [
+                {
+                  name: 'Rent day bonus',
+                  totalAmount: 0,
+                  period: 'MONTHLY',
+                  periodStartMonth: 1,
+                  notes: 'Double points on all purchases on the 1st of each month (except rent).',
+                },
+                {
+                  name: 'Lyft credit',
+                  totalAmount: 5,
+                  period: 'MONTHLY',
+                  periodStartMonth: 1,
+                  notes: '$5 Lyft credit after 5 rides.',
+                  perkCredit: {
+                    create: [{ amount: 5, date: new Date('2026-05-22'), description: 'Lyft rides' }],
+                  },
                 },
               ],
             },
