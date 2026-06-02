@@ -58,10 +58,10 @@ const LogPerkCreditDocument = graphql(`
   }
 `)
 
-type Route = 'dashboard' | 'card' | 'cards'
+type Route = 'perks' | 'card' | 'cards'
 
 export function MeView() {
-  const [route, setRoute] = useState<Route>('dashboard')
+  const [route, setRoute] = useState<Route>('perks')
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
   const [dialogPerk, setDialogPerk] = useState<Perk | null>(null)
   const [toast, setToast] = useState<string | null>(null)
@@ -82,7 +82,7 @@ export function MeView() {
   }
 
   function back() {
-    setRoute('dashboard')
+    setRoute('perks')
     setSelectedCardId(null)
   }
 
@@ -123,7 +123,7 @@ export function MeView() {
         userEmail={userEmail}
         onNavigate={(key) => {
           if (key === 'cards') setRoute('cards')
-          else setRoute('dashboard')
+          else setRoute('perks')
           setSelectedCardId(null)
         }}
       />

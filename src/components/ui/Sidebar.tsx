@@ -6,23 +6,29 @@ import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
+import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import AnchorIcon from '@mui/icons-material/Anchor'
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
 import CardGiftcardOutlinedIcon from '@mui/icons-material/CardGiftcardOutlined'
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutlined'
 import CreditCardIcon from '@mui/icons-material/CreditCard'
+import PieChartOutlineIcon from '@mui/icons-material/PieChartOutlined'
+import RepeatIcon from '@mui/icons-material/Repeat'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
-import SpaceDashboardOutlinedIcon from '@mui/icons-material/SpaceDashboardOutlined'
 import type { SvgIconComponent } from '@mui/icons-material'
 import { brand } from '@/lib/theme'
 
 export const SIDEBAR_WIDTH = 220
 
 const NAV_ITEMS: { key: string; label: string; Icon: SvgIconComponent }[] = [
-  { key: 'dashboard', label: 'Dashboard', Icon: SpaceDashboardOutlinedIcon },
-  { key: 'cards', label: 'Cards', Icon: CreditCardIcon },
   { key: 'perks', label: 'Perks', Icon: CardGiftcardOutlinedIcon },
-  { key: 'calendar', label: 'Calendar', Icon: CalendarMonthOutlinedIcon },
+  { key: 'cards', label: 'Cards', Icon: CreditCardIcon },
+]
+
+const COMING_SOON_ITEMS: { key: string; label: string; Icon: SvgIconComponent }[] = [
+  { key: 'budgeting', label: 'Budgeting', Icon: PieChartOutlineIcon },
+  { key: 'subscriptions', label: 'Subscriptions', Icon: RepeatIcon },
+  { key: 'chatbot', label: 'Chatbot', Icon: ChatBubbleOutlineIcon },
 ]
 
 const navItemSx = (active: boolean) => ({
@@ -101,6 +107,27 @@ export function Sidebar({ route, userEmail, onNavigate }: SidebarProps) {
             </ListItemButton>
           )
         })}
+        {COMING_SOON_ITEMS.map(({ key, label, Icon }) => (
+          <Tooltip key={key} title="Coming soon" placement="right" arrow>
+            <span>
+              <ListItemButton
+                disabled
+                sx={{
+                  ...navItemSx(false),
+                  '&.Mui-disabled': { opacity: 0.45 },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 0, mr: 1.25, color: 'inherit' }}>
+                  <Icon sx={{ fontSize: 19 }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary={label}
+                  slotProps={{ primary: { sx: { fontSize: 14, fontWeight: 500 } } }}
+                />
+              </ListItemButton>
+            </span>
+          </Tooltip>
+        ))}
       </List>
 
       {/* Bottom */}
