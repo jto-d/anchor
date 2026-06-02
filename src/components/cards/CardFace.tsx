@@ -3,8 +3,8 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import AnchorIcon from '@mui/icons-material/Anchor'
-import { themeOf } from '@/data/cardRewards'
-import type { RewardCardData } from '@/data/cardRewards'
+import { themeOf } from '@/utils/cardRewards'
+import type { RewardCardData } from '@/utils/cardRewards'
 
 interface CardFaceProps {
   card: RewardCardData
@@ -19,7 +19,7 @@ export function CardFace({ card, mini = false }: CardFaceProps) {
         position: 'relative',
         overflow: 'hidden',
         color: '#fff',
-        background: th.grad,
+        background: th.gradient,
         borderRadius: mini ? '12px' : '16px',
         p: mini ? '14px 16px' : '18px 20px',
       }}

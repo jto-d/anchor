@@ -5,10 +5,10 @@ import Typography from '@mui/material/Typography'
 import { RewardIcon } from './RewardIcon'
 import { CatIcon } from './CatIcon'
 import { Eyebrow } from '@/components/ui/Eyebrow'
-import { CATEGORIES, TYPE_META, themeOf, cardRate, rankForCategory } from '@/data/cardRewards'
-import { fmtRate } from '@/data/cardRewards'
+import { CATEGORIES, TYPE_META, themeOf, cardRate, rankForCategory } from '@/utils/cardRewards'
+import { fmtRate } from '@/utils/cardRewards'
 import { brand } from '@/lib/theme'
-import type { RewardCardData } from '@/data/cardRewards'
+import type { RewardCardData } from '@/utils/cardRewards'
 import AnchorIcon from '@mui/icons-material/Anchor'
 
 interface SuggestMatrixProps {
@@ -70,7 +70,7 @@ export function SuggestMatrix({ cards }: SuggestMatrixProps) {
                           width: 34,
                           height: 23,
                           borderRadius: '5px',
-                          background: th.grad,
+                          background: th.gradient,
                           display: 'grid',
                           placeItems: 'center',
                         }}

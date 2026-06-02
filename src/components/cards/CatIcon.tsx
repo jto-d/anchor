@@ -3,7 +3,7 @@
 import Box from '@mui/material/Box'
 import { RewardIcon } from './RewardIcon'
 import { brand } from '@/lib/theme'
-import type { Category } from '@/data/cardRewards'
+import type { Category } from '@/utils/cardRewards'
 
 interface CatIconProps {
   cat: Category

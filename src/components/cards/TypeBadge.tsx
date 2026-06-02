@@ -1,10 +1,10 @@
 'use client'
 
 import Box from '@mui/material/Box'
-import { TYPE_META } from '@/data/cardRewards'
+import { TYPE_META } from '@/utils/cardRewards'
 import { RewardIcon } from './RewardIcon'
 import { brand } from '@/lib/theme'
-import type { CardType } from '@/data/cardRewards'
+import type { CardType } from '@/utils/cardRewards'
 
 interface TypeBadgeProps {
   type: CardType

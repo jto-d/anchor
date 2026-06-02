@@ -1,9 +1,9 @@
 'use client'
 
 import Box from '@mui/material/Box'
-import { fmtRate } from '@/data/cardRewards'
+import { fmtRate } from '@/utils/cardRewards'
 import { brand } from '@/lib/theme'
-import type { Reward } from '@/data/cardRewards'
+import type { Reward } from '@/utils/cardRewards'
 
 interface RateBadgeProps {
   reward: Reward

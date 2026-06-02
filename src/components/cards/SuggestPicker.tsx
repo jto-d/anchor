@@ -9,9 +9,9 @@ import { RewardIcon } from './RewardIcon'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import {
   CATEGORIES, CAT, themeOf, topRewards, rankForCategory, fmtRate, TYPE_META,
-} from '@/data/cardRewards'
+} from '@/utils/cardRewards'
 import { brand } from '@/lib/theme'
-import type { RewardCardData, CategoryKey } from '@/data/cardRewards'
+import type { RewardCardData, CategoryKey } from '@/utils/cardRewards'
 
 function RateCompareNote() {
   return (
@@ -107,7 +107,7 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
                       height: 52,
                       borderRadius: '13px',
                       flexShrink: 0,
-                      background: th.grad,
+                      background: th.gradient,
                       display: 'grid',
                       placeItems: 'center',
                       boxShadow: brand.shadow.sm,
@@ -261,7 +261,7 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
                   height: 10,
                   borderRadius: '999px',
                   flexShrink: 0,
-                  background: themeOf(card).grad,
+                  background: themeOf(card).gradient,
                 }}
               />
               <Box sx={{ flex: 1, minWidth: 0 }}>

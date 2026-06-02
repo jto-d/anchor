@@ -8,9 +8,9 @@ import { CardListRow } from './RewardCard'
 import { SuggestPicker } from './SuggestPicker'
 import { SuggestMatrix } from './SuggestMatrix'
 import { Eyebrow } from '@/components/ui/Eyebrow'
-import { dbCardToRewardCard } from '@/data/cardRewards'
+import { dbCardToRewardCard } from '@/utils/cardRewards'
 import { brand } from '@/lib/theme'
-import type { SuggestMode } from '@/data/cardRewards'
+import type { SuggestMode } from '@/utils/cardRewards'
 import type { Card } from '@/utils/types'
 
 interface SectionHeadProps {

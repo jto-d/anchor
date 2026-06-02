@@ -10,9 +10,9 @@ import { RateBadge } from './RateBadge'
 import { TypeBadge } from './TypeBadge'
 import { OverflowMenu } from './OverflowMenu'
 import { Eyebrow } from '@/components/ui/Eyebrow'
-import { themeOf, topRewards, baseReward, CAT, fmtRate } from '@/data/cardRewards'
+import { themeOf, topRewards, baseReward, CAT, fmtRate } from '@/utils/cardRewards'
 import { brand } from '@/lib/theme'
-import type { RewardCardData, TileStyle, Density, Reward } from '@/data/cardRewards'
+import type { RewardCardData, TileStyle, Density, Reward } from '@/utils/cardRewards'
 
 const MENU_ITEMS = [
   { key: 'edit',   label: 'Edit card',   icon: 'pencil' },
@@ -160,7 +160,7 @@ export function RewardCard({ card, style = 'statement', density = 'comfortable',
       ) : (
         <Box sx={{ position: 'relative' }}>
           {style === 'band' && (
-            <Box sx={{ height: '5px', background: th.grad }} />
+            <Box sx={{ height: '5px', background: th.gradient }} />
           )}
           <Box
             sx={{
@@ -178,7 +178,7 @@ export function RewardCard({ card, style = 'statement', density = 'comfortable',
                   height: 40,
                   borderRadius: '11px',
                   flexShrink: 0,
-                  background: th.grad,
+                  background: th.gradient,
                   display: 'grid',
                   placeItems: 'center',
                 }}
@@ -205,7 +205,7 @@ export function RewardCard({ card, style = 'statement', density = 'comfortable',
                     width: 11,
                     height: 11,
                     borderRadius: '999px',
-                    background: th.grad,
+                    background: th.gradient,
                   }}
                 />
               </Box>
@@ -269,7 +269,7 @@ export function CardListRow({ card, density = 'comfortable', onAction }: {
             height: 30,
             borderRadius: '6px',
             flexShrink: 0,
-            background: th.grad,
+            background: th.gradient,
             display: 'grid',
             placeItems: 'center',
             boxShadow: '0 1px 2px rgba(16,24,32,.05)',
