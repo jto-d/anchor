@@ -1,3 +1,5 @@
+import { resolveCardDesign } from '@/lib/cardDesigns'
+
 export type CategoryKey =
   | 'dining' | 'groceries' | 'travel' | 'hotels' | 'gas'
   | 'transit' | 'streaming' | 'drugstore' | 'retail' | 'base'
@@ -28,6 +30,7 @@ export interface RewardCardData {
   name: string
   issuer: string
   lastFour: string
+  design?: string
   type: CardType
   theme: CardTheme
   network: string
@@ -132,7 +135,13 @@ export const SEED_CARDS: RewardCardData[] = [
   },
 ]
 
-export const themeOf = (card: RewardCardData) => CARD_THEMES[card.theme] ?? CARD_THEMES.ink
+export const themeOf = (card: RewardCardData): { grad: string; dot: string } => {
+  if (card.design) {
+    const d = resolveCardDesign(card.design)
+    return { grad: d.gradient, dot: d.text }
+  }
+  return CARD_THEMES[card.theme] ?? CARD_THEMES.ink
+}
 
 export function cardRate(card: RewardCardData, catKey: CategoryKey): Reward | null {
   const direct = card.rewards.find((r) => r.cat === catKey)
@@ -161,3 +170,102 @@ export function rankForCategory(cards: RewardCardData[], catKey: CategoryKey): R
 
 export const fmtRate = (r: Reward): string =>
   r.unit === 'x' ? `${r.rate}×` : `${r.rate}%`
+
+interface CatalogEntry {
+  type: CardType
+  network: string
+  theme: CardTheme
+  rewards: Reward[]
+}
+
+const CARD_CATALOG: Record<string, CatalogEntry> = {
+  'amex-gold': {
+    type: 'points', network: 'Amex', theme: 'gold',
+    rewards: [
+      { cat: 'dining',    rate: 4, unit: 'x' },
+      { cat: 'groceries', rate: 4, unit: 'x' },
+      { cat: 'travel',    rate: 3, unit: 'x' },
+      { cat: 'base',      rate: 1, unit: 'x' },
+    ],
+  },
+  'amex-platinum': {
+    type: 'points', network: 'Amex', theme: 'pewter',
+    rewards: [
+      { cat: 'travel', rate: 5, unit: 'x' },
+      { cat: 'hotels', rate: 5, unit: 'x' },
+      { cat: 'base',   rate: 1, unit: 'x' },
+    ],
+  },
+  'chase-sapphire-preferred': {
+    type: 'points', network: 'Visa Signature', theme: 'teal',
+    rewards: [
+      { cat: 'travel',     rate: 5, unit: 'x' },
+      { cat: 'hotels',     rate: 5, unit: 'x' },
+      { cat: 'dining',     rate: 3, unit: 'x' },
+      { cat: 'streaming',  rate: 3, unit: 'x' },
+      { cat: 'groceries',  rate: 3, unit: 'x' },
+      { cat: 'base',       rate: 1, unit: 'x' },
+    ],
+  },
+  'united-quest': {
+    type: 'points', network: 'Visa Signature', theme: 'ink',
+    rewards: [
+      { cat: 'travel',  rate: 3, unit: 'x' },
+      { cat: 'hotels',  rate: 3, unit: 'x' },
+      { cat: 'dining',  rate: 2, unit: 'x' },
+      { cat: 'base',    rate: 1, unit: 'x' },
+    ],
+  },
+  'bilt-palladium': {
+    type: 'points', network: 'Mastercard', theme: 'teal',
+    rewards: [
+      { cat: 'dining',  rate: 3, unit: 'x' },
+      { cat: 'travel',  rate: 2, unit: 'x' },
+      { cat: 'base',    rate: 1, unit: 'x' },
+    ],
+  },
+  'chase-aeroplan': {
+    type: 'points', network: 'Visa Infinite', theme: 'slate',
+    rewards: [
+      { cat: 'dining',     rate: 3, unit: 'x' },
+      { cat: 'groceries',  rate: 2, unit: 'x' },
+      { cat: 'travel',     rate: 2, unit: 'x' },
+      { cat: 'base',       rate: 1, unit: 'x' },
+    ],
+  },
+  'united-explorer': {
+    type: 'points', network: 'Visa Signature', theme: 'espresso',
+    rewards: [
+      { cat: 'travel', rate: 2, unit: 'x' },
+      { cat: 'dining', rate: 2, unit: 'x' },
+      { cat: 'hotels', rate: 2, unit: 'x' },
+      { cat: 'base',   rate: 1, unit: 'x' },
+    ],
+  },
+}
+
+const FALLBACK_ENTRY: CatalogEntry = {
+  type: 'cashback', network: '', theme: 'teal',
+  rewards: [{ cat: 'base', rate: 1, unit: '%' }],
+}
+
+export function dbCardToRewardCard(card: {
+  id: string
+  name: string
+  issuer: string
+  lastFour?: string | null
+  design?: string | null
+}): RewardCardData {
+  const entry = (card.design && CARD_CATALOG[card.design]) || FALLBACK_ENTRY
+  return {
+    id: card.id,
+    name: card.name,
+    issuer: card.issuer,
+    lastFour: card.lastFour ?? '',
+    design: card.design ?? undefined,
+    type: entry.type,
+    theme: entry.theme,
+    network: entry.network,
+    rewards: entry.rewards,
+  }
+}

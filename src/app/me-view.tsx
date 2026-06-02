@@ -143,10 +143,11 @@ export function MeView() {
             <Topbar
               title="Cards"
               subtitle="Your wallet and where each card earns the most."
-              onAddCard={() => setToast("Add-a-card flow isn’t wired yet.")}
+              onAddCard={() => setToast("Add-a-card flow isn't wired yet.")}
             />
             <CardsView
-              onAddCard={() => setToast("Add-a-card flow isn’t wired yet.")}
+              cards={cards}
+              onAddCard={() => setToast("Add-a-card flow isn't wired yet.")}
               onManageCard={(action, cardId) =>
                 setToast(`${action === 'remove' ? 'Remove' : 'Edit'} — not wired yet (card ${cardId.slice(-4)}).`)
               }

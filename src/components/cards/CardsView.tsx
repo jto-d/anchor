@@ -8,9 +8,10 @@ import { CardListRow } from './RewardCard'
 import { SuggestPicker } from './SuggestPicker'
 import { SuggestMatrix } from './SuggestMatrix'
 import { Eyebrow } from '@/components/ui/Eyebrow'
-import { SEED_CARDS } from '@/data/cardRewards'
+import { dbCardToRewardCard } from '@/data/cardRewards'
 import { brand } from '@/lib/theme'
 import type { SuggestMode } from '@/data/cardRewards'
+import type { Card } from '@/utils/types'
 
 interface SectionHeadProps {
   eyebrow: string
@@ -50,12 +51,13 @@ function SectionHead({ eyebrow, title, sub, right }: SectionHeadProps) {
 }
 
 interface CardsViewProps {
+  cards: Card[]
   onAddCard: () => void
   onManageCard?: (action: string, cardId: string) => void
 }
 
-export function CardsView({ onAddCard, onManageCard }: CardsViewProps) {
-  const cards = SEED_CARDS
+export function CardsView({ cards: dbCards, onAddCard, onManageCard }: CardsViewProps) {
+  const cards = dbCards.map(dbCardToRewardCard)
   const [suggestMode, setSuggestMode] = useState<SuggestMode>('picker')
 
   const cashbackCount = cards.filter((c) => c.type === 'cashback').length
