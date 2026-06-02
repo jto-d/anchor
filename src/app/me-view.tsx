@@ -13,6 +13,7 @@ import { Topbar } from '@/components/ui/Topbar'
 import { PerksDashboard } from '@/components/PerksDashboard'
 import { CardDetail } from '@/components/CardDetail'
 import { LogCreditDialog } from '@/components/LogCreditDialog'
+import { CardsView } from '@/components/cards/CardsView'
 import { brand } from '@/lib/theme'
 import type { Card, Perk } from '@/utils/types'
 
@@ -57,7 +58,7 @@ const LogPerkCreditDocument = graphql(`
   }
 `)
 
-type Route = 'dashboard' | 'card'
+type Route = 'dashboard' | 'card' | 'cards'
 
 export function MeView() {
   const [route, setRoute] = useState<Route>('dashboard')
@@ -118,10 +119,11 @@ export function MeView() {
   return (
     <Box sx={{ display: 'flex', height: '100vh', bgcolor: 'background.default', color: 'text.primary' }}>
       <Sidebar
-        route={route === 'card' ? 'cards' : route}
+        route={route === 'card' || route === 'cards' ? 'cards' : route}
         userEmail={userEmail}
-        onNavigate={() => {
-          setRoute('dashboard')
+        onNavigate={(key) => {
+          if (key === 'cards') setRoute('cards')
+          else setRoute('dashboard')
           setSelectedCardId(null)
         }}
       />
@@ -135,6 +137,20 @@ export function MeView() {
               onAddCard={() => {}}
             />
             <CardDetail card={selectedCard} onBack={back} onLog={setDialogPerk} onAddPerk={() => {}} />
+          </>
+        ) : route === 'cards' ? (
+          <>
+            <Topbar
+              title="Cards"
+              subtitle="Your wallet and where each card earns the most."
+              onAddCard={() => setToast("Add-a-card flow isn’t wired yet.")}
+            />
+            <CardsView
+              onAddCard={() => setToast("Add-a-card flow isn’t wired yet.")}
+              onManageCard={(action, cardId) =>
+                setToast(`${action === 'remove' ? 'Remove' : 'Edit'} — not wired yet (card ${cardId.slice(-4)}).`)
+              }
+            />
           </>
         ) : (
           <>
