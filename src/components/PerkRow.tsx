@@ -12,7 +12,7 @@ import CheckIcon from '@mui/icons-material/Check'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ScheduleOutlinedIcon from '@mui/icons-material/ScheduleOutlined'
 import { StatusChip } from './ui/StatusChip'
-import { capturedYTD, annualValue, perkPct, perkStatus, periodLabel } from '@/utils/perk'
+import { capturedYTD, capturedThisMonth, annualValue, perkPct, perkStatus, periodLabel } from '@/utils/perk'
 import { fmt, fmt2, fmtDate } from '@/utils/format'
 import { MONTHS } from '@/utils/constants'
 import type { Perk } from '@/utils/types'
@@ -28,6 +28,9 @@ export function PerkRow({ perk, onLog }: PerkRowProps) {
   const annual = annualValue(perk)
   const pct = perkPct(perk)
   const status = perkStatus(perk)
+  const isMonthly = perk.period === 'MONTHLY'
+  const thisMonth = isMonthly ? capturedThisMonth(perk) : 0
+  const monthPct = isMonthly ? Math.min(1, thisMonth / parseFloat(perk.totalAmount)) : 0
   const statusIcon =
     status.key === 'captured' ? <CheckIcon /> : status.key === 'expiring' ? <ScheduleOutlinedIcon /> : undefined
   const startMonthLabel = MONTHS[(perk.periodStartMonth - 1 + 12) % 12]
@@ -55,19 +58,49 @@ export function PerkRow({ perk, onLog }: PerkRowProps) {
         </Box>
 
         <Box sx={{ width: 150, flex: 'none' }}>
-          <LinearProgress
-            variant="determinate"
-            value={pct * 100}
-            sx={{ height: 8, bgcolor: 'grey.100', '& .MuiLinearProgress-bar': { bgcolor: 'primary.main' } }}
-          />
-          <Typography
-            sx={{ fontSize: 11, color: 'grey.500', mt: '5px', fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}
-          >
-            <Box component="span" sx={{ fontWeight: 600, color: pct >= 1 ? 'primary.main' : 'text.primary' }}>
-              {fmt(captured)}
-            </Box>{' '}
-            of {fmt(annual)}
-          </Typography>
+          {isMonthly ? (
+            <>
+              <LinearProgress
+                variant="determinate"
+                value={monthPct * 100}
+                sx={{ height: 8, bgcolor: 'grey.100', '& .MuiLinearProgress-bar': { bgcolor: 'primary.main' } }}
+              />
+              <Typography
+                sx={{ fontSize: 11, color: 'grey.500', mt: '5px', fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}
+              >
+                <Box component="span" sx={{ fontWeight: 600, color: monthPct >= 1 ? 'primary.main' : 'text.primary' }}>
+                  {fmt(thisMonth)}
+                </Box>{' '}
+                of {fmt(parseFloat(perk.totalAmount))} this mo
+              </Typography>
+              <LinearProgress
+                variant="determinate"
+                value={pct * 100}
+                sx={{ height: 5, mt: '8px', bgcolor: 'grey.100', '& .MuiLinearProgress-bar': { bgcolor: 'grey.400' } }}
+              />
+              <Typography
+                sx={{ fontSize: 10, color: 'grey.400', mt: '3px', fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}
+              >
+                {fmt(captured)} of {fmt(annual)} / yr
+              </Typography>
+            </>
+          ) : (
+            <>
+              <LinearProgress
+                variant="determinate"
+                value={pct * 100}
+                sx={{ height: 8, bgcolor: 'grey.100', '& .MuiLinearProgress-bar': { bgcolor: 'primary.main' } }}
+              />
+              <Typography
+                sx={{ fontSize: 11, color: 'grey.500', mt: '5px', fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}
+              >
+                <Box component="span" sx={{ fontWeight: 600, color: pct >= 1 ? 'primary.main' : 'text.primary' }}>
+                  {fmt(captured)}
+                </Box>{' '}
+                of {fmt(annual)}
+              </Typography>
+            </>
+          )}
         </Box>
 
         <Button

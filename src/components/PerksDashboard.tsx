@@ -26,10 +26,12 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
   const pct = available ? captured / available : 0
 
   const atRisk: { card: Card; perk: Perk }[] = []
+  const used: { card: Card; perk: Perk }[] = []
   cards.forEach((c) =>
     c.perks.forEach((p) => {
       const st = perkStatus(p)
       if (st.key === 'open' || st.key === 'expiring' || st.key === 'partial') atRisk.push({ card: c, perk: p })
+      else if (st.key === 'captured') used.push({ card: c, perk: p })
     })
   )
 
@@ -94,6 +96,19 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
           atRisk.slice(0, 6).map(({ perk }) => <PerkRow key={perk.id} perk={perk} onLog={onLog} />)
         )}
       </Paper>
+
+      {/* Used perks */}
+      {used.length > 0 && (
+        <>
+          <Eyebrow sx={{ mt: '28px', mb: '4px' }}>Used perks</Eyebrow>
+          <Typography sx={{ mb: 1, fontSize: 13, color: 'grey.500' }}>
+            Fully captured this period.
+          </Typography>
+          <Paper variant="outlined" sx={{ borderColor: 'divider', borderRadius: '14px', px: 2, py: '4px' }}>
+            {used.map(({ perk }) => <PerkRow key={perk.id} perk={perk} onLog={onLog} />)}
+          </Paper>
+        </>
+      )}
     </Box>
   )
 }
