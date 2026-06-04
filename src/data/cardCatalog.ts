@@ -70,6 +70,31 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'base', rate: 1 },
     ],
   },
+  'chase-sapphire-reserve': {
+    gradient: 'linear-gradient(150deg, #D4C6B6, #0B1325)',
+    text: WHITE,
+    type: 'points',
+    network: 'Visa Signature',
+    rewards: [
+      { cat: 'travel', rate: 4 },
+      { cat: 'hotels', rate: 4 },
+      { cat: 'dining', rate: 3 },
+      { cat: 'portal', rate: 8 },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+  'chase-freedom-unlimited': {
+    gradient: 'linear-gradient(150deg, #16498A, #141631)',
+    text: WHITE,
+    type: 'points',
+    network: 'Visa Signature',
+    rewards: [
+      { cat: 'dining', rate: 3 },
+      { cat: 'drugstore', rate: 3 },
+      { cat: 'portal', rate: 3 },
+      { cat: 'base', rate: 1.5 },
+    ],
+  },
   'united-quest': {
     gradient: 'linear-gradient(150deg, #461864, #33184A)',
     text: WHITE,
