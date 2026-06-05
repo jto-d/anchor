@@ -29,6 +29,7 @@ const MeDocument = graphql(`
         name
         issuer
         lastFour
+        openedDate
         design
         perks {
           id
@@ -67,12 +68,13 @@ const RemoveCardDocument = graphql(`
 `)
 
 const AddCardDocument = graphql(`
-  mutation AddCard($catalogKey: String!, $lastFour: String) {
-    addCard(catalogKey: $catalogKey, lastFour: $lastFour) {
+  mutation AddCard($catalogKey: String!, $lastFour: String, $openedDate: String) {
+    addCard(catalogKey: $catalogKey, lastFour: $lastFour, openedDate: $openedDate) {
       id
       name
       issuer
       lastFour
+      openedDate
       design
       perks {
         id
@@ -131,8 +133,8 @@ export function MeView() {
     setToast(`Logged $${amount.toFixed(2)} to ${perkName}`)
   }
 
-  async function handleAddCard(catalogKey: string, lastFour: string) {
-    const result = await addCard({ catalogKey, lastFour: lastFour || undefined })
+  async function handleAddCard(catalogKey: string, lastFour: string, openedDate: string) {
+    const result = await addCard({ catalogKey, lastFour: lastFour || undefined, openedDate: openedDate || undefined })
     reexecuteQuery({ requestPolicy: 'network-only' })
     setAddCardOpen(false)
     if (result.error) {

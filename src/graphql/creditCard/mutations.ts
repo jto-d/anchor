@@ -23,8 +23,9 @@ builder.mutationFields((t) => ({
     args: {
       catalogKey: t.arg.string({ required: true }),
       lastFour: t.arg.string(),
+      openedDate: t.arg.string(),
     },
-    resolve: async (query, _root, { catalogKey, lastFour }, ctx) => {
+    resolve: async (query, _root, { catalogKey, lastFour, openedDate }, ctx) => {
       const entry = CARD_CATALOG[catalogKey]
       if (!entry) throw new Error(`Unknown catalog key: ${catalogKey}`)
 
@@ -38,6 +39,7 @@ builder.mutationFields((t) => ({
           issuer: entry.issuer,
           design: catalogKey,
           lastFour: lastFour ?? null,
+          openedDate: openedDate ? new Date(openedDate) : null,
           perks: perks.length ? { create: perks } : undefined,
         },
       })

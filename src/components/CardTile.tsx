@@ -33,11 +33,13 @@ export function CardTile({ card, onOpen }: CardTileProps) {
         {card.issuer}
       </Typography>
       <Typography sx={{ fontSize: 18, fontWeight: 600, letterSpacing: '-0.01em', mt: 3 }}>{card.name}</Typography>
-      {card.lastFour && (
+      {(card.lastFour || card.openedDate) && (
         <Typography
           sx={{ fontSize: 12, fontVariantNumeric: 'tabular-nums', letterSpacing: '0.12em', opacity: 0.8, mt: '3px' }}
         >
-          •••• •••• •••• {card.lastFour}
+          {card.lastFour ? `•••• •••• •••• ${card.lastFour}` : ''}
+          {card.lastFour && card.openedDate ? '  ·  ' : ''}
+          {card.openedDate ? `Opened ${new Date(card.openedDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}` : ''}
         </Typography>
       )}
       <Box sx={{ mt: 2 }}>

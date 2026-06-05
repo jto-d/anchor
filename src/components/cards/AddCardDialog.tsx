@@ -140,15 +140,17 @@ interface AddCardDialogProps {
   open: boolean
   existingDesigns: string[]
   onClose: () => void
-  onAdd: (catalogKey: string, lastFour: string) => Promise<void> | void
+  onAdd: (catalogKey: string, lastFour: string, openedDate: string) => Promise<void> | void
 }
 
 export function AddCardDialog({ open, existingDesigns, onClose, onAdd }: AddCardDialogProps) {
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
   const [query, setQuery] = useState('')
   const [lastFour, setLastFour] = useState('')
+  const [openedDate, setOpenedDate] = useState('')
   const [searchFocus, setSearchFocus] = useState(false)
   const [lastFocus, setLastFocus] = useState(false)
+  const [dateFocus, setDateFocus] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
   // Reset everything each time the dialog opens.
@@ -157,6 +159,7 @@ export function AddCardDialog({ open, existingDesigns, onClose, onAdd }: AddCard
       setSelectedKey(null)
       setQuery('')
       setLastFour('')
+      setOpenedDate('')
       setSubmitting(false)
     }
   }, [open])
@@ -181,7 +184,7 @@ export function AddCardDialog({ open, existingDesigns, onClose, onAdd }: AddCard
     if (!selected) return
     setSubmitting(true)
     try {
-      await onAdd(selected.key, lastFour)
+      await onAdd(selected.key, lastFour, openedDate)
     } finally {
       setSubmitting(false)
     }
@@ -263,35 +266,60 @@ export function AddCardDialog({ open, existingDesigns, onClose, onAdd }: AddCard
         </Box>
       </Box>
 
-      {/* Last 4 + perk preview */}
+      {/* Last 4 + opened date + perk preview */}
       <Box sx={{ p: '16px 22px 4px', display: 'flex', flexDirection: 'column', gap: '14px', flex: 'none' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <Box component="label" htmlFor="lastfour" sx={{ fontSize: '13px', fontWeight: 600, color: 'text.primary', flex: 'none' }}>
-            Last 4 digits <Box component="span" sx={{ color: 'text.disabled', fontWeight: 400 }}>(optional)</Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Box component="label" htmlFor="lastfour" sx={{ fontSize: '13px', fontWeight: 600, color: 'text.primary', flex: 'none' }}>
+              Last 4 <Box component="span" sx={{ color: 'text.disabled', fontWeight: 400 }}>(optional)</Box>
+            </Box>
+            <Box
+              component="input"
+              id="lastfour"
+              value={lastFour}
+              placeholder="1234"
+              inputMode="numeric"
+              maxLength={4}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLastFour(e.target.value.replace(/\D/g, '').slice(0, 4))}
+              onFocus={() => setLastFocus(true)}
+              onBlur={() => setLastFocus(false)}
+              sx={{
+                ...inputBase,
+                width: 88,
+                textAlign: 'center',
+                fontSize: '15px',
+                fontWeight: 500,
+                letterSpacing: '0.18em',
+                fontVariantNumeric: 'tabular-nums',
+                border: `1px solid ${lastFocus ? brand.anchor[600] : brand.zinc[300]}`,
+                boxShadow: lastFocus ? FOCUS_RING : 'none',
+                '&::placeholder': { color: brand.zinc[400], letterSpacing: '0.18em' },
+              }}
+            />
           </Box>
-          <Box
-            component="input"
-            id="lastfour"
-            value={lastFour}
-            placeholder="1234"
-            inputMode="numeric"
-            maxLength={4}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLastFour(e.target.value.replace(/\D/g, '').slice(0, 4))}
-            onFocus={() => setLastFocus(true)}
-            onBlur={() => setLastFocus(false)}
-            sx={{
-              ...inputBase,
-              width: 96,
-              textAlign: 'center',
-              fontSize: '15px',
-              fontWeight: 500,
-              letterSpacing: '0.18em',
-              fontVariantNumeric: 'tabular-nums',
-              border: `1px solid ${lastFocus ? brand.anchor[600] : brand.zinc[300]}`,
-              boxShadow: lastFocus ? FOCUS_RING : 'none',
-              '&::placeholder': { color: brand.zinc[400], letterSpacing: '0.18em' },
-            }}
-          />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Box component="label" htmlFor="openeddate" sx={{ fontSize: '13px', fontWeight: 600, color: 'text.primary', flex: 'none' }}>
+              Opened <Box component="span" sx={{ color: 'text.disabled', fontWeight: 400 }}>(optional)</Box>
+            </Box>
+            <Box
+              component="input"
+              id="openeddate"
+              type="date"
+              value={openedDate}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOpenedDate(e.target.value)}
+              onFocus={() => setDateFocus(true)}
+              onBlur={() => setDateFocus(false)}
+              sx={{
+                ...inputBase,
+                width: 148,
+                px: '10px',
+                fontSize: '13.5px',
+                fontVariantNumeric: 'tabular-nums',
+                border: `1px solid ${dateFocus ? brand.anchor[600] : brand.zinc[300]}`,
+                boxShadow: dateFocus ? FOCUS_RING : 'none',
+              }}
+            />
+          </Box>
         </Box>
 
         <Box

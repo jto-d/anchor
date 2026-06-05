@@ -31,7 +31,8 @@ model CreditCard {
   userId   String
   name     String
   issuer   String
-  lastFour String?
+  lastFour   String?
+  openedDate DateTime? @db.Date
   design String? // slug e.g. "chase-sapphire-preferred"
 
   user  User   @relation(fields: [userId], references: [id])
