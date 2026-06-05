@@ -4,6 +4,20 @@ import { CARD_CATALOG } from "@/data/cardCatalog"
 import { PERK_CATALOG } from "@/data/perkCatalog"
 
 builder.mutationFields((t) => ({
+  removeCard: t.field({
+    type: 'Boolean',
+    args: {
+      cardId: t.arg.string({ required: true }),
+    },
+    resolve: async (_root, { cardId }, ctx) => {
+      await prisma.$transaction([
+        prisma.perkCredit.deleteMany({ where: { perk: { creditCardId: cardId } } }),
+        prisma.creditCard.delete({ where: { id: cardId, userId: ctx.userId } }),
+      ])
+      return true
+    },
+  }),
+
   addCard: t.prismaField({
     type: "CreditCard",
     args: {

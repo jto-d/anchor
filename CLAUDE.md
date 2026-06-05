@@ -21,32 +21,65 @@ pnpm db:seed           # prisma db seed → runs prisma/seed.ts via tsx
 pnpm db:studio         # prisma studio
 ```
 
-There are no tests or linter wired up — `--no-eslint` was passed to `create-next-app`, and Next 16 removed `next lint` entirely (use `eslint`/`biome` directly if you add one). `postinstall` runs `prisma generate`.
+There are no tests or linter wired up — `--no-eslint` was passed to `create-next-app`, and Next 16 removed `next lint` entirely. `postinstall` runs `prisma generate`.
+
+## App architecture
+
+The entire UI lives under `src/app/page.tsx` → `MeView` (client component). `MeView` owns all data fetching (urql), all mutations, and a lightweight client-side router with three routes: `'perks'` (dashboard), `'card'` (single card detail), and `'cards'` (wallet + suggest engine). Route transitions happen via `useState`; there is no Next.js routing between pages.
+
+**Component tree:**
+- `MeView` — root state, urql queries/mutations, route switch
+  - `Sidebar` + `Topbar` — chrome
+  - `PerksDashboard` — default view, lists perks across all cards
+  - `CardDetail` — per-card perk list and log-credit actions
+  - `CardsView` — wallet list + suggestion engine (SuggestPicker / SuggestMatrix)
+  - `AddCardDialog` — adds a card from `CARD_CATALOG`
+  - `LogCreditDialog` — logs a perk credit
+
+**DB Card → UI shape:** `dbCardToRewardCard()` in `src/utils/cardRewards.ts` merges a DB `CreditCard` (id, name, issuer, lastFour, design) with the static `CARD_CATALOG` entry for its `design` slug to produce `RewardCardData` (adds type, network, rewards). The DB never stores multipliers — they come entirely from the catalog.
+
+## Static data catalogs
+
+`src/data/cardCatalog.ts` — the master product registry. Each key is a `design` slug (e.g. `chase-sapphire-preferred`). Entries define `name`, `issuer`, gradient/text for rendering, `type` (cashback | points), `network`, and `rewards` (category → multiplier). **Multipliers live here only**, not in the DB.
+
+`src/data/perkCatalog.ts` — perk templates keyed by the same design slug. When `addCard` runs, it bulk-creates the template perks from this file onto the new card. Users can log credits against those perks but cannot create or edit perks or multipliers through the UI.
 
 ## Schema-and-codegen pipeline
 
 The chain is one-way and must run in this order whenever Prisma models or Pothos types change:
 
-1. **`prisma/schema.prisma`** — models live here. `datasource db` has no `url`; the URL is provided by `prisma.config.ts` (Prisma 7 split). Two generators run: `prisma-client-js` and `prisma-pothos-types` (with `generateDatamodel = "true"` — required so the runtime `getDatamodel()` function gets emitted, not just the `.d.ts`).
-2. **`prisma generate`** writes the Prisma client + a `generated.{d.ts,js}` into `node_modules/@pothos/plugin-prisma/`.
-3. **`src/graphql/schema/builder.ts`** imports `getDatamodel` from `@pothos/plugin-prisma/generated` and passes it as `dmmf` to the SchemaBuilder. **In Prisma 7 this is required** — the old `client._runtimeDataModel` path no longer exists, so the builder will throw `Model 'X' is missing required datamodel information` without it.
+1. **`prisma/schema.prisma`** — models live here. `datasource db` has no `url`; the URL is provided by `prisma.config.ts` (Prisma 7 split). Two generators run: `prisma-client-js` and `prisma-pothos-types` (with `generateDatamodel = "true"` — required so the runtime `getDatamodel()` function is emitted).
+2. **`prisma generate`** writes the Prisma client + `generated.{d.ts,js}` into `node_modules/@pothos/plugin-prisma/`.
+3. **`src/graphql/builder.ts`** imports `getDatamodel` from `@pothos/plugin-prisma/generated` and passes it as `dmmf` to the SchemaBuilder. **In Prisma 7 this is required** — the old `client._runtimeDataModel` path no longer exists, so the builder will throw `Model 'X' is missing required datamodel information` without it.
 4. **`pnpm schema`** runs `tsx src/graphql/print-schema.ts`, which imports the built schema and writes SDL to `./schema.graphql`. It loads `dotenv/config` first because importing the schema pulls in `src/lib/prisma.ts`, which constructs `PrismaNeon({ connectionString: process.env.DATABASE_URL! })` at module load.
 5. **`graphql-codegen`** reads `./schema.graphql` and operations from `src/**/*.{ts,tsx}` and emits `src/gql/` (client-preset, `fragmentMasking: false`).
 
 `schema.graphql` and `src/gql/` are gitignored — regenerate after `git pull`.
 
+## GraphQL schema layout
+
+`src/graphql/schema.ts` is the entry point — it imports all type/query/mutation files for side effects and then calls `builder.toSchema()`. Each domain has its own subfolder:
+
+- `src/graphql/user/` — type, queries (`me`)
+- `src/graphql/creditCard/` — type, queries, mutations (`addCard`)
+- `src/graphql/perk/` — type, queries
+- `src/graphql/perkCredit/` — type, mutations (`logPerkCredit`)
+
 ## Pothos conventions
 
-- `builder.defaultFieldNullability = false` (and the matching `DefaultFieldNullability: false` generic) — every field is non-null unless you opt in. The codegen output reflects this, so consumers don't pile up `?.` chains.
-- Each model has its own file under `src/graphql/schema/` (`user.ts`, `account.ts`, `transaction.ts`). They're imported for side effects from `src/graphql/schema/index.ts`, which then calls `builder.toSchema()`.
-- `Decimal` and `DateTime` fields are exposed as `String` (via `tx.amount.toString()` / `date.toISOString()`) to avoid registering custom scalars. If/when you add scalars, declare them in the builder's `Scalars:` generic and the operations using them will need to be regenerated.
-- The Pothos Prisma plugin docs (in `node_modules/@pothos/plugin-prisma/README.md`) warn against putting the Prisma client into Context — keep it as a module singleton (`src/lib/prisma.ts`).
+- `builder.defaultFieldNullability = false` (and the matching `DefaultFieldNullability: false` generic) — every field is non-null unless you opt in.
+- `Decimal` and `DateTime` fields are exposed as `String` to avoid registering custom scalars.
+- The Pothos Prisma plugin warns against putting the Prisma client into Context — keep it as a module singleton (`src/lib/prisma.ts`).
+
+## Auth / user context
+
+There is no real auth. The Yoga context in `src/app/api/graphql/route.ts` returns a hardcoded `{ userId: '<cuid>' }`. All queries and mutations resolve against this single user. Any future auth system would replace that context factory.
 
 ## Database access
 
-- **Two URLs in `.env`**: `DATABASE_URL` (pooled, `-pooler` in hostname) is used by the app at runtime via `@prisma/adapter-neon`. `DIRECT_URL` (no `-pooler`) is required by `prisma migrate` because pooled connections don't support the `CREATE`/`ALTER` statements migrations issue.
-- **`prisma.config.ts`** is the single source of truth for which URL Prisma CLI uses — it reads `DIRECT_URL`. The runtime Prisma client gets its connection via the Neon adapter constructor, *not* via the schema's `datasource`.
-- `src/lib/prisma.ts` sets `neonConfig.webSocketConstructor = ws` (Neon's driver needs an explicit `ws` impl in Node) and memoizes the client on `globalThis` for HMR.
+- **Two URLs in `.env`**: `DATABASE_URL` (pooled, `-pooler` in hostname) used at runtime. `DIRECT_URL` (no `-pooler`) required by `prisma migrate`.
+- **`prisma.config.ts`** — single source of truth for Prisma CLI URL (reads `DIRECT_URL`).
+- `src/lib/prisma.ts` sets `neonConfig.webSocketConstructor = ws` and memoizes the client on `globalThis` for HMR.
 - The Neon project is in the `threedays` org (`project_id: hidden-hall-51915629`). MCP tools (`mcp__Neon__*`) can run SQL against it for ad-hoc inspection.
 
 ## Yoga ↔ Next route handler
@@ -57,23 +90,22 @@ The chain is one-way and must run in this order whenever Prisma models or Pothos
 
 `src/lib/urql.tsx` (`Providers`) is the only client-side urql wiring. Two non-obvious choices:
 
-- `suspense: false`. With suspense on, `useQuery` tries to fetch during SSR, and Node's native `fetch` rejects relative URLs (`/api/graphql`) with `Failed to parse URL`. Disabling suspense makes the demo a pure client-side fetch.
-- `url` is conditional: `http://localhost:${process.env.PORT ?? 3000}/api/graphql` on the server, relative on the client. If you re-enable suspense or add RSC queries via `@urql/next/rsc`, switch the server URL to an env var (e.g. `NEXT_PUBLIC_APP_URL`) so it isn't hardcoded to localhost.
+- `suspense: false`. With suspense on, `useQuery` tries to fetch during SSR and Node's native `fetch` rejects relative URLs (`/api/graphql`) with `Failed to parse URL`. Disabling suspense makes the app a pure client-side fetch.
+- `url` is conditional: `http://localhost:${process.env.PORT ?? 3000}/api/graphql` on the server, relative on the client.
 
 ## Styling — MUI
 
-The UI is built entirely with **Material UI v9** (`@mui/material`, `@mui/icons-material`) on the Emotion engine. There is **no Tailwind** — it was removed along with `postcss.config.*` (Tailwind was its only plugin), so there is no PostCSS step.
+The UI is built entirely with **Material UI v9** (`@mui/material`, `@mui/icons-material`) on the Emotion engine. There is **no Tailwind**.
 
-- **Theme** — `src/lib/theme.ts` (`'use client'`) holds the single `createTheme`: the "Anchor" brand (teal `primary`, Switzer typography, soft radii, `MuiButton`/`MuiPaper`/`MuiChip`/`MuiLinearProgress` overrides). It also exports a `brand` object of raw scales (anchor/zinc, `shadow`, `accentSoft`) for the few spots that need literal values — the teal-soft headline panel, `StatusChip` colors. Reach for theme tokens (`sx`, `palette.*`) first; use `brand` only when no token fits.
-- **Card designs** — `src/lib/cardDesigns.ts` is a per-product registry mapping a card's `design` slug (e.g. `chase-sapphire-preferred`, `amex-gold`) to a `{ gradient, text }` pair. `resolveCardDesign(slug)` falls back to the `teal` design. `CardTile` drives every on-surface tint from the single `text` color (via `alpha()`), so light gradients stay legible.
-- **Providers** — `src/app/layout.tsx` (server component) wraps the tree in `AppRouterCacheProvider` (from `@mui/material-nextjs/v16-appRouter` — the import path is version-pinned to Next 16) → `ThemeProvider` → `CssBaseline`. The cache provider drives Emotion's SSR style injection/ordering; drop it and you get hydration class mismatches / unstyled flashes.
-- **`src/app/globals.css`** is now just the Switzer font `@import`, a height/box reset, font smoothing, and the scrollbar. All color/radii/shadow tokens live in the theme; components style via the `sx` prop, not `className`.
-- **Icons** come from `@mui/icons-material` directly at call sites — the old hand-rolled `Icons.tsx` SVG set is gone. `src/app/components/Primitives.tsx` now exports only `Eyebrow` (a themed `Typography`) and `StatusChip` (maps a perk's `StatusKey` → colored `Chip`).
+- **Theme** — `src/lib/theme.ts` holds the single `createTheme`: the "Anchor" brand (teal `primary`, Switzer typography, soft radii). It also exports a `brand` object of raw scales (anchor/zinc, `shadow`, `accentSoft`). Use theme tokens (`sx`, `palette.*`) first; use `brand` only when no token fits.
+- **Card designs** — `src/utils/cardDesigns.ts` maps a `design` slug to `{ gradient, text }`. `resolveCardDesign(slug)` falls back to the teal design. `CardTile` drives every on-surface tint from the single `text` color via `alpha()`.
+- **Providers** — `src/app/layout.tsx` wraps the tree in `AppRouterCacheProvider` (from `@mui/material-nextjs/v16-appRouter` — import path is version-pinned) → `ThemeProvider` → `CssBaseline`. Drop the cache provider and you get hydration class mismatches.
+- **Icons** come from `@mui/icons-material` at call sites. Shared primitives live in `src/components/ui/`: `Eyebrow` (themed Typography) and `StatusChip` (perk StatusKey → colored Chip).
 
 ## When something looks off
 
-- **`PothosSchemaError: Model 'X' is missing required datamodel information`** → `generateDatamodel = "true"` is missing from the `pothos` generator in `schema.prisma`, or `dmmf: getDatamodel()` was dropped from `builder.ts`. Re-run `pnpm exec prisma generate` after fixing.
+- **`PothosSchemaError: Model 'X' is missing required datamodel information`** → `generateDatamodel = "true"` is missing from the `pothos` generator, or `dmmf: getDatamodel()` was dropped from `builder.ts`. Re-run `pnpm exec prisma generate`.
 - **Type errors after editing a `.graphql` operation or a Prisma model** → run `pnpm codegen`.
 - **`Failed to parse URL from /api/graphql`** → urql is fetching server-side with a relative URL. See the urql client section.
 - **Prisma CLI error about `url`/`directUrl`** → those properties were removed from `datasource` in Prisma 7. They belong in `prisma.config.ts`.
-- **MUI styles flash unstyled or hydration class mismatch** → `AppRouterCacheProvider` must still wrap the app in `layout.tsx`, above `ThemeProvider`. See the Styling section.
+- **MUI styles flash unstyled or hydration class mismatch** → `AppRouterCacheProvider` must still wrap the app in `layout.tsx`, above `ThemeProvider`.

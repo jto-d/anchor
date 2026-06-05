@@ -19,6 +19,7 @@ interface OverflowMenuProps {
 
 export function OverflowMenu({ items, onAction }: OverflowMenuProps) {
   const [open, setOpen] = useState(false)
+  const [openUp, setOpenUp] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -30,11 +31,21 @@ export function OverflowMenu({ items, onAction }: OverflowMenuProps) {
     return () => document.removeEventListener('mousedown', close)
   }, [open])
 
+  function handleOpen(e: React.MouseEvent) {
+    e.stopPropagation()
+    if (!open && ref.current) {
+      const rect = ref.current.getBoundingClientRect()
+      const dropdownHeight = items.length * 40 + 12
+      setOpenUp(rect.bottom + dropdownHeight > window.innerHeight)
+    }
+    setOpen((v) => !v)
+  }
+
   return (
     <Box ref={ref} sx={{ position: 'relative', flexShrink: 0 }}>
       <Box
         component="button"
-        onClick={(e: React.MouseEvent) => { e.stopPropagation(); setOpen((v) => !v) }}
+        onClick={handleOpen}
         title="Manage card"
         sx={{
           width: 30,
@@ -58,7 +69,7 @@ export function OverflowMenu({ items, onAction }: OverflowMenuProps) {
         <Box
           sx={{
             position: 'absolute',
-            top: '36px',
+            ...(openUp ? { bottom: '36px' } : { top: '36px' }),
             right: 0,
             zIndex: 30,
             minWidth: '168px',

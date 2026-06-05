@@ -60,6 +60,12 @@ const LogPerkCreditDocument = graphql(`
   }
 `)
 
+const RemoveCardDocument = graphql(`
+  mutation RemoveCard($cardId: String!) {
+    removeCard(cardId: $cardId)
+  }
+`)
+
 const AddCardDocument = graphql(`
   mutation AddCard($catalogKey: String!, $lastFour: String) {
     addCard(catalogKey: $catalogKey, lastFour: $lastFour) {
@@ -97,6 +103,7 @@ export function MeView() {
 
   const [{ data, fetching, error }, reexecuteQuery] = useQuery({ query: MeDocument })
   const [, logPerkCredit] = useMutation(LogPerkCreditDocument)
+  const [, removeCard] = useMutation(RemoveCardDocument)
   const [, addCard] = useMutation(AddCardDocument)
 
   const cards: Card[] = (data?.me.creditCards ?? []) as Card[]
@@ -189,9 +196,14 @@ export function MeView() {
             <CardsView
               cards={cards}
               onAddCard={() => setAddCardOpen(true)}
-              onManageCard={(action, cardId) =>
-                setToast(`${action === 'remove' ? 'Remove' : 'Edit'} — not wired yet (card ${cardId.slice(-4)}).`)
-              }
+              onManageCard={async (action, cardId) => {
+                if (action === 'remove') {
+                  const name = cards.find((c) => c.id === cardId)?.name ?? 'Card'
+                  await removeCard({ cardId })
+                  reexecuteQuery({ requestPolicy: 'network-only' })
+                  setToast(`${name} removed from your wallet`)
+                }
+              }}
             />
           </>
         ) : (
