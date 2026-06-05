@@ -16,7 +16,7 @@ import { Tooltip } from './Tooltip'
 interface TopbarProps {
   title: string
   subtitle?: string
-  onAddCard: () => void
+  onAddCard?: () => void
 }
 
 export function Topbar({ title, subtitle, onAddCard }: TopbarProps) {
@@ -77,9 +77,11 @@ export function Topbar({ title, subtitle, onAddCard }: TopbarProps) {
               <NotificationsNoneOutlinedIcon sx={{ fontSize: 18 }} />
             </IconButton>
           </Tooltip>
-          <Button variant="contained" startIcon={<AddIcon />} onClick={onAddCard} sx={{ height: 38, flex: 'none' }}>
-            Add a card
-          </Button>
+          {onAddCard && (
+            <Button variant="contained" startIcon={<AddIcon />} onClick={onAddCard} sx={{ height: 38, flex: 'none' }}>
+              Add a card
+            </Button>
+          )}
         </Box>
       </Toolbar>
     </AppBar>

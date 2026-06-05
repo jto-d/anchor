@@ -14,7 +14,9 @@ import { PerksDashboard } from '@/components/PerksDashboard'
 import { CardDetail } from '@/components/CardDetail'
 import { LogCreditDialog } from '@/components/LogCreditDialog'
 import { CardsView } from '@/components/cards/CardsView'
+import { AddCardDialog } from '@/components/cards/AddCardDialog'
 import { brand } from '@/lib/theme'
+import { CARD_CATALOG } from '@/data/cardCatalog'
 import type { Card, Perk } from '@/utils/types'
 
 const MeDocument = graphql(`
@@ -58,16 +60,44 @@ const LogPerkCreditDocument = graphql(`
   }
 `)
 
+const AddCardDocument = graphql(`
+  mutation AddCard($catalogKey: String!, $lastFour: String) {
+    addCard(catalogKey: $catalogKey, lastFour: $lastFour) {
+      id
+      name
+      issuer
+      lastFour
+      design
+      perks {
+        id
+        name
+        totalAmount
+        period
+        periodStartMonth
+        notes
+        perkCredits {
+          id
+          amount
+          date
+          description
+        }
+      }
+    }
+  }
+`)
+
 type Route = 'perks' | 'card' | 'cards'
 
 export function MeView() {
   const [route, setRoute] = useState<Route>('perks')
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
   const [dialogPerk, setDialogPerk] = useState<Perk | null>(null)
+  const [addCardOpen, setAddCardOpen] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
 
   const [{ data, fetching, error }, reexecuteQuery] = useQuery({ query: MeDocument })
   const [, logPerkCredit] = useMutation(LogPerkCreditDocument)
+  const [, addCard] = useMutation(AddCardDocument)
 
   const cards: Card[] = (data?.me.creditCards ?? []) as Card[]
   const selectedCard = cards.find((c) => c.id === selectedCardId) ?? null
@@ -92,6 +122,18 @@ export function MeView() {
     reexecuteQuery({ requestPolicy: 'network-only' })
     setDialogPerk(null)
     setToast(`Logged $${amount.toFixed(2)} to ${perkName}`)
+  }
+
+  async function handleAddCard(catalogKey: string, lastFour: string) {
+    const result = await addCard({ catalogKey, lastFour: lastFour || undefined })
+    reexecuteQuery({ requestPolicy: 'network-only' })
+    setAddCardOpen(false)
+    if (result.error) {
+      setToast(result.error.message.replace(/^\[\w+\]\s*/, ''))
+    } else {
+      const name = CARD_CATALOG[catalogKey]?.name ?? 'Card'
+      setToast(`${name} added to your wallet`)
+    }
   }
 
   if (fetching) {
@@ -134,7 +176,6 @@ export function MeView() {
             <Topbar
               title={selectedCard.name}
               subtitle={`${selectedCard.issuer}${selectedCard.lastFour ? ' · •••• ' + selectedCard.lastFour : ''}`}
-              onAddCard={() => {}}
             />
             <CardDetail card={selectedCard} onBack={back} onLog={setDialogPerk} onAddPerk={() => {}} />
           </>
@@ -143,11 +184,11 @@ export function MeView() {
             <Topbar
               title="Cards"
               subtitle="Your wallet and where each card earns the most."
-              onAddCard={() => setToast("Add-a-card flow isn't wired yet.")}
+              onAddCard={() => setAddCardOpen(true)}
             />
             <CardsView
               cards={cards}
-              onAddCard={() => setToast("Add-a-card flow isn't wired yet.")}
+              onAddCard={() => setAddCardOpen(true)}
               onManageCard={(action, cardId) =>
                 setToast(`${action === 'remove' ? 'Remove' : 'Edit'} — not wired yet (card ${cardId.slice(-4)}).`)
               }
@@ -155,13 +196,20 @@ export function MeView() {
           </>
         ) : (
           <>
-            <Topbar title="Dashboard" subtitle="Track every perk before it expires." onAddCard={() => {}} />
+            <Topbar title="Dashboard" subtitle="Track every perk before it expires." />
             <PerksDashboard cards={cards} onOpenCard={openCard} onLog={setDialogPerk} />
           </>
         )}
       </Box>
 
       <LogCreditDialog perk={livePerk} onClose={() => setDialogPerk(null)} onSave={handleSaveCredit} />
+
+      <AddCardDialog
+        open={addCardOpen}
+        existingDesigns={cards.map((c) => c.design).filter((d): d is string => !!d)}
+        onClose={() => setAddCardOpen(false)}
+        onAdd={handleAddCard}
+      />
 
       <Snackbar
         open={!!toast}
