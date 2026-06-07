@@ -46,42 +46,62 @@ async function main() {
       creditCards: {
         create: [
           mkCard('amex-gold', '1009', {
-            'Airline fee credit': [{ amount: 200, date: new Date('2026-02-14'), description: 'United · baggage' }],
             'Uber Cash': [
-              { amount: 15, date: new Date('2026-05-03'), description: 'Uber Eats' },
-              { amount: 15, date: new Date('2026-04-02'), description: 'Uber ride' },
-              { amount: 15, date: new Date('2026-03-09'), description: 'Uber Eats' },
+              { amount: 10, date: new Date('2026-05-03'), description: 'Uber Eats' },
+              { amount: 10, date: new Date('2026-04-02'), description: 'Uber ride' },
+              { amount: 10, date: new Date('2026-03-09'), description: 'Uber Eats' },
             ],
-            'Saks Fifth Avenue': [{ amount: 50, date: new Date('2026-03-21'), description: 'Saks.com' }],
+            'Dining Credit': [
+              { amount: 10, date: new Date('2026-05-18'), description: 'Goldbelly' },
+              { amount: 10, date: new Date('2026-04-22'), description: 'Buffalo Wild Wings' },
+            ],
+            "Dunkin' Credit": [{ amount: 7, date: new Date('2026-05-07'), description: "Dunkin'" }],
+            'Resy Credit': [{ amount: 50, date: new Date('2026-03-14'), description: 'Resy · dinner' }],
           }),
           mkCard('chase-sapphire-preferred', '4477', {
-            'Travel credit': [{ amount: 300, date: new Date('2026-01-28'), description: 'Delta · airfare' }],
-            'DoorDash credit': [{ amount: 10, date: new Date('2026-05-11'), description: 'DoorDash' }],
+            'Chase Travel Hotel Credit': [{ amount: 50, date: new Date('2026-02-10'), description: 'Chase Travel · hotel' }],
+            'DoorDash Non-Restaurant Credit': [{ amount: 10, date: new Date('2026-05-11'), description: 'DoorDash · grocery' }],
           }),
           mkCard('united-quest', '8021', {
-            'Travel credit': [{ amount: 120, date: new Date('2026-04-19'), description: 'Hotel · Capital One Travel' }],
+            'United TravelBank Credit': [{ amount: 200, date: new Date('2026-01-08'), description: 'United · anniversary credit' }],
+            'Rideshare Credit': [
+              { amount: 8, date: new Date('2026-05-14'), description: 'Lyft' },
+              { amount: 8, date: new Date('2026-04-19'), description: 'Uber' },
+            ],
+            'Instacart Credit': [
+              { amount: 15, date: new Date('2026-05-20'), description: 'Instacart order' },
+              { amount: 15, date: new Date('2026-04-21'), description: 'Instacart order' },
+            ],
           }),
           mkCard('amex-platinum', '6758', {
-            'Hotel credit': [{ amount: 200, date: new Date('2026-03-10'), description: 'Fine Hotels + Resorts' }],
-            'Uber Cash': [{ amount: 15, date: new Date('2026-05-04'), description: 'Uber Eats' }],
-            'CLEAR Plus': [{ amount: 189, date: new Date('2026-01-15'), description: 'CLEAR Plus membership' }],
+            'Hotel Credit': [{ amount: 300, date: new Date('2026-03-10'), description: 'Fine Hotels + Resorts · NYC' }],
+            'Digital Entertainment Credit': [
+              { amount: 25, date: new Date('2026-05-01'), description: 'Disney+ / Hulu bundle' },
+              { amount: 25, date: new Date('2026-04-01'), description: 'Disney+ / Hulu bundle' },
+            ],
+            'CLEAR Plus': [{ amount: 209, date: new Date('2026-01-15'), description: 'CLEAR Plus membership' }],
+            'Airline Fee Credit': [{ amount: 200, date: new Date('2026-02-14'), description: 'United · baggage fees' }],
+            'Equinox Credit': [{ amount: 300, date: new Date('2026-01-20'), description: 'Equinox membership' }],
           }),
-          mkCard('bofa-customized-cash', '3342', {
-            'Online shopping credit': [{ amount: 18, date: new Date('2026-04-30'), description: 'Amazon purchases' }],
-          }),
+          mkCard('bofa-customized-cash', '3342'),
           mkCard('united-explorer', '5513', {
-            'United Club passes': [{ amount: 50, date: new Date('2026-02-20'), description: 'United Club · ORD' }],
+            'United Hotels Credit': [{ amount: 50, date: new Date('2026-02-20'), description: 'United Hotels · Chicago' }],
+            'Rideshare Credit': [
+              { amount: 5, date: new Date('2026-05-08'), description: 'Lyft' },
+              { amount: 5, date: new Date('2026-04-11'), description: 'Uber' },
+            ],
+            'Instacart Credit': [{ amount: 10, date: new Date('2026-05-17'), description: 'Instacart order' }],
           }),
           mkCard('united-gateway', '7790'),
           mkCard('chase-aeroplan', '2284', {
-            'Air Canada credit': [{ amount: 100, date: new Date('2026-03-05'), description: 'Air Canada · YYZ' }],
-            'DoorDash credit': [{ amount: 10, date: new Date('2026-05-15'), description: 'DoorDash' }],
+            'Global Entry / TSA PreCheck / NEXUS': [{ amount: 120, date: new Date('2026-01-05'), description: 'Global Entry renewal' }],
           }),
           mkCard('bilt-obsidian', '4417', {
-            'Travel credit': [{ amount: 100, date: new Date('2026-02-10'), description: 'Bilt Travel · flight' }],
+            'Bilt Travel Hotel Credit': [{ amount: 50, date: new Date('2026-02-10'), description: 'Bilt Travel Portal · hotel' }],
           }),
           mkCard('bilt-palladium', '9901', {
-            'Lyft credit': [{ amount: 5, date: new Date('2026-05-22'), description: 'Lyft rides' }],
+            'Bilt Travel Hotel Credit': [{ amount: 200, date: new Date('2026-01-18'), description: 'Bilt Travel Portal · hotel' }],
+            'Bilt Cash (annual)': [{ amount: 200, date: new Date('2026-01-01'), description: 'Bilt Cash · annual credit' }],
           }),
         ],
       },

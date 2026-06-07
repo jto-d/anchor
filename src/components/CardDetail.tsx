@@ -22,6 +22,7 @@ interface CardDetailProps {
   onAddPerk: () => void
 }
 
+// todo: remove edit card from here and kebab menu
 export function CardDetail({ card, onBack, onLog, onAddPerk }: CardDetailProps) {
   const captured = cardCaptured(card)
   const available = cardAvailable(card)
@@ -83,7 +84,7 @@ export function CardDetail({ card, onBack, onLog, onAddPerk }: CardDetailProps) 
             No perks on this card yet.
           </Typography>
         ) : (
-          card.perks.map((p) => <PerkRow key={p.id} perk={p} onLog={onLog} />)
+          card.perks.map((p) => <PerkRow key={p.id} perk={p} cardOpenedDate={card.openedDate} onLog={onLog} />)
         )}
       </Paper>
     </Box>

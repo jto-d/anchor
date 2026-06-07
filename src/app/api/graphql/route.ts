@@ -1,11 +1,12 @@
 import { createYoga } from 'graphql-yoga'
 import { schema } from '@/graphql/schema'
 
+// todo: replace this with actual auth
 const yoga = createYoga({
   schema,
   graphqlEndpoint: '/api/graphql',
   fetchAPI: { Response },
-  context: () => ({ userId: 'cmpx86t810000xs30hgd4omwb' }),
+  context: () => ({ userId: 'cmq1jgc5k0000e1syg2x09643' }),
 })
 
 async function handler(request: Request): Promise<Response> {

@@ -29,7 +29,7 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
   const used: { card: Card; perk: Perk }[] = []
   cards.forEach((c) =>
     c.perks.forEach((p) => {
-      const st = perkStatus(p)
+      const st = perkStatus(p, c.openedDate)
       if (st.key === 'open' || st.key === 'expiring' || st.key === 'partial') atRisk.push({ card: c, perk: p })
       else if (st.key === 'captured') used.push({ card: c, perk: p })
     })
@@ -93,7 +93,7 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
             All caught up. Nothing on the table.
           </Typography>
         ) : (
-          atRisk.slice(0, 6).map(({ perk }) => <PerkRow key={perk.id} perk={perk} onLog={onLog} />)
+          atRisk.slice(0, 6).map(({ card, perk }) => <PerkRow key={perk.id} perk={perk} cardOpenedDate={card.openedDate} onLog={onLog} />)
         )}
       </Paper>
 
@@ -105,7 +105,7 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
             Fully captured this period.
           </Typography>
           <Paper variant="outlined" sx={{ borderColor: 'divider', borderRadius: '14px', px: 2, py: '4px' }}>
-            {used.map(({ perk }) => <PerkRow key={perk.id} perk={perk} onLog={onLog} />)}
+            {used.map(({ card, perk }) => <PerkRow key={perk.id} perk={perk} cardOpenedDate={card.openedDate} onLog={onLog} />)}
           </Paper>
         </>
       )}

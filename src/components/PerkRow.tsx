@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
 import LinearProgress from '@mui/material/LinearProgress'
@@ -10,30 +11,37 @@ import Typography from '@mui/material/Typography'
 import AddIcon from '@mui/icons-material/Add'
 import CheckIcon from '@mui/icons-material/Check'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined'
 import ScheduleOutlinedIcon from '@mui/icons-material/ScheduleOutlined'
 import { StatusChip } from './ui/StatusChip'
-import { capturedYTD, capturedThisMonth, annualValue, perkPct, perkStatus, periodLabel } from '@/utils/perk'
+import { capturedYTD, capturedThisMonth, capturedInCycle, annualValue, perkPct, perkStatus, periodLabel, nextResetDate } from '@/utils/perk'
 import { fmt, fmt2, fmtDate } from '@/utils/format'
-import { MONTHS } from '@/utils/constants'
 import type { Perk } from '@/utils/types'
 
 interface PerkRowProps {
   perk: Perk
+  cardOpenedDate?: string | null
   onLog: (perk: Perk) => void
 }
 
-export function PerkRow({ perk, onLog }: PerkRowProps) {
+export function PerkRow({ perk, cardOpenedDate, onLog }: PerkRowProps) {
   const [open, setOpen] = useState(false)
-  const captured = capturedYTD(perk)
-  const annual = annualValue(perk)
-  const pct = perkPct(perk)
-  const status = perkStatus(perk)
   const isMonthly = perk.period === 'MONTHLY'
-  const thisMonth = isMonthly ? capturedThisMonth(perk) : 0
-  const monthPct = isMonthly ? Math.min(1, thisMonth / parseFloat(perk.totalAmount)) : 0
+
+  const captured   = capturedInCycle(perk, cardOpenedDate)
+  const perPeriod  = parseFloat(perk.totalAmount)
+  const annual     = annualValue(perk)
+  const ytd        = capturedYTD(perk)
+  const pct        = perkPct(perk, cardOpenedDate)
+  const status     = perkStatus(perk, cardOpenedDate)
+  const thisMonth  = isMonthly ? capturedThisMonth(perk) : 0
+  const monthPct   = isMonthly && perPeriod > 0 ? Math.min(1, thisMonth / perPeriod) : 0
+
+  const resetDate  = nextResetDate(perk, cardOpenedDate)
+  const resetLabel = resetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+
   const statusIcon =
     status.key === 'captured' ? <CheckIcon /> : status.key === 'expiring' ? <ScheduleOutlinedIcon /> : undefined
-  const startMonthLabel = MONTHS[(perk.periodStartMonth - 1 + 12) % 12]
 
   return (
     <Box sx={{ borderBottom: 1, borderColor: 'divider', '&:last-of-type': { borderBottom: 0 } }}>
@@ -47,13 +55,21 @@ export function PerkRow({ perk, onLog }: PerkRowProps) {
         </IconButton>
 
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, flexWrap: 'wrap' }}>
             <Typography sx={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.01em' }}>{perk.name}</Typography>
             <StatusChip status={status.key} label={status.label} icon={statusIcon} />
+            {perk.enrollmentRequired && (
+              <Chip
+                size="small"
+                icon={<NotificationsActiveOutlinedIcon sx={{ fontSize: 11 }} />}
+                label="Enrollment required"
+                sx={{ fontSize: 11, height: 20, bgcolor: 'warning.50', color: 'warning.800', border: 1, borderColor: 'warning.200', '& .MuiChip-icon': { color: 'warning.600' } }}
+              />
+            )}
           </Box>
           <Typography sx={{ fontSize: 12, color: 'grey.500', mt: '3px' }}>
-            {periodLabel(perk.period)} · {fmt2(parseFloat(perk.totalAmount))}
-            {perk.period === 'MONTHLY' ? ' / mo' : perk.period === 'ANNUAL' ? ' / yr' : ''} · resets {startMonthLabel}
+            {periodLabel(perk.period)} · {fmt2(perPeriod)}
+            {isMonthly ? ' / mo' : perk.period === 'ANNUAL' ? ' / yr' : ''} · resets {resetLabel}
           </Typography>
         </Box>
 
@@ -71,17 +87,17 @@ export function PerkRow({ perk, onLog }: PerkRowProps) {
                 <Box component="span" sx={{ fontWeight: 600, color: monthPct >= 1 ? 'primary.main' : 'text.primary' }}>
                   {fmt(thisMonth)}
                 </Box>{' '}
-                of {fmt(parseFloat(perk.totalAmount))} this mo
+                of {fmt(perPeriod)} this mo
               </Typography>
               <LinearProgress
                 variant="determinate"
-                value={pct * 100}
+                value={annual > 0 ? Math.min(1, ytd / annual) * 100 : 0}
                 sx={{ height: 5, mt: '8px', bgcolor: 'grey.100', '& .MuiLinearProgress-bar': { bgcolor: 'grey.400' } }}
               />
               <Typography
                 sx={{ fontSize: 10, color: 'grey.400', mt: '3px', fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}
               >
-                {fmt(captured)} of {fmt(annual)} / yr
+                {fmt(ytd)} of {fmt(annual)} / yr
               </Typography>
             </>
           ) : (
@@ -97,7 +113,7 @@ export function PerkRow({ perk, onLog }: PerkRowProps) {
                 <Box component="span" sx={{ fontWeight: 600, color: pct >= 1 ? 'primary.main' : 'text.primary' }}>
                   {fmt(captured)}
                 </Box>{' '}
-                of {fmt(annual)}
+                of {fmt(perPeriod)}
               </Typography>
             </>
           )}

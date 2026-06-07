@@ -5,62 +5,80 @@
 export interface PerkTemplate {
   name: string
   totalAmount: number
-  period: 'MONTHLY' | 'QUARTERLY' | 'SEMI_ANNUAL' | 'ANNUAL'
+  period: 'MONTHLY' | 'QUARTERLY' | 'SEMI_ANNUAL' | 'ANNUAL' | 'QUADRENNIAL'
   periodStartMonth: number // 1-12
+  resetType: 'CALENDAR' | 'ANNIVERSARY'
+  enrollmentRequired: boolean
   notes?: string
 }
 
 export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
+  // ── AMERICAN EXPRESS ─────────────────────────────────────────────────────────
   'amex-gold': [
-    { name: 'Airline fee credit', totalAmount: 200, period: 'ANNUAL', periodStartMonth: 1, notes: 'Select one airline each January.' },
-    { name: 'Uber Cash', totalAmount: 15, period: 'MONTHLY', periodStartMonth: 1, notes: 'Adds to your Uber account on the 1st.' },
-    { name: 'Saks Fifth Avenue', totalAmount: 50, period: 'SEMI_ANNUAL', periodStartMonth: 1, notes: 'Jan–Jun and Jul–Dec.' },
-    { name: 'Digital entertainment', totalAmount: 20, period: 'MONTHLY', periodStartMonth: 1, notes: 'NYT, Peacock, Audible, and more.' },
-    { name: 'CLEAR Plus', totalAmount: 189, period: 'ANNUAL', periodStartMonth: 1, notes: 'Reimburses your CLEAR membership.' },
+    { name: 'Uber Cash', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $120/yr. Adds to Uber account; use on U.S. rides or Uber Eats. Enrollment required.' },
+    { name: 'Dining Credit', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $120/yr. Participating partners (Buffalo Wild Wings, Wonder, Goldbelly & Wine.com through 6/30). Enrollment required.' },
+    { name: "Dunkin' Credit", totalAmount: 7, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $84/yr at U.S. Dunkin locations. Enrollment required.' },
+    { name: 'Resy Credit', totalAmount: 50, period: 'SEMI_ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $100/yr. Jan–Jun and Jul–Dec at U.S. Resy restaurants. Enrollment required.' },
   ],
   'amex-platinum': [
-    { name: 'Airline incidental credit', totalAmount: 200, period: 'ANNUAL', periodStartMonth: 1, notes: 'Select one airline each January.' },
-    { name: 'Hotel credit', totalAmount: 200, period: 'ANNUAL', periodStartMonth: 1, notes: 'Fine Hotels + Resorts or The Hotel Collection.' },
-    { name: 'Uber Cash', totalAmount: 15, period: 'MONTHLY', periodStartMonth: 1, notes: '$15/month, $20 in December.' },
-    { name: 'CLEAR Plus', totalAmount: 189, period: 'ANNUAL', periodStartMonth: 1, notes: 'Reimburses your CLEAR membership.' },
-    { name: 'Global Entry / TSA PreCheck', totalAmount: 120, period: 'ANNUAL', periodStartMonth: 1, notes: 'Up to $120 every 4 years.' },
+    { name: 'Hotel Credit', totalAmount: 300, period: 'SEMI_ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $600/yr. Prepaid Fine Hotels + Resorts or The Hotel Collection (2-night min) via Amex Travel.' },
+    { name: 'Resy Credit', totalAmount: 100, period: 'QUARTERLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $400/yr. Eligible Resy restaurant purchases. Enrollment required.' },
+    { name: 'Digital Entertainment Credit', totalAmount: 25, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $300/yr. Disney+, Hulu, ESPN, Peacock, Paramount+, NYT, WSJ, YouTube TV/Premium. Enrollment required.' },
+    { name: 'lululemon Credit', totalAmount: 75, period: 'QUARTERLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $300/yr. U.S. retail stores (excl. outlets) and lululemon.com. Enrollment required.' },
+    { name: 'Walmart+ Credit', totalAmount: 12.95, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Reimburses one monthly Walmart+ membership (plus tax). Pay with the card.' },
+    { name: 'CLEAR Plus', totalAmount: 209, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Reimburses CLEAR Plus membership.' },
+    { name: 'Airline Fee Credit', totalAmount: 200, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Select one airline each year; incidental fees only.' },
+    { name: 'Equinox Credit', totalAmount: 300, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $300/yr (often disbursed monthly in practice) toward Equinox memberships. Enrollment required.' },
+    { name: 'Oura Ring Credit', totalAmount: 200, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Toward an Oura Ring / Oura membership. Enrollment required.' },
   ],
-  'bofa-customized-cash': [
-    { name: 'Online shopping credit', totalAmount: 25, period: 'QUARTERLY', periodStartMonth: 1, notes: '3% cash back on your chosen category, up to $2,500/quarter.' },
-  ],
+  // ── BANK OF AMERICA ──────────────────────────────────────────────────────────
+  'bofa-customized-cash': [],
+  // ── CHASE — SAPPHIRE ─────────────────────────────────────────────────────────
   'chase-sapphire-preferred': [
-    { name: 'Travel credit', totalAmount: 300, period: 'ANNUAL', periodStartMonth: 1, notes: 'Applies automatically to travel.' },
-    { name: 'DoorDash credit', totalAmount: 25, period: 'MONTHLY', periodStartMonth: 1, notes: 'Restaurant + non-restaurant.' },
-    { name: 'Lyft credit', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, notes: 'In-app Lyft credit.' },
+    { name: 'Chase Travel Hotel Credit', totalAmount: 50, period: 'ANNUAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $50 each ANNIVERSARY year (not calendar). Hotel stays via Chase Travel.' },
+    { name: 'DoorDash Non-Restaurant Credit', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'One $10 promo/mo on non-restaurant orders. Requires active complimentary DashPass (activate by 12/31/27).' },
   ],
   'chase-sapphire-reserve': [
-    { name: 'Travel credit', totalAmount: 300, period: 'ANNUAL', periodStartMonth: 1, notes: 'Applies automatically to travel.' },
-    { name: 'Global Entry / TSA PreCheck', totalAmount: 120, period: 'ANNUAL', periodStartMonth: 1, notes: 'Up to $120 every 4 years.' },
+    { name: 'Travel Credit', totalAmount: 300, period: 'ANNUAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'ANNIVERSARY-year reset (not calendar). Auto-applies to first $300 of travel purchases.' },
+    { name: 'The Edit Hotel Credit', totalAmount: 250, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $500/yr, max $250 per transaction. Prepaid 2-night+ stays via The Edit. As of 2026, flexible calendar-year timing (no longer split semi-annually).' },
+    { name: 'Dining Credit (Exclusive Tables)', totalAmount: 150, period: 'SEMI_ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $300/yr. Sapphire Reserve Exclusive Tables via OpenTable. Jan–Jun and Jul–Dec.' },
+    { name: 'StubHub / viagogo Credit', totalAmount: 150, period: 'SEMI_ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $300/yr. Jan–Jun and Jul–Dec. Activation required.' },
+    { name: 'DoorDash Restaurant Credit', totalAmount: 5, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'On restaurant orders. Requires DashPass (activate by 12/31/27).' },
+    { name: 'DoorDash Non-Restaurant Credit', totalAmount: 20, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Two $10 promos/mo on grocery/retail. Second unlocks only after first is used.' },
+    { name: 'Lyft Credit', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'In-app credit through 9/30/27. (Also 5x points on Lyft.)' },
+    { name: 'Peloton Membership Credit', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $120/yr toward Peloton memberships.' },
   ],
-  'chase-freedom-unlimited': [],
+  'chase-freedom-unlimited': [
+    { name: 'DoorDash Non-Restaurant Credit', totalAmount: 10, period: 'QUARTERLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $10/quarter on non-restaurant orders through 12/31/27. Requires active DashPass.' },
+  ],
+  // ── CHASE — UNITED ───────────────────────────────────────────────────────────
   'united-quest': [
-    { name: 'Travel credit', totalAmount: 300, period: 'ANNUAL', periodStartMonth: 1, notes: 'Through Capital One Travel.' },
-    { name: 'Anniversary miles', totalAmount: 100, period: 'ANNUAL', periodStartMonth: 1, notes: '10,000 bonus miles each year.' },
+    { name: 'United TravelBank Credit', totalAmount: 200, period: 'ANNUAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'ANNIVERSARY year. $200 TravelBank cash at opening + each anniversary; United-operated flights only.' },
+    { name: 'Renowned Hotels Credit', totalAmount: 150, period: 'ANNUAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'ANNIVERSARY year. Prepaid stays via Renowned Hotels and Resorts for United Cardmembers.' },
+    { name: 'Rideshare Credit', totalAmount: 8, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $100/yr — $8/mo Jan–Nov and $12 in Dec. Calendar year. Annual opt-in required.' },
+    { name: 'Avis / Budget Credit', totalAmount: 80, period: 'ANNUAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'ANNIVERSARY year. $40 TravelBank cash on each of 1st & 2nd rental via cars.united.com.' },
+    { name: 'Instacart Credit', totalAmount: 15, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $180/yr — split $10 + $5 monthly. Calendar year.' },
+    { name: 'TSA PreCheck / Global Entry', totalAmount: 120, period: 'QUADRENNIAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Once every 4 years (not annual).' },
   ],
   'united-explorer': [
-    { name: 'United Club passes', totalAmount: 100, period: 'ANNUAL', periodStartMonth: 1, notes: '2 one-time United Club passes per year.' },
-    { name: 'Global Entry / TSA PreCheck', totalAmount: 120, period: 'ANNUAL', periodStartMonth: 1, notes: 'Up to $120 every 4 years.' },
+    { name: 'United Travel Credit', totalAmount: 100, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Earned only AFTER spending $10,000 in a calendar year (spend-gated, not automatic).' },
+    { name: 'United Hotels Credit', totalAmount: 50, period: 'ANNUAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $100/yr — $50 on each of 1st & 2nd prepaid United Hotels bookings per ANNIVERSARY year.' },
+    { name: 'Rideshare Credit', totalAmount: 5, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $60/yr. Calendar year. Enrollment + annual opt-in required.' },
+    { name: 'Avis / Budget Credit', totalAmount: 50, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: '$25 TravelBank cash on each of 1st & 2nd Avis/Budget rental via cars.united.com.' },
+    { name: 'Instacart Credit', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $120/yr. Plus 3-month complimentary Instacart+ membership.' },
+    { name: 'TSA PreCheck / Global Entry', totalAmount: 120, period: 'QUADRENNIAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Once every 4 years (not annual).' },
   ],
-  'united-gateway': [
-    { name: 'United purchase credit', totalAmount: 100, period: 'ANNUAL', periodStartMonth: 1, notes: '$100 statement credit on United purchases after $10,000 spend.' },
-  ],
+  'united-gateway': [],
   'chase-aeroplan': [
-    { name: 'Air Canada credit', totalAmount: 100, period: 'ANNUAL', periodStartMonth: 1, notes: 'Applies to Air Canada purchases.' },
-    { name: 'DoorDash credit', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, notes: 'Monthly DashPass credit.' },
+    { name: 'Global Entry / TSA PreCheck / NEXUS', totalAmount: 120, period: 'QUADRENNIAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Once every 4 years (not annual).' },
   ],
+  // ── BILT ─────────────────────────────────────────────────────────────────────
   'bilt-blue': [],
   'bilt-obsidian': [
-    { name: 'Rent day bonus', totalAmount: 0, period: 'MONTHLY', periodStartMonth: 1, notes: 'Double points on all purchases on the 1st of each month (except rent).' },
-    { name: 'Travel credit', totalAmount: 100, period: 'ANNUAL', periodStartMonth: 1, notes: '$100 annual travel credit via Bilt Travel.' },
-    { name: 'Lyft credit', totalAmount: 5, period: 'MONTHLY', periodStartMonth: 1, notes: '$5 Lyft credit after 5 rides.' },
+    { name: 'Bilt Travel Hotel Credit', totalAmount: 50, period: 'SEMI_ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $100/yr. $50 each in Jan–Jun and Jul–Dec. Bilt Travel Portal, 2-night min.' },
   ],
   'bilt-palladium': [
-    { name: 'Rent day bonus', totalAmount: 0, period: 'MONTHLY', periodStartMonth: 1, notes: 'Double points on all purchases on the 1st of each month (except rent).' },
-    { name: 'Lyft credit', totalAmount: 5, period: 'MONTHLY', periodStartMonth: 1, notes: '$5 Lyft credit after 5 rides.' },
+    { name: 'Bilt Travel Hotel Credit', totalAmount: 200, period: 'SEMI_ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $400/yr. $200 each in Jan–Jun and Jul–Dec. Bilt Travel Portal, 2-night min.' },
+    { name: 'Bilt Cash (annual)', totalAmount: 200, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Bilt Cash credited Jan 1 (or at approval). NOT a statement credit — only $100 rolls over, rest expires 12/31.' },
   ],
 }

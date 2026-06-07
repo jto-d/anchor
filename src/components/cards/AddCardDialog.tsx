@@ -21,11 +21,14 @@ import { PERK_CATALOG, type PerkTemplate } from '@/data/perkCatalog'
 const FONT = "'Switzer', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
 const FOCUS_RING = `0 0 0 3px rgba(13,122,120,0.15)`
 
+
+// todo: remove quadrennial and TSA perks
 const PERIOD_SUFFIX: Record<PerkTemplate['period'], string> = {
-  MONTHLY: '/ mo',
-  QUARTERLY: '/ qtr',
+  MONTHLY:     '/ mo',
+  QUARTERLY:   '/ qtr',
   SEMI_ANNUAL: '/ 6 mo',
-  ANNUAL: '/ yr',
+  ANNUAL:      '/ yr',
+  QUADRENNIAL: '/ 4 yr',
 }
 
 function perkValue(p: PerkTemplate): string {

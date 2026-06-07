@@ -16,6 +16,12 @@ enum PerkPeriod {
   QUARTERLY
   SEMI_ANNUAL
   ANNUAL
+  QUADRENNIAL
+}
+
+enum ResetType {
+  CALENDAR
+  ANNIVERSARY
 }
 
 model User {
@@ -44,10 +50,12 @@ model Perk {
   creditCardId     String
   name             String
   totalAmount      Decimal    @db.Decimal(10, 2)
-  period           PerkPeriod
-  periodStartMonth Int // 1-12
-  notes            String?
-  createdAt        DateTime   @default(now())
+  period             PerkPeriod
+  periodStartMonth   Int // 1-12
+  resetType          ResetType  @default(CALENDAR)
+  enrollmentRequired Boolean    @default(false)
+  notes              String?
+  createdAt          DateTime   @default(now())
 
   creditCard CreditCard   @relation(fields: [creditCardId], references: [id], onDelete: Cascade)
   perkCredit PerkCredit[]

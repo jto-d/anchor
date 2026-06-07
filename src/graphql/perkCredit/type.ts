@@ -9,7 +9,7 @@ builder.prismaObject("PerkCredit", {
         }),
         date: t.field({
             type: "String",
-            resolve: (pc) => pc.date.toISOString(),
+            resolve: (pc) => pc.date.toISOString().slice(0, 10),
         }),
         description: t.exposeString("description", { nullable: true }),
         createdAt: t.field({

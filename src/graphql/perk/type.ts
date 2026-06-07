@@ -1,7 +1,11 @@
 import { builder } from "../builder"
 
 const PerkPeriod = builder.enumType("PerkPeriod", {
-    values: ["MONTHLY", "QUARTERLY", "SEMI_ANNUAL", "ANNUAL"] as const,
+    values: ["MONTHLY", "QUARTERLY", "SEMI_ANNUAL", "ANNUAL", "QUADRENNIAL"] as const,
+})
+
+const ResetType = builder.enumType("ResetType", {
+    values: ["CALENDAR", "ANNIVERSARY"] as const,
 })
 
 builder.prismaObject("Perk", {
@@ -14,6 +18,8 @@ builder.prismaObject("Perk", {
         }),
         period: t.expose("period", { type: PerkPeriod }),
         periodStartMonth: t.exposeInt("periodStartMonth"),
+        resetType: t.expose("resetType", { type: ResetType }),
+        enrollmentRequired: t.exposeBoolean("enrollmentRequired"),
         notes: t.exposeString("notes", { nullable: true }),
         createdAt: t.field({
             type: "String",

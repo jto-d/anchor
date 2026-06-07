@@ -37,6 +37,8 @@ const MeDocument = graphql(`
           totalAmount
           period
           periodStartMonth
+          resetType
+          enrollmentRequired
           notes
           perkCredits {
             id
