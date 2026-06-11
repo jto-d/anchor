@@ -15,6 +15,7 @@ import { CardDetail } from '@/components/CardDetail'
 import { LogCreditDialog } from '@/components/LogCreditDialog'
 import { CardsView } from '@/components/cards/CardsView'
 import { AddCardDialog } from '@/components/cards/AddCardDialog'
+import { RemoveCardDialog } from '@/components/cards/RemoveCardDialog'
 import { brand } from '@/lib/theme'
 import { CARD_CATALOG } from '@/data/cardCatalog'
 import type { Card, Perk } from '@/utils/types'
@@ -103,6 +104,7 @@ export function MeView() {
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
   const [dialogPerk, setDialogPerk] = useState<Perk | null>(null)
   const [addCardOpen, setAddCardOpen] = useState(false)
+  const [pendingRemoveId, setPendingRemoveId] = useState<string | null>(null)
   const [toast, setToast] = useState<string | null>(null)
 
   const [{ data, fetching, error }, reexecuteQuery] = useQuery({ query: MeDocument })
@@ -200,13 +202,8 @@ export function MeView() {
             <CardsView
               cards={cards}
               onAddCard={() => setAddCardOpen(true)}
-              onManageCard={async (action, cardId) => {
-                if (action === 'remove') {
-                  const name = cards.find((c) => c.id === cardId)?.name ?? 'Card'
-                  await removeCard({ cardId })
-                  reexecuteQuery({ requestPolicy: 'network-only' })
-                  setToast(`${name} removed from your wallet`)
-                }
+              onManageCard={(action, cardId) => {
+                if (action === 'remove') setPendingRemoveId(cardId)
               }}
             />
           </>
@@ -225,6 +222,19 @@ export function MeView() {
         existingDesigns={cards.map((c) => c.design).filter((d): d is string => !!d)}
         onClose={() => setAddCardOpen(false)}
         onAdd={handleAddCard}
+      />
+
+      <RemoveCardDialog
+        cardName={pendingRemoveId ? (cards.find((c) => c.id === pendingRemoveId)?.name ?? 'this card') : null}
+        onClose={() => setPendingRemoveId(null)}
+        onConfirm={async () => {
+          if (!pendingRemoveId) return
+          const name = cards.find((c) => c.id === pendingRemoveId)?.name ?? 'Card'
+          await removeCard({ cardId: pendingRemoveId })
+          reexecuteQuery({ requestPolicy: 'network-only' })
+          setPendingRemoveId(null)
+          setToast(`${name} removed from your wallet`)
+        }}
       />
 
       <Snackbar
