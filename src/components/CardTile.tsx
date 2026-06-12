@@ -54,7 +54,7 @@ export function CardTile({ card, onOpen }: CardTileProps) {
               Recovered
             </Typography>
             <Typography sx={{ fontSize: 16, fontWeight: 600, fontVariantNumeric: 'tabular-nums', mt: '2px' }}>
-              {fmt(captured)}
+              {fmtDollars(captured)}
             </Typography>
           </Box>
           <Box sx={{ textAlign: 'right' }}>
@@ -62,7 +62,7 @@ export function CardTile({ card, onOpen }: CardTileProps) {
               Available
             </Typography>
             <Typography sx={{ fontSize: 16, fontWeight: 600, fontVariantNumeric: 'tabular-nums', mt: '2px' }}>
-              {fmt(available)}
+              {fmtDollars(available)}
             </Typography>
           </Box>
         </Box>

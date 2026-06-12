@@ -15,7 +15,7 @@ import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsAc
 import ScheduleOutlinedIcon from '@mui/icons-material/ScheduleOutlined'
 import { StatusChip } from './ui/StatusChip'
 import { capturedYTD, capturedThisMonth, capturedInCycle, annualValue, perkPct, perkStatus, periodLabel, nextResetDate } from '@/utils/perk'
-import { fmt, fmtCents, fmtDate, toAmount } from '@/utils/format'
+import { fmtDollars, fmtCents, fmtDate, toAmount } from '@/utils/format'
 import { resolveCardDesign } from '@/utils/cardDesigns'
 import type { Card, Perk } from '@/utils/types'
 
@@ -93,9 +93,9 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
                 sx={{ fontSize: 11, color: 'grey.500', mt: '5px', fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}
               >
                 <Box component="span" sx={{ fontWeight: 600, color: monthPct >= 1 ? 'primary.main' : 'text.primary' }}>
-                  {fmt(thisMonth)}
+                  {fmtDollars(thisMonth)}
                 </Box>{' '}
-                of {fmt(perPeriod)} this mo
+                of {fmtDollars(perPeriod)} this mo
               </Typography>
               <LinearProgress
                 variant="determinate"
@@ -105,7 +105,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
               <Typography
                 sx={{ fontSize: 10, color: 'grey.400', mt: '3px', fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}
               >
-                {fmt(ytd)} of {fmt(annual)} / yr
+                {fmtDollars(ytd)} of {fmtDollars(annual)} / yr
               </Typography>
             </>
           ) : (
@@ -119,9 +119,9 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
                 sx={{ fontSize: 11, color: 'grey.500', mt: '5px', fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}
               >
                 <Box component="span" sx={{ fontWeight: 600, color: pct >= 1 ? 'primary.main' : 'text.primary' }}>
-                  {fmt(captured)}
+                  {fmtDollars(captured)}
                 </Box>{' '}
-                of {fmt(perPeriod)}
+                of {fmtDollars(perPeriod)}
               </Typography>
             </>
           )}

@@ -53,9 +53,9 @@ export function CardDetail({ card, onBack, onLog }: CardDetailProps) {
           </Typography>
           <Typography sx={{ fontSize: 14, color: 'grey.500', mt: '6px' }}>
             <Box component="span" sx={{ fontWeight: 600, color: 'primary.main' }}>
-              {fmt(captured)}
+              {fmtDollars(captured)}
             </Box>{' '}
-            recovered of {fmt(available)} available · {card.perks.length} perks
+            recovered of {fmtDollars(available)} available · {card.perks.length} perks
           </Typography>
           <Stack direction="row" spacing={1.25} sx={{ mt: 2 }}>
             <Button

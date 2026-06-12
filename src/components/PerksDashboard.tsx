@@ -44,10 +44,10 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
           <Typography
             sx={{ fontSize: 42, fontWeight: 600, letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums', color: brand.anchor[800], lineHeight: 1 }}
           >
-            {fmt(captured)}
+            {fmtDollars(captured)}
           </Typography>
           <Typography sx={{ fontSize: 16, color: 'primary.main', fontWeight: 500 }}>
-            recovered of {fmt(available)} available
+            recovered of {fmtDollars(available)} available
           </Typography>
         </Box>
         <Box sx={{ mt: 2, maxWidth: 500 }}>
@@ -57,7 +57,7 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
             sx={{ height: 7, bgcolor: 'rgba(11,99,96,0.15)', '& .MuiLinearProgress-bar': { bgcolor: 'primary.main' } }}
           />
           <Typography sx={{ fontSize: 12, color: 'primary.main', mt: '7px', fontWeight: 500 }}>
-            {Math.round(pct * 100)}% captured · {fmt(available - captured)} still on the table
+            {Math.round(pct * 100)}% captured · {fmtDollars(available - captured)} still on the table
           </Typography>
         </Box>
       </Paper>
@@ -65,10 +65,10 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
       {/* Stats */}
       <Stack direction="row" spacing={1.75} sx={{ mb: '28px' }}>
         <StatCard label="Cards tracked" value={String(cards.length)} sub="Across all issuers" />
-        <StatCard label="Recovered" value={fmt(captured)} sub="Credits captured this year" accent="primary.main" />
+        <StatCard label="Recovered" value={fmtDollars(captured)} sub="Credits captured this year" accent="primary.main" />
         <StatCard
           label="On the table"
-          value={fmt(available - captured)}
+          value={fmtDollars(available - captured)}
           sub={`${atRisk.length} perks need attention`}
           accent="warning.main"
         />

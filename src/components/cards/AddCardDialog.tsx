@@ -33,7 +33,7 @@ const PERIOD_SUFFIX: Record<PerkTemplate['period'], string> = {
 
 function perkValue(p: PerkTemplate): string {
   if (p.totalAmount === 0) return 'Included'
-  return `${fmt(p.totalAmount)} ${PERIOD_SUFFIX[p.period]}`
+  return `${fmtDollars(p.totalAmount)} ${PERIOD_SUFFIX[p.period]}`
 }
 
 interface CatalogCard {
