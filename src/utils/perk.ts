@@ -1,11 +1,12 @@
 import { PERIOD_META } from './constants'
+import { toAmount } from './format'
 import type { Perk, StatusKey } from './types'
 
 export type CycleWindow = { start: Date; end: Date }
 
 export function annualValue(perk: Perk): number {
   const meta = PERIOD_META[perk.period as keyof typeof PERIOD_META]
-  return parseFloat(perk.totalAmount) * (meta?.per ?? 1)
+  return toAmount(perk.totalAmount) * (meta?.per ?? 1)
 }
 
 // ── Cycle window helpers ──────────────────────────────────────────────────────
@@ -130,7 +131,7 @@ export function capturedInCycle(perk: Perk, cardOpenedDate?: string | null, now 
       const d = new Date(c.date + 'T00:00:00')
       return d >= start && d < end
     })
-    .reduce((s, c) => s + parseFloat(c.amount), 0)
+    .reduce((s, c) => s + toAmount(c.amount), 0)
 }
 
 // Sum of credits in the current calendar year — used for the monthly perk annual-rollup bar.
@@ -138,7 +139,7 @@ export function capturedYTD(perk: Perk, now = new Date()): number {
   const y = now.getFullYear()
   return perk.perkCredits
     .filter((c) => new Date(c.date + 'T00:00:00').getFullYear() === y)
-    .reduce((s, c) => s + parseFloat(c.amount), 0)
+    .reduce((s, c) => s + toAmount(c.amount), 0)
 }
 
 export function capturedThisMonth(perk: Perk, now = new Date()): number {
@@ -149,13 +150,13 @@ export function capturedThisMonth(perk: Perk, now = new Date()): number {
       const d = new Date(c.date + 'T00:00:00')
       return d.getFullYear() === y && d.getMonth() === m
     })
-    .reduce((s, c) => s + parseFloat(c.amount), 0)
+    .reduce((s, c) => s + toAmount(c.amount), 0)
 }
 
 // ── Derived status ────────────────────────────────────────────────────────────
 
 export function perkPct(perk: Perk, cardOpenedDate?: string | null, now = new Date()): number {
-  const perPeriod = parseFloat(perk.totalAmount)
+  const perPeriod = toAmount(perk.totalAmount)
   if (perPeriod === 0) return 0
   return Math.min(1, capturedInCycle(perk, cardOpenedDate, now) / perPeriod)
 }

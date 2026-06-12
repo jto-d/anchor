@@ -16,7 +16,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { Eyebrow } from './ui/Eyebrow'
 import { brand } from '@/lib/theme'
 import { annualValue, capturedYTD } from '@/utils/perk'
-import { fmt2 } from '@/utils/format'
+import { fmt2, toAmount } from '@/utils/format'
 import type { Perk } from '@/utils/types'
 
 interface LogCreditDialogProps {
@@ -36,7 +36,7 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
   useEffect(() => {
     if (!perk) return
     setShown(perk)
-    const defaultAmt = Math.min(parseFloat(perk.totalAmount), Math.max(0, annualValue(perk) - capturedYTD(perk)))
+    const defaultAmt = Math.min(toAmount(perk.totalAmount), Math.max(0, annualValue(perk) - capturedYTD(perk)))
     setAmount(String(defaultAmt))
     setDate(new Date().toISOString().slice(0, 10))
     setDesc('')
@@ -110,7 +110,7 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
             <Button
               variant="contained"
               startIcon={<CheckIcon />}
-              onClick={() => onSave(shown.id, parseFloat(amount) || 0, date, desc.trim())}
+              onClick={() => onSave(shown.id, toAmount(amount) || 0, date, desc.trim())}
             >
               Save credit
             </Button>

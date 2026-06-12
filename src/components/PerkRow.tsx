@@ -15,21 +15,23 @@ import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsAc
 import ScheduleOutlinedIcon from '@mui/icons-material/ScheduleOutlined'
 import { StatusChip } from './ui/StatusChip'
 import { capturedYTD, capturedThisMonth, capturedInCycle, annualValue, perkPct, perkStatus, periodLabel, nextResetDate } from '@/utils/perk'
-import { fmt, fmt2, fmtDate } from '@/utils/format'
-import type { Perk } from '@/utils/types'
+import { fmt, fmt2, fmtDate, toAmount } from '@/utils/format'
+import { resolveCardDesign } from '@/utils/cardDesigns'
+import type { Card, Perk } from '@/utils/types'
 
 interface PerkRowProps {
   perk: Perk
+  card?: Card
   cardOpenedDate?: string | null
   onLog: (perk: Perk) => void
 }
 
-export function PerkRow({ perk, cardOpenedDate, onLog }: PerkRowProps) {
+export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
   const [open, setOpen] = useState(false)
   const isMonthly = perk.period === 'MONTHLY'
 
   const captured   = capturedInCycle(perk, cardOpenedDate)
-  const perPeriod  = parseFloat(perk.totalAmount)
+  const perPeriod  = toAmount(perk.totalAmount)
   const annual     = annualValue(perk)
   const ytd        = capturedYTD(perk)
   const pct        = perkPct(perk, cardOpenedDate)
@@ -58,6 +60,12 @@ export function PerkRow({ perk, cardOpenedDate, onLog }: PerkRowProps) {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, flexWrap: 'wrap' }}>
             <Typography sx={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.01em' }}>{perk.name}</Typography>
             <StatusChip status={status.key} label={status.label} icon={statusIcon} />
+            {card && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: '5px', px: '7px', py: '2px', borderRadius: '99px', border: 1, borderColor: 'divider', bgcolor: 'grey.50', flex: 'none', whiteSpace: 'nowrap' }}>
+                <Box sx={{ width: 8, height: 8, borderRadius: '50%', background: resolveCardDesign(card.design).gradient, flex: 'none' }} />
+                <Typography sx={{ fontSize: 11, fontWeight: 600, color: 'text.secondary' }}>{card.name}</Typography>
+              </Box>
+            )}
             {perk.enrollmentRequired && (
               <Chip
                 size="small"
@@ -173,7 +181,7 @@ export function PerkRow({ perk, cardOpenedDate, onLog }: PerkRowProps) {
                     component="span"
                     sx={{ fontSize: 13, fontWeight: 500, fontVariantNumeric: 'tabular-nums', color: 'primary.main' }}
                   >
-                    +{fmt2(parseFloat(c.amount))}
+                    +{fmt2(toAmount(c.amount))}
                   </Typography>
                 </Box>
               ))}
