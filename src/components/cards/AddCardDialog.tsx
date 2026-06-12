@@ -14,7 +14,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { brand } from '@/lib/theme'
-import { fmt } from '@/utils/format'
+import { fmtDollars} from '@/utils/format'
 import { CARD_CATALOG } from '@/data/cardCatalog'
 import { PERK_CATALOG, type PerkTemplate } from '@/data/perkCatalog'
 

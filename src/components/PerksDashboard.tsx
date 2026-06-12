@@ -11,7 +11,7 @@ import { PerkRow } from './PerkRow'
 import { brand } from '@/lib/theme'
 import { cardCaptured, cardAvailable } from '@/utils/card'
 import { perkStatus } from '@/utils/perk'
-import { fmt } from '@/utils/format'
+import { fmtDollars} from '@/utils/format'
 import type { Card, Perk } from '@/utils/types'
 
 interface PerksDashboardProps {
@@ -105,7 +105,7 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
             Fully captured this period.
           </Typography>
           <Paper variant="outlined" sx={{ borderColor: 'divider', borderRadius: '14px', px: 2, py: '4px' }}>
-            {used.map(({ card, perk }) => <PerkRow key={perk.id} perk={perk} cardOpenedDate={card.openedDate} onLog={onLog} />)}
+            {used.map(({ card, perk }) => <PerkRow key={perk.id} perk={perk} card={card} cardOpenedDate={card.openedDate} onLog={onLog} />)}
           </Paper>
         </>
       )}

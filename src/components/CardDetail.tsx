@@ -12,18 +12,17 @@ import { Eyebrow } from './ui/Eyebrow'
 import { CardTile } from './CardTile'
 import { PerkRow } from './PerkRow'
 import { cardCaptured, cardAvailable } from '@/utils/card'
-import { fmt } from '@/utils/format'
+import { fmtDollars} from '@/utils/format'
 import type { Card, Perk } from '@/utils/types'
 
 interface CardDetailProps {
   card: Card
   onBack: () => void
   onLog: (perk: Perk) => void
-  onAddPerk: () => void
 }
 
 // todo: remove edit card from here and kebab menu
-export function CardDetail({ card, onBack, onLog, onAddPerk }: CardDetailProps) {
+export function CardDetail({ card, onBack, onLog }: CardDetailProps) {
   const captured = cardCaptured(card)
   const available = cardAvailable(card)
 
@@ -59,9 +58,6 @@ export function CardDetail({ card, onBack, onLog, onAddPerk }: CardDetailProps) 
             recovered of {fmt(available)} available · {card.perks.length} perks
           </Typography>
           <Stack direction="row" spacing={1.25} sx={{ mt: 2 }}>
-            <Button variant="contained" startIcon={<AddIcon />} onClick={onAddPerk}>
-              Add a perk
-            </Button>
             <Button
               variant="outlined"
               startIcon={<EditOutlinedIcon />}

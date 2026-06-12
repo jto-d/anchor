@@ -15,7 +15,7 @@ import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsAc
 import ScheduleOutlinedIcon from '@mui/icons-material/ScheduleOutlined'
 import { StatusChip } from './ui/StatusChip'
 import { capturedYTD, capturedThisMonth, capturedInCycle, annualValue, perkPct, perkStatus, periodLabel, nextResetDate } from '@/utils/perk'
-import { fmt, fmt2, fmtDate, toAmount } from '@/utils/format'
+import { fmt, fmtCents, fmtDate, toAmount } from '@/utils/format'
 import { resolveCardDesign } from '@/utils/cardDesigns'
 import type { Card, Perk } from '@/utils/types'
 
@@ -76,7 +76,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
             )}
           </Box>
           <Typography sx={{ fontSize: 12, color: 'grey.500', mt: '3px' }}>
-            {periodLabel(perk.period)} · {fmt2(perPeriod)}
+            {periodLabel(perk.period)} · {fmtCents(perPeriod)}
             {isMonthly ? ' / mo' : perk.period === 'ANNUAL' ? ' / yr' : ''} · resets {resetLabel}
           </Typography>
         </Box>
@@ -181,7 +181,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
                     component="span"
                     sx={{ fontSize: 13, fontWeight: 500, fontVariantNumeric: 'tabular-nums', color: 'primary.main' }}
                   >
-                    +{fmt2(toAmount(c.amount))}
+                    +{fmtCents(toAmount(c.amount))}
                   </Typography>
                 </Box>
               ))}

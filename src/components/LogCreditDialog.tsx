@@ -16,7 +16,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { Eyebrow } from './ui/Eyebrow'
 import { brand } from '@/lib/theme'
 import { annualValue, capturedYTD } from '@/utils/perk'
-import { fmt2, toAmount } from '@/utils/format'
+import { fmtCents, toAmount } from '@/utils/format'
 import type { Perk } from '@/utils/types'
 
 interface LogCreditDialogProps {
@@ -68,7 +68,7 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
                 {shown.name}
               </Typography>
               <Typography sx={{ fontSize: 13, color: 'grey.500', mt: '3px' }}>
-                {fmt2(remaining)} still available this period
+                {fmtCents(remaining)} still available this period
               </Typography>
             </Box>
             <IconButton onClick={onClose} sx={{ color: 'text.disabled', mt: '-4px', mr: '-8px' }}>

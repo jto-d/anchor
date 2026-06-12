@@ -9,7 +9,6 @@ export type CardType = 'cashback' | 'points'
 export type TileStyle = 'statement' | 'face' | 'band'
 export type Density = 'comfortable' | 'compact'
 export type SuggestMode = 'picker' | 'matrix'
-export type LayoutMode = 'grid' | 'list'
 
 export interface Category {
   key: CategoryKey

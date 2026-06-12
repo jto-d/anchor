@@ -28,3 +28,7 @@ Issues from the senior engineer review that haven't been addressed yet. Fixed it
 
 ### 9. Incomplete features tracked only as inline TODOs
 Several buttons have empty or no-op handlers (Edit card, Add a perk, Settings, Notifications). These are scattered as `// todo` comments in components rather than tracked anywhere. Should be converted to issues or a backlog.
+
+
+### Onboarding flow
+If i actually want to start sending this to people and hone in on design

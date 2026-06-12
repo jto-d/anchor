@@ -10,7 +10,7 @@ import AnchorIcon from '@mui/icons-material/Anchor'
 import { brand } from '@/lib/theme'
 import { resolveCardDesign } from '@/utils/cardDesigns'
 import { cardCaptured, cardAvailable } from '@/utils/card'
-import { fmt } from '@/utils/format'
+import { fmtDollars} from '@/utils/format'
 import type { Card } from '@/utils/types'
 
 interface CardTileProps {

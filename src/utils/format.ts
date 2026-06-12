@@ -1,11 +1,11 @@
 /** Parse a Decimal string from GraphQL into a JS number. Single point of change if we move to a Decimal library. */
 export const toAmount = (s: string): number => parseFloat(s)
 
-export function fmt(n: number): string {
+export function fmtDollars(n: number): string {
   return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
 }
 
-export function fmt2(n: number): string {
+export function fmtCents(n: number): string {
   return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 

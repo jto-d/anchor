@@ -190,7 +190,7 @@ export function MeView() {
               title={selectedCard.name}
               subtitle={`${selectedCard.issuer}${selectedCard.lastFour ? ' · •••• ' + selectedCard.lastFour : ''}`}
             />
-            <CardDetail card={selectedCard} onBack={back} onLog={setDialogPerk} onAddPerk={() => {}} />
+            <CardDetail card={selectedCard} onBack={back} onLog={setDialogPerk} />
           </>
         ) : route === 'cards' ? (
           <>
