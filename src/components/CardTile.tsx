@@ -9,7 +9,7 @@ import { alpha } from '@mui/material/styles'
 import AnchorIcon from '@mui/icons-material/Anchor'
 import { brand } from '@/lib/theme'
 import { resolveCardDesign } from '@/utils/cardDesigns'
-import { cardCaptured, cardAvailable } from '@/utils/card'
+import { cardCapturedYTD, cardAvailable } from '@/utils/card'
 import { fmtDollars} from '@/utils/format'
 import type { Card } from '@/utils/types'
 
@@ -19,7 +19,7 @@ interface CardTileProps {
 }
 
 export function CardTile({ card, onOpen }: CardTileProps) {
-  const captured = cardCaptured(card)
+  const captured = cardCapturedYTD(card)
   const available = cardAvailable(card)
   const pct = available ? Math.min(1, captured / available) : 0
   const design = resolveCardDesign(card.design)

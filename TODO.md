@@ -1,16 +1,3 @@
-# Open Issues
-
-Issues from the senior engineer review that haven't been addressed yet. Fixed items (query auth isolation, perk cycle tests, decimal coercion, input validation) are not listed here.
-
----
-
-## Critical / Security
-
-### 2. Hardcoded auth
-`src/app/api/graphql/route.ts` returns a hardcoded `userId` in the Yoga context. There is no real authentication layer. Any multi-user deployment requires replacing this with a proper auth system (e.g. NextAuth.js, Clerk).
-
----
-
 ## Scalability
 
 ### 3. No pagination — single unbounded query
@@ -32,3 +19,10 @@ Several buttons have empty or no-op handlers (Edit card, Add a perk, Settings, N
 
 ### Onboarding flow
 If i actually want to start sending this to people and hone in on design
+
+
+### MISC
+portals no icon
+optional causing add card dialog to stretch too far
+add annual fee to card data
+ - want to show credit redemption vs. annual fee (per card and overall)

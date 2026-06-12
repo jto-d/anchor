@@ -1,17 +1,20 @@
 'use client'
 
+import { useState } from 'react'
 import Box from '@mui/material/Box'
 import LinearProgress from '@mui/material/LinearProgress'
 import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
+import ToggleButton from '@mui/material/ToggleButton'
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import Typography from '@mui/material/Typography'
 import { Eyebrow } from './ui/Eyebrow'
 import { CardTile } from './CardTile'
 import { PerkRow } from './PerkRow'
 import { brand } from '@/lib/theme'
-import { cardCaptured, cardAvailable } from '@/utils/card'
-import { perkStatus } from '@/utils/perk'
-import { fmtDollars} from '@/utils/format'
+import { cardAvailable, cardOnTheTable } from '@/utils/card'
+import { capturedYTD, capturedThisMonth, perkStatus } from '@/utils/perk'
+import { fmtDollars } from '@/utils/format'
 import type { Card, Perk } from '@/utils/types'
 
 interface PerksDashboardProps {
@@ -21,8 +24,14 @@ interface PerksDashboardProps {
 }
 
 export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps) {
-  const captured = cards.reduce((s, c) => s + cardCaptured(c), 0)
+  const [view, setView] = useState<'ytd' | 'month'>('ytd')
+
+  const captured =
+    view === 'ytd'
+      ? cards.reduce((s, c) => c.perks.reduce((ps, p) => ps + capturedYTD(p), s), 0)
+      : cards.reduce((s, c) => c.perks.reduce((ps, p) => ps + capturedThisMonth(p), s), 0)
   const available = cards.reduce((s, c) => s + cardAvailable(c), 0)
+  const onTheTable = cards.reduce((s, c) => s + cardOnTheTable(c), 0)
   const pct = available ? captured / available : 0
 
   const atRisk: { card: Card; perk: Perk }[] = []
@@ -39,7 +48,19 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
     <Box sx={{ p: '26px 30px' }}>
       {/* Headline */}
       <Paper sx={{ bgcolor: brand.accentSoft, border: 1, borderColor: brand.anchor[100], borderRadius: '18px', p: '22px 24px', mb: '22px' }}>
-        <Eyebrow sx={{ color: 'primary.main' }}>This year</Eyebrow>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Eyebrow sx={{ color: 'primary.main' }}>{view === 'ytd' ? 'This year' : 'This month'}</Eyebrow>
+          <ToggleButtonGroup
+            value={view}
+            exclusive
+            onChange={(_, v) => v && setView(v)}
+            size="small"
+            sx={{ '& .MuiToggleButton-root': { px: 1.5, py: 0.25, fontSize: 11, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', border: 1, borderColor: brand.anchor[200], color: 'primary.main' }, '& .Mui-selected': { bgcolor: 'primary.main', color: '#fff', '&:hover': { bgcolor: 'primary.dark' } } }}
+          >
+            <ToggleButton value="ytd">YTD</ToggleButton>
+            <ToggleButton value="month">Month</ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
         <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5, mt: 1.25, flexWrap: 'wrap' }}>
           <Typography
             sx={{ fontSize: 42, fontWeight: 600, letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums', color: brand.anchor[800], lineHeight: 1 }}
@@ -57,7 +78,7 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
             sx={{ height: 7, bgcolor: 'rgba(11,99,96,0.15)', '& .MuiLinearProgress-bar': { bgcolor: 'primary.main' } }}
           />
           <Typography sx={{ fontSize: 12, color: 'primary.main', mt: '7px', fontWeight: 500 }}>
-            {Math.round(pct * 100)}% captured · {fmtDollars(available - captured)} still on the table
+            {Math.round(pct * 100)}% captured · {fmtDollars(onTheTable)} still on the table
           </Typography>
         </Box>
       </Paper>
@@ -65,10 +86,10 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
       {/* Stats */}
       <Stack direction="row" spacing={1.75} sx={{ mb: '28px' }}>
         <StatCard label="Cards tracked" value={String(cards.length)} sub="Across all issuers" />
-        <StatCard label="Recovered" value={fmtDollars(captured)} sub="Credits captured this year" accent="primary.main" />
+        <StatCard label="Recovered" value={fmtDollars(captured)} sub={`Credits captured ${view === 'ytd' ? 'this year' : 'this month'}`} accent="primary.main" />
         <StatCard
           label="On the table"
-          value={fmtDollars(available - captured)}
+          value={fmtDollars(onTheTable)}
           sub={`${atRisk.length} perks need attention`}
           accent="warning.main"
         />
