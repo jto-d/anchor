@@ -105,9 +105,7 @@ function PerkPreview({ card }: { card: CatalogCard | null }) {
     return (
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: '9px', p: '13px 14px', borderRadius: '12px', bgcolor: 'grey.50', border: '1px solid', borderColor: 'divider', color: 'text.secondary', fontSize: '13px', lineHeight: 1.45 }}>
         <InfoOutlinedIcon sx={{ fontSize: 15, color: 'text.disabled', mt: '1px' }} />
-        <span>
-          <Box component="strong" sx={{ fontWeight: 600, color: 'text.primary' }}>No pre-set perks.</Box> You can add them manually after.
-        </span>
+        <Box component="strong" sx={{ fontWeight: 600, color: 'text.primary' }}>This card has no pre-set perks.</Box>
       </Box>
     )
   }
