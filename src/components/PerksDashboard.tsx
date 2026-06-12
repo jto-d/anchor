@@ -93,7 +93,7 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
             All caught up. Nothing on the table.
           </Typography>
         ) : (
-          atRisk.slice(0, 6).map(({ card, perk }) => <PerkRow key={perk.id} perk={perk} cardOpenedDate={card.openedDate} onLog={onLog} />)
+          atRisk.slice(0, 6).map(({ card, perk }) => <PerkRow key={perk.id} perk={perk} card={card} cardOpenedDate={card.openedDate} onLog={onLog} />)
         )}
       </Paper>
 
