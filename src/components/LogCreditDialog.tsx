@@ -32,6 +32,7 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
   const [amount, setAmount] = useState('')
   const [date, setDate] = useState('')
   const [desc, setDesc] = useState('')
+  const [touched, setTouched] = useState(false)
 
   useEffect(() => {
     if (!perk) return
@@ -40,9 +41,14 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
     setAmount(String(defaultAmt))
     setDate(new Date().toISOString().slice(0, 10))
     setDesc('')
+    setTouched(false)
   }, [perk?.id])
 
   const remaining = shown ? Math.max(0, annualValue(shown) - capturedYTD(shown)) : 0
+
+  const amtNum = parseFloat(amount)
+  const amtInvalid = touched && (isNaN(amtNum) || amtNum <= 0)
+  const dateInvalid = touched && !date
 
   return (
     <Dialog
@@ -78,6 +84,8 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
               fullWidth
               size="small"
               sx={{ mt: 2 }}
+              error={amtInvalid}
+              helperText={amtInvalid ? 'Enter a positive amount' : undefined}
               slotProps={{
                 input: { startAdornment: <InputAdornment position="start">$</InputAdornment> },
                 inputLabel: { shrink: true },
@@ -90,6 +98,8 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
               onChange={(e) => setDate(e.target.value)}
               fullWidth
               size="small"
+              error={dateInvalid}
+              helperText={dateInvalid ? 'Date is required' : undefined}
               slotProps={{ inputLabel: { shrink: true } }}
             />
             <TextField
@@ -110,7 +120,12 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
             <Button
               variant="contained"
               startIcon={<CheckIcon />}
-              onClick={() => onSave(shown.id, parseFloat(amount) || 0, date, desc.trim())}
+              onClick={() => {
+                setTouched(true)
+                const n = parseFloat(amount)
+                if (isNaN(n) || n <= 0 || !date) return
+                onSave(shown.id, n, date, desc.trim())
+              }}
             >
               Save credit
             </Button>
