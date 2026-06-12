@@ -12,7 +12,7 @@ import { Eyebrow } from './ui/Eyebrow'
 import { CardTile } from './CardTile'
 import { PerkRow } from './PerkRow'
 import { brand } from '@/lib/theme'
-import { cardAvailable, cardOnTheTable } from '@/utils/card'
+import { cardOnTheTable } from '@/utils/card'
 import { capturedYTD, capturedThisMonth, perkStatus } from '@/utils/perk'
 import { fmtDollars } from '@/utils/format'
 import type { Card, Perk } from '@/utils/types'
@@ -30,9 +30,8 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
     view === 'ytd'
       ? cards.reduce((s, c) => c.perks.reduce((ps, p) => ps + capturedYTD(p), s), 0)
       : cards.reduce((s, c) => c.perks.reduce((ps, p) => ps + capturedThisMonth(p), s), 0)
-  const available = cards.reduce((s, c) => s + cardAvailable(c), 0)
   const onTheTable = cards.reduce((s, c) => s + cardOnTheTable(c), 0)
-  const pct = available ? captured / available : 0
+  const pct = (captured + onTheTable) ? captured / (captured + onTheTable) : 0
 
   const atRisk: { card: Card; perk: Perk }[] = []
   const used: { card: Card; perk: Perk }[] = []
@@ -68,7 +67,7 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
             {fmtDollars(captured)}
           </Typography>
           <Typography sx={{ fontSize: 16, color: 'primary.main', fontWeight: 500 }}>
-            recovered of {fmtDollars(available)} available
+            recovered · {fmtDollars(onTheTable)} still available
           </Typography>
         </Box>
         <Box sx={{ mt: 2, maxWidth: 500 }}>
@@ -78,7 +77,7 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
             sx={{ height: 7, bgcolor: 'rgba(11,99,96,0.15)', '& .MuiLinearProgress-bar': { bgcolor: 'primary.main' } }}
           />
           <Typography sx={{ fontSize: 12, color: 'primary.main', mt: '7px', fontWeight: 500 }}>
-            {Math.round(pct * 100)}% captured · {fmtDollars(onTheTable)} still on the table
+            {Math.round(pct * 100)}% of active cycles captured
           </Typography>
         </Box>
       </Paper>
