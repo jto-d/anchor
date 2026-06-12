@@ -47,7 +47,7 @@ function calendarCycleWindow(period: string, now: Date): CycleWindow {
 }
 
 function anniversaryCycleWindow(period: string, openedDateStr: string, now: Date): CycleWindow {
-  const opened = new Date(openedDateStr + 'T00:00:00')
+  const opened = new Date(openedDateStr.slice(0, 10) + 'T00:00:00')
   const annMonth = opened.getMonth() + 1 // 1-12
   const annDay   = opened.getDate()
   const openedYear = opened.getFullYear()
