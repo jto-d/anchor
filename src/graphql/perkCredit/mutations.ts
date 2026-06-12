@@ -10,15 +10,27 @@ builder.mutationFields((t) => ({
       date: t.arg.string({ required: true }),
       description: t.arg.string(),
     },
-    resolve: async (query, _root, { perkId, amount, date, description }) =>
-      prisma.perkCredit.create({
+    resolve: async (query, _root, { perkId, amount, date, description }, ctx) => {
+      if (amount <= 0) throw new Error('amount must be greater than 0')
+
+      const parsedDate = new Date(date)
+      if (isNaN(parsedDate.getTime())) throw new Error('date is not a valid date')
+
+      const perk = await prisma.perk.findFirst({
+        where: { id: perkId, creditCard: { userId: ctx.userId } },
+        select: { id: true },
+      })
+      if (!perk) throw new Error('Perk not found')
+
+      return prisma.perkCredit.create({
         ...query,
         data: {
           perkId,
           amount,
-          date: new Date(date),
+          date: parsedDate,
           description: description ?? null,
         },
-      }),
+      })
+    },
   }),
 }))

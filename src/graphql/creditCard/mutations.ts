@@ -29,6 +29,16 @@ builder.mutationFields((t) => ({
       const entry = CARD_CATALOG[catalogKey]
       if (!entry) throw new Error(`Unknown catalog key: ${catalogKey}`)
 
+      if (lastFour != null && !/^\d{4}$/.test(lastFour)) {
+        throw new Error('lastFour must be exactly 4 digits')
+      }
+
+      if (openedDate != null) {
+        const d = new Date(openedDate)
+        if (isNaN(d.getTime())) throw new Error('openedDate is not a valid date')
+        if (d > new Date()) throw new Error('openedDate cannot be in the future')
+      }
+
       const perks = PERK_CATALOG[catalogKey] ?? []
 
       return prisma.creditCard.create({
