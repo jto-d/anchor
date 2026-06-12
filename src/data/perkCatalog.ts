@@ -58,7 +58,6 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
     { name: 'Rideshare Credit', totalAmount: 8, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $100/yr — $8/mo Jan–Nov and $12 in Dec. Calendar year. Annual opt-in required.' },
     { name: 'Avis / Budget Credit', totalAmount: 80, period: 'ANNUAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'ANNIVERSARY year. $40 TravelBank cash on each of 1st & 2nd rental via cars.united.com.' },
     { name: 'Instacart Credit', totalAmount: 15, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $180/yr — split $10 + $5 monthly. Calendar year.' },
-    { name: 'TSA PreCheck / Global Entry', totalAmount: 120, period: 'QUADRENNIAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Once every 4 years (not annual).' },
   ],
   'united-explorer': [
     { name: 'United Travel Credit', totalAmount: 100, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Earned only AFTER spending $10,000 in a calendar year (spend-gated, not automatic).' },
@@ -66,12 +65,9 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
     { name: 'Rideshare Credit', totalAmount: 5, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $60/yr. Calendar year. Enrollment + annual opt-in required.' },
     { name: 'Avis / Budget Credit', totalAmount: 50, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: '$25 TravelBank cash on each of 1st & 2nd Avis/Budget rental via cars.united.com.' },
     { name: 'Instacart Credit', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $120/yr. Plus 3-month complimentary Instacart+ membership.' },
-    { name: 'TSA PreCheck / Global Entry', totalAmount: 120, period: 'QUADRENNIAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Once every 4 years (not annual).' },
   ],
   'united-gateway': [],
-  'chase-aeroplan': [
-    { name: 'Global Entry / TSA PreCheck / NEXUS', totalAmount: 120, period: 'QUADRENNIAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Once every 4 years (not annual).' },
-  ],
+  'chase-aeroplan': [],
   // ── BILT ─────────────────────────────────────────────────────────────────────
   'bilt-blue': [],
   'bilt-obsidian': [
