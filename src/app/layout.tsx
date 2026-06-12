@@ -5,6 +5,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import { theme } from '@/lib/theme'
 import { Providers } from '@/lib/urql'
+import { AuthSessionProvider } from './session-provider'
 
 export const metadata: Metadata = {
   title: 'Anchor',
@@ -22,7 +23,9 @@ export default function RootLayout({
         <AppRouterCacheProvider options={{ key: 'mui' }}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Providers>{children}</Providers>
+            <AuthSessionProvider>
+              <Providers>{children}</Providers>
+            </AuthSessionProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
