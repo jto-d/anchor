@@ -22,6 +22,7 @@ const ICON_PATHS: Record<string, string> = {
   streaming:'<rect width="20" height="15" x="2" y="3" rx="2"/><path d="m10 8 5 3-5 3z" fill="currentColor" stroke="none"/><path d="M8 21h8"/><path d="M12 18v3"/>',
   drugstore:'<path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/>',
   retail:   '<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>',
+  portal:   '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="M2 8h20"/><circle cx="6" cy="6" r=".5" fill="currentColor" stroke="none"/><circle cx="10" cy="6" r=".5" fill="currentColor" stroke="none"/>',
   base:     '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="1" fill="currentColor"/>',
 }
 
