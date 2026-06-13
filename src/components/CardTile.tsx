@@ -9,9 +9,15 @@ import { alpha } from '@mui/material/styles'
 import AnchorIcon from '@mui/icons-material/Anchor'
 import { brand } from '@/lib/theme'
 import { resolveCardDesign } from '@/utils/cardDesigns'
-import { cardCapturedYTD, cardAvailable } from '@/utils/card'
-import { fmtDollars} from '@/utils/format'
+import { cardCapturedYTD, cardAvailable, cardNet, cardVerdict } from '@/utils/card'
+import { fmtDollars, fmtSigned } from '@/utils/format'
 import type { Card } from '@/utils/types'
+
+const VERDICT_DOT: Record<string, string> = {
+  worthIt: '#5BC1C0',
+  marginal: '#F0B23E',
+  reviewIt: '#F2777C',
+}
 
 interface CardTileProps {
   card: Card
@@ -23,16 +29,36 @@ export function CardTile({ card, onOpen }: CardTileProps) {
   const available = cardAvailable(card)
   const pct = available ? Math.min(1, captured / available) : 0
   const design = resolveCardDesign(card.design)
+  const net = cardNet(card)
+  const verdict = cardVerdict(card)
 
   const content = (
     <>
-      <AnchorIcon sx={{ position: 'absolute', top: 16, right: 17, fontSize: 19, opacity: 0.9 }} />
-      <Typography
-        sx={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', opacity: 0.75, textTransform: 'uppercase' }}
-      >
-        {card.issuer}
-      </Typography>
-      <Typography sx={{ fontSize: 18, fontWeight: 600, letterSpacing: '-0.01em', mt: 3 }}>{card.name}</Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: '18px' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: '7px', minWidth: 0 }}>
+          <AnchorIcon sx={{ fontSize: 14, opacity: 0.85, flexShrink: 0 }} />
+          <Typography
+            sx={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', opacity: 0.8, textTransform: 'uppercase', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+          >
+            {card.issuer}
+          </Typography>
+        </Box>
+        <Box
+          component="span"
+          sx={{
+            display: 'inline-flex', alignItems: 'center', gap: '5px', flexShrink: 0,
+            height: '22px', px: '9px', borderRadius: '999px',
+            background: 'rgba(255,255,255,0.13)', border: '1px solid rgba(255,255,255,0.16)',
+            fontSize: '11px', fontWeight: 600, letterSpacing: '-0.005em',
+            fontVariantNumeric: 'tabular-nums', color: '#fff', backdropFilter: 'blur(2px)',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <Box component="span" sx={{ width: 6, height: 6, borderRadius: '999px', bgcolor: VERDICT_DOT[verdict.key], flexShrink: 0 }} />
+          {fmtSigned(net)}<Box component="span" sx={{ opacity: 0.65, fontWeight: 500 }}>/yr</Box>
+        </Box>
+      </Box>
+      <Typography sx={{ fontSize: 18, fontWeight: 600, letterSpacing: '-0.01em' }}>{card.name}</Typography>
       {(card.lastFour || card.openedDate) && (
         <Typography
           sx={{ fontSize: 12, fontVariantNumeric: 'tabular-nums', letterSpacing: '0.12em', opacity: 0.8, mt: '3px' }}

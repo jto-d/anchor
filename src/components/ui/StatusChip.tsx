@@ -2,14 +2,17 @@
 
 import Chip from '@mui/material/Chip'
 import { brand } from '@/lib/theme'
-import type { StatusKey } from '@/utils/types'
+import type { StatusKey, VerdictKey } from '@/utils/types'
 
-const CHIP_SX: Record<StatusKey, { bgcolor: string; color: string }> = {
+const CHIP_SX: Record<StatusKey | VerdictKey, { bgcolor: string; color: string }> = {
   captured: { bgcolor: brand.accentSoft, color: brand.anchor[700] },
   partial: { bgcolor: brand.accentSoft, color: brand.anchor[700] },
   expiring: { bgcolor: brand.amber[50], color: brand.amber[700] },
   open: { bgcolor: brand.zinc[100], color: brand.zinc[600] },
   forfeited: { bgcolor: brand.red[50], color: brand.red[600] },
+  worthIt: { bgcolor: brand.accentSoft, color: brand.anchor[700] },
+  marginal: { bgcolor: brand.amber[50], color: brand.amber[700] },
+  reviewIt: { bgcolor: brand.red[50], color: brand.red[600] },
 }
 
 /** Status pill mapping a perk's StatusKey to the right Anchor colors. */
@@ -18,7 +21,7 @@ export function StatusChip({
   label,
   icon,
 }: {
-  status: StatusKey
+  status: StatusKey | VerdictKey
   label: string
   icon?: React.ReactElement
 }) {

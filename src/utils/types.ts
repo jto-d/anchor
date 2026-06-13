@@ -5,3 +5,4 @@ export type Perk = Card['perks'][number]
 export type PerkCredit = Perk['perkCredits'][number]
 
 export type StatusKey = 'captured' | 'partial' | 'expiring' | 'open' | 'forfeited'
+export type VerdictKey = 'worthIt' | 'marginal' | 'reviewIt'

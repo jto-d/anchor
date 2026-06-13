@@ -7,6 +7,7 @@ export interface CardCatalogEntry {
   text: string
   type: CardType
   network: string
+  annualFee: number
   rewards: { cat: CategoryKey; rate: number }[]
 }
 
@@ -20,6 +21,7 @@ export const FALLBACK_CARD: CardCatalogEntry = {
   text: WHITE,
   type: 'cashback',
   network: '',
+  annualFee: 0,
   rewards: [{ cat: 'base', rate: 1 }],
 }
 
@@ -31,6 +33,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     text: '#3D3413',
     type: 'points',
     network: 'Amex',
+    annualFee: 325,
     rewards: [
       { cat: 'dining', rate: 4 },
       { cat: 'groceries', rate: 4 },
@@ -45,6 +48,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     text: '#27272A',
     type: 'points',
     network: 'Amex',
+    annualFee: 695,
     rewards: [
       { cat: 'travel', rate: 5 },
       { cat: 'hotels', rate: 5 },
@@ -58,6 +62,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     text: WHITE,
     type: 'cashback',
     network: 'Visa Signature',
+    annualFee: 0,
     rewards: [
       { cat: 'groceries', rate: 2 },
       { cat: 'retail', rate: 3 },
@@ -71,6 +76,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
+    annualFee: 95,
     rewards: [
       { cat: 'travel', rate: 2 },
       { cat: 'transit', rate: 2 },
@@ -89,6 +95,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
+    annualFee: 550,
     rewards: [
       { cat: 'travel', rate: 4 },
       { cat: 'hotels', rate: 4 },
@@ -104,6 +111,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
+    annualFee: 0,
     rewards: [
       { cat: 'dining', rate: 3 },
       { cat: 'drugstore', rate: 3 },
@@ -118,6 +126,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
+    annualFee: 350,
     rewards: [
       { cat: 'travel', rate: 2 },
       { cat: 'transit', rate: 2 },
@@ -135,6 +144,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
+    annualFee: 95,
     rewards: [
       { cat: 'hotels', rate: 2 },
       { cat: 'dining', rate: 2 },
@@ -148,6 +158,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
+    annualFee: 0,
     rewards: [
       { cat: 'transit', rate: 2 },
       { cat: 'gas', rate: 2 },
@@ -161,6 +172,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     text: WHITE,
     type: 'points',
     network: 'Mastercard',
+    annualFee: 95,
     rewards: [
       { cat: 'dining', rate: 3 },
       { cat: 'portal', rate: 3 },
@@ -175,6 +187,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     text: BILT_GREY,
     type: 'points',
     network: 'Mastercard',
+    annualFee: 0,
     rewards: [
       { cat: 'base', rate: 1 },
     ],
@@ -186,6 +199,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     text: BILT_GREY,
     type: 'points',
     network: 'Mastercard',
+    annualFee: 95,
     rewards: [
       { cat: 'travel', rate: 2 },
       { cat: 'dining', rate: 3 },
@@ -200,6 +214,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     text: BILT_GREY,
     type: 'points',
     network: 'Mastercard',
+    annualFee: 495,
     rewards: [
       { cat: 'base', rate: 2 },
     ],

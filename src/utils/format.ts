@@ -9,6 +9,9 @@ export function fmtCents(n: number): string {
   return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
+export const fmtSigned = (n: number): string =>
+  (n < 0 ? '−' : '+') + '$' + Math.abs(n).toLocaleString('en-US', { maximumFractionDigits: 0 })
+
 export function fmtDate(iso: string): string {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }

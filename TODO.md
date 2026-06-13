@@ -20,6 +20,7 @@ Several buttons have empty or no-op handlers (Edit card, Add a perk, Settings, N
 add annual fee to card data
  - want to show credit redemption vs. annual fee (per card and overall)
 ends soon pill with more fine tuned window
+maybe have the "worth it" tag calculation be based on actual use
 
 ### need to add a ton more cards
 

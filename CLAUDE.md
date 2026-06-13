@@ -102,6 +102,10 @@ The UI is built entirely with **Material UI v9** (`@mui/material`, `@mui/icons-m
 - **Providers** — `src/app/layout.tsx` wraps the tree in `AppRouterCacheProvider` (from `@mui/material-nextjs/v16-appRouter` — import path is version-pinned) → `ThemeProvider` → `CssBaseline`. Drop the cache provider and you get hydration class mismatches.
 - **Icons** come from `@mui/icons-material` at call sites. Shared primitives live in `src/components/ui/`: `Eyebrow` (themed Typography) and `StatusChip` (perk StatusKey → colored Chip).
 
+## Verification
+
+The app requires Google OAuth to reach the dashboard — headless browser screenshots are not possible. Use `pnpm build` (runs full `tsc` type-check) as the verification signal for UI changes. The `/verify` skill will SKIP browser steps accordingly.
+
 ## When something looks off
 
 - **`PothosSchemaError: Model 'X' is missing required datamodel information`** → `generateDatamodel = "true"` is missing from the `pothos` generator, or `dmmf: getDatamodel()` was dropped from `builder.ts`. Re-run `pnpm exec prisma generate`.

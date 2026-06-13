@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography'
 import { Eyebrow } from './ui/Eyebrow'
 import { CardTile } from './CardTile'
 import { PerkRow } from './PerkRow'
+import { SummaryFigures, CardValueSection } from './CardValue'
 import { brand } from '@/lib/theme'
 import { cardOnTheTable } from '@/utils/card'
 import { capturedYTD, capturedThisMonth, perkStatus } from '@/utils/perk'
@@ -80,19 +81,13 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
             {Math.round(pct * 100)}% of active cycles captured
           </Typography>
         </Box>
+        <Box sx={{ mt: '22px', pt: '20px', borderTop: '1px solid rgba(11,99,96,0.18)', maxWidth: 560 }}>
+          <SummaryFigures cards={cards} tone="headline" />
+        </Box>
       </Paper>
 
-      {/* Stats */}
-      <Stack direction="row" spacing={1.75} sx={{ mb: '28px' }}>
-        <StatCard label="Cards tracked" value={String(cards.length)} sub="Across all issuers" />
-        <StatCard label="Recovered" value={fmtDollars(captured)} sub={`Credits captured ${view === 'ytd' ? 'this year' : 'this month'}`} accent="primary.main" />
-        <StatCard
-          label="On the table"
-          value={fmtDollars(onTheTable)}
-          sub={`${atRisk.length} perks need attention`}
-          accent="warning.main"
-        />
-      </Stack>
+      {/* Card value */}
+      <CardValueSection cards={cards} onOpenCard={onOpenCard} />
 
       {/* Card tiles */}
       <Eyebrow sx={{ mb: 1.5 }}>Your cards</Eyebrow>
@@ -130,19 +125,5 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
         </>
       )}
     </Box>
-  )
-}
-
-function StatCard({ label, value, sub, accent }: { label: string; value: string; sub?: string; accent?: string }) {
-  return (
-    <Paper variant="outlined" sx={{ borderColor: 'divider', borderRadius: '14px', p: '16px 18px', flex: 1 }}>
-      <Eyebrow>{label}</Eyebrow>
-      <Typography
-        sx={{ fontSize: 28, fontWeight: 600, letterSpacing: '-0.025em', fontVariantNumeric: 'tabular-nums', mt: 1.25, color: accent ?? 'text.primary', lineHeight: 1 }}
-      >
-        {value}
-      </Typography>
-      {sub && <Typography sx={{ fontSize: 12, color: 'grey.500', mt: '5px' }}>{sub}</Typography>}
-    </Paper>
   )
 }
