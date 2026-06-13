@@ -17,7 +17,6 @@
 Several buttons have empty or no-op handlers (Edit card, Add a perk, Settings, Notifications). These are scattered as `// todo` comments in components rather than tracked anywhere. Should be converted to issues or a backlog.
 
 ### MISC
-optional causing add card dialog to stretch too far
 add annual fee to card data
  - want to show credit redemption vs. annual fee (per card and overall)
 ends soon pill with more fine tuned window

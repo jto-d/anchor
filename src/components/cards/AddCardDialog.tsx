@@ -272,7 +272,7 @@ export function AddCardDialog({ open, existingDesigns, onClose, onAdd }: AddCard
         <Box sx={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <Box component="label" htmlFor="lastfour" sx={{ fontSize: '13px', fontWeight: 600, color: 'text.primary', flex: 'none' }}>
-              Last 4 <Box component="span" sx={{ color: 'text.disabled', fontWeight: 400 }}>(optional)</Box>
+              Last 4
             </Box>
             <Box
               component="input"
@@ -300,7 +300,7 @@ export function AddCardDialog({ open, existingDesigns, onClose, onAdd }: AddCard
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <Box component="label" htmlFor="openeddate" sx={{ fontSize: '13px', fontWeight: 600, color: 'text.primary', flex: 'none' }}>
-              Opened <Box component="span" sx={{ color: 'text.disabled', fontWeight: 400 }}>(optional)</Box>
+              Opened
             </Box>
             <Box
               component="input"
