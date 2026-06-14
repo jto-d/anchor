@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography'
 import AddIcon from '@mui/icons-material/Add'
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined'
 import SearchIcon from '@mui/icons-material/Search'
-import { Tooltip } from './Tooltip'
+import { ComingSoon } from './ComingSoon'
 
 interface TopbarProps {
   title: string
@@ -63,7 +63,7 @@ export function Topbar({ title, subtitle, onAddCard }: TopbarProps) {
             <SearchIcon sx={{ fontSize: 15, color: 'text.disabled' }} />
             <InputBase placeholder="Search perks…" sx={{ fontSize: 13, color: 'text.secondary', flex: 1 }} />
           </Paper> */}
-          <Tooltip title="Coming soon">
+          <ComingSoon>
             <IconButton
               sx={{
                 border: 1,
@@ -76,7 +76,7 @@ export function Topbar({ title, subtitle, onAddCard }: TopbarProps) {
             >
               <NotificationsNoneOutlinedIcon sx={{ fontSize: 18 }} />
             </IconButton>
-          </Tooltip>
+          </ComingSoon>
           {onAddCard && (
             <Button variant="contained" startIcon={<AddIcon />} onClick={onAddCard} sx={{ height: 38, flex: 'none' }}>
               Add a card

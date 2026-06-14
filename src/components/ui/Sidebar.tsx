@@ -6,7 +6,6 @@ import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import AnchorIcon from '@mui/icons-material/Anchor'
 import CardGiftcardOutlinedIcon from '@mui/icons-material/CardGiftcardOutlined'
@@ -17,6 +16,7 @@ import RepeatIcon from '@mui/icons-material/Repeat'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import type { SvgIconComponent } from '@mui/icons-material'
 import { brand } from '@/lib/theme'
+import { ComingSoon } from './ComingSoon'
 
 export const SIDEBAR_WIDTH = 220
 
@@ -108,36 +108,30 @@ export function Sidebar({ route, userEmail, onNavigate }: SidebarProps) {
           )
         })}
         {COMING_SOON_ITEMS.map(({ key, label, Icon }) => (
-          <Tooltip key={key} title="Coming soon" placement="right" arrow>
-            <span>
-              <ListItemButton
-                disabled
-                sx={{
-                  ...navItemSx(false),
-                  '&.Mui-disabled': { opacity: 0.45 },
-                }}
-              >
-                <ListItemIcon sx={{ minWidth: 0, mr: 1.25, color: 'inherit' }}>
-                  <Icon sx={{ fontSize: 19 }} />
-                </ListItemIcon>
-                <ListItemText
-                  primary={label}
-                  slotProps={{ primary: { sx: { fontSize: 14, fontWeight: 500 } } }}
-                />
-              </ListItemButton>
-            </span>
-          </Tooltip>
+          <ComingSoon key={key} placement="right">
+            <ListItemButton sx={navItemSx(false)}>
+              <ListItemIcon sx={{ minWidth: 0, mr: 1.25, color: 'inherit' }}>
+                <Icon sx={{ fontSize: 19 }} />
+              </ListItemIcon>
+              <ListItemText
+                primary={label}
+                slotProps={{ primary: { sx: { fontSize: 14, fontWeight: 500 } } }}
+              />
+            </ListItemButton>
+          </ComingSoon>
         ))}
       </List>
 
       {/* Bottom */}
       <Box sx={{ mt: 'auto' }}>
-        <ListItemButton onClick={() => {}} sx={navItemSx(false)}>
-          <ListItemIcon sx={{ minWidth: 0, mr: 1.25, color: 'inherit' }}>
-            <SettingsOutlinedIcon sx={{ fontSize: 19 }} />
-          </ListItemIcon>
-          <ListItemText primary="Settings" slotProps={{ primary: { sx: { fontSize: 14, fontWeight: 500 } } }} />
-        </ListItemButton>
+        <ComingSoon placement="right">
+          <ListItemButton sx={navItemSx(false)}>
+            <ListItemIcon sx={{ minWidth: 0, mr: 1.25, color: 'inherit' }}>
+              <SettingsOutlinedIcon sx={{ fontSize: 19 }} />
+            </ListItemIcon>
+            <ListItemText primary="Settings" slotProps={{ primary: { sx: { fontSize: 14, fontWeight: 500 } } }} />
+          </ListItemButton>
+        </ComingSoon>
         <Divider sx={{ mt: 0.5, mb: 0.5 }} />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.1, px: 1.25, py: 1, minWidth: 0 }}>
           <Avatar

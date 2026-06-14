@@ -6,15 +6,12 @@ import Typography from '@mui/material/Typography'
 import AnchorIcon from '@mui/icons-material/Anchor'
 import { CatIcon } from './CatIcon'
 import { TypeBadge } from './TypeBadge'
-import { OverflowMenu } from './OverflowMenu'
+import IconButton from '@mui/material/IconButton'
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import { themeOf, topRewards, baseReward, CAT, fmtRate } from '@/utils/cardRewards'
 import { brand } from '@/lib/theme'
 import type { RewardCardData, Density } from '@/utils/cardRewards'
 
-const MENU_ITEMS = [
-  { key: 'edit',   label: 'Edit card',   icon: 'pencil' },
-  { key: 'remove', label: 'Remove card', icon: 'trash',  danger: true },
-]
 
 /* Dense list row — used in the list layout */
 export function CardListRow({ card, density = 'comfortable', onAction }: {
@@ -126,7 +123,13 @@ export function CardListRow({ card, density = 'comfortable', onAction }: {
         )}
       </Box>
 
-      <OverflowMenu items={MENU_ITEMS} onAction={onAction} />
+      <IconButton
+        size="small"
+        onClick={() => onAction('remove')}
+        sx={{ color: 'text.disabled', '&:hover': { color: 'error.main' } }}
+      >
+        <DeleteOutlinedIcon fontSize="small" />
+      </IconButton>
     </Box>
   )
 }

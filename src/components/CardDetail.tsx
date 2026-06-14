@@ -3,11 +3,9 @@
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
-import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import AddIcon from '@mui/icons-material/Add'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import { Eyebrow } from './ui/Eyebrow'
 import { CardTile } from './CardTile'
 import { PerkRow } from './PerkRow'
@@ -21,7 +19,6 @@ interface CardDetailProps {
   onLog: (perk: Perk) => void
 }
 
-// todo: remove edit card from here and kebab menu
 export function CardDetail({ card, onBack, onLog }: CardDetailProps) {
   const captured = cardCaptured(card)
   const available = cardAvailable(card)
@@ -57,19 +54,6 @@ export function CardDetail({ card, onBack, onLog }: CardDetailProps) {
             </Box>{' '}
             recovered of {fmtDollars(available)} available · {card.perks.length} perks
           </Typography>
-          <Stack direction="row" spacing={1.25} sx={{ mt: 2 }}>
-            <Button
-              variant="outlined"
-              startIcon={<EditOutlinedIcon />}
-              sx={{
-                borderColor: 'grey.300',
-                color: 'text.primary',
-                '&:hover': { borderColor: 'grey.400', bgcolor: 'grey.50' },
-              }}
-            >
-              Edit card
-            </Button>
-          </Stack>
         </Box>
       </Box>
 

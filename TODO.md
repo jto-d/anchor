@@ -17,10 +17,9 @@
 Several buttons have empty or no-op handlers (Edit card, Add a perk, Settings, Notifications). These are scattered as `// todo` comments in components rather than tracked anywhere. Should be converted to issues or a backlog.
 
 ### MISC
-add annual fee to card data
- - want to show credit redemption vs. annual fee (per card and overall)
 ends soon pill with more fine tuned window
 Card page should have link to card listing?
+Notes/tooltips for cards (Lyft 5x for CSP, online groceries only)
 
 ### need to add a ton more cards
 
