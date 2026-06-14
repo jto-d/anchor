@@ -8,7 +8,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import { brand } from '@/lib/theme'
 import { resolveCardDesign } from '@/utils/cardDesigns'
-import { cardAvailable, cardAnnualFee, cardNet, cardVerdict } from '@/utils/card'
+import { cardAvailable, cardCapturedYTD, cardAnnualFee, cardNet, cardVerdict } from '@/utils/card'
 import { fmtDollars, fmtSigned } from '@/utils/format'
 import { StatusChip } from '@/components/ui/StatusChip'
 import { Eyebrow } from '@/components/ui/Eyebrow'
@@ -17,12 +17,14 @@ import type { Card, VerdictKey } from '@/utils/types'
 function walletTotals(cards: Card[]) {
   const fees = cards.reduce((s, c) => s + cardAnnualFee(c), 0)
   const avail = cards.reduce((s, c) => s + cardAvailable(c), 0)
-  return { fees, avail, net: avail - fees }
+  const captured = cards.reduce((s, c) => s + cardCapturedYTD(c), 0)
+  return { fees, avail, net: captured - fees }
 }
 
 function verdictIcon(key: VerdictKey) {
   if (key === 'worthIt') return <CheckIcon />
   if (key === 'reviewIt') return <WarningAmberIcon />
+  if (key === 'noFee') return <CheckIcon />
   return <AccessTimeIcon />
 }
 

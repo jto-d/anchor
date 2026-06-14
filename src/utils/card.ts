@@ -28,10 +28,11 @@ export function cardAnnualFee(card: Card): number {
 }
 
 export function cardNet(card: Card): number {
-  return cardAvailable(card) - cardAnnualFee(card)
+  return cardCapturedYTD(card) - cardAnnualFee(card)
 }
 
 export function cardVerdict(card: Card): { key: VerdictKey; label: string } {
+  if (cardAnnualFee(card) === 0) return { key: 'noFee', label: 'No annual fee' }
   const net = cardNet(card)
   if (net >= 100) return { key: 'worthIt', label: 'Worth it' }
   if (net >= 0) return { key: 'marginal', label: 'Marginal' }

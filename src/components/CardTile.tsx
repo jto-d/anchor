@@ -17,6 +17,7 @@ const VERDICT_DOT: Record<string, string> = {
   worthIt: '#5BC1C0',
   marginal: '#F0B23E',
   reviewIt: '#F2777C',
+  noFee: '#A1A1AA',
 }
 
 interface CardTileProps {

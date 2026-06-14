@@ -13,6 +13,7 @@ const CHIP_SX: Record<StatusKey | VerdictKey, { bgcolor: string; color: string }
   worthIt: { bgcolor: brand.accentSoft, color: brand.anchor[700] },
   marginal: { bgcolor: brand.amber[50], color: brand.amber[700] },
   reviewIt: { bgcolor: brand.red[50], color: brand.red[600] },
+  noFee: { bgcolor: brand.zinc[100], color: brand.zinc[600] },
 }
 
 /** Status pill mapping a perk's StatusKey to the right Anchor colors. */
