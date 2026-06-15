@@ -51,6 +51,8 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
   'chase-freedom-unlimited': [
     { name: 'DoorDash Non-Restaurant Credit', totalAmount: 10, period: 'QUARTERLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $10/quarter on non-restaurant orders through 12/31/27. Requires active DashPass.' },
   ],
+  'chase-freedom-flex': [],
+  'chase-freedom-rise': [],
   // ── CHASE — UNITED ───────────────────────────────────────────────────────────
   'united-quest': [
     { name: 'United TravelBank Credit', totalAmount: 200, period: 'ANNUAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'ANNIVERSARY year. $200 TravelBank cash at opening + each anniversary; United-operated flights only.' },
@@ -67,7 +69,49 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
     { name: 'Instacart Credit', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $120/yr. Plus 3-month complimentary Instacart+ membership.' },
   ],
   'united-gateway': [],
+  'united-club': [
+    { name: 'Global Entry / TSA PreCheck Credit', totalAmount: 100, period: 'QUADRENNIAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $100 every 4 years for Global Entry application fee (includes TSA PreCheck). Statement credit posted within 2–3 billing cycles.' },
+  ],
   'chase-aeroplan': [],
+  // ── CHASE — INK BUSINESS ─────────────────────────────────────────────────────
+  'chase-ink-preferred': [],
+  'chase-ink-cash': [],
+  'chase-ink-unlimited': [],
+  'chase-ink-premier': [],
+  // ── CHASE — UNITED BUSINESS ──────────────────────────────────────────────────
+  'united-business': [
+    { name: 'United Travel Credit', totalAmount: 100, period: 'ANNUAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Earned only AFTER 7 United flight purchases of $100+ each cardmember year (spend-gated). Awarded as United TravelBank credit.' },
+    { name: 'Rideshare Credit', totalAmount: 5, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $60/yr. Calendar year. Annual opt-in required.' },
+  ],
+  'united-club-business': [
+    { name: 'Global Entry / TSA PreCheck Credit', totalAmount: 100, period: 'QUADRENNIAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $100 every 4 years for Global Entry application fee (includes TSA PreCheck). Statement credit posted within 2–3 billing cycles.' },
+  ],
+  // ── CHASE — SOUTHWEST BUSINESS ───────────────────────────────────────────────
+  'southwest-performance-business': [
+    { name: 'Southwest Travel Credit', totalAmount: 250, period: 'SEMI_ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $500/yr. $250 each in Jan–Jun and Jul–Dec toward Southwest Airlines purchases.' },
+    { name: 'In-flight Wi-Fi Credit', totalAmount: 75, period: 'ANNUAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $75/yr as statement credits for in-flight Wi-Fi purchases on Southwest flights.' },
+    { name: 'Global Entry / TSA PreCheck Credit', totalAmount: 100, period: 'QUADRENNIAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $100 every 4 years for Global Entry application fee (includes TSA PreCheck).' },
+  ],
+  'southwest-premier-business': [],
+  // ── CHASE — MARRIOTT BUSINESS ────────────────────────────────────────────────
+  'marriott-bonvoy-business': [],
+  // ── CHASE — SOUTHWEST PERSONAL ───────────────────────────────────────────────
+  'southwest-priority': [
+    { name: 'Southwest Travel Credit', totalAmount: 75, period: 'ANNUAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $75/yr toward Southwest Airlines purchases. Applied as a statement credit.' },
+  ],
+  'southwest-premier': [],
+  'southwest-plus': [],
+  // ── HYATT ─────────────────────────────────────────────────────────────────────
+  'world-of-hyatt': [],
+  // ── MARRIOTT BONVOY (PERSONAL) ────────────────────────────────────────────────
+  'marriott-bonvoy-boundless': [],
+  'marriott-bonvoy-bold': [],
+  // ── IHG ───────────────────────────────────────────────────────────────────────
+  'ihg-one-rewards-premier': [
+    { name: 'Global Entry / TSA PreCheck Credit', totalAmount: 100, period: 'QUADRENNIAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $100 every 4 years for Global Entry application fee (includes TSA PreCheck).' },
+  ],
+  // ── AMAZON ────────────────────────────────────────────────────────────────────
+  'amazon-prime-rewards': [],
   // ── BILT ─────────────────────────────────────────────────────────────────────
   'bilt-blue': [],
   'bilt-obsidian': [

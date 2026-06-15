@@ -18,6 +18,8 @@ Several buttons have empty or no-op handlers (Edit card, Add a perk, Settings, N
 
 ### MISC
 Card page should have link to card listing?
+Notes/tooltips for cards (Lyft 5x for CSP, online groceries only)
+manually go through perks and multipliers
 
 ### need to add a ton more cards
 
