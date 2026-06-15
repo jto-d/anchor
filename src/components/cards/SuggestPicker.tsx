@@ -167,7 +167,7 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
                     >
                       <InfoOutlinedIcon sx={{ fontSize: 14, color: brand.anchor[600], mt: '1px', flexShrink: 0 }} />
                       <Typography sx={{ fontSize: '12.5px', lineHeight: 1.45, color: brand.anchor[800], letterSpacing: '-0.005em' }}>
-                        <Box component="strong" sx={{ fontWeight: 600 }}>To earn it · </Box>{reward.note}
+                        <Box component="strong" sx={{ fontWeight: 600 }}>Note · </Box>{reward.note}
                       </Typography>
                     </Box>
                   )}
