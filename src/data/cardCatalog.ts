@@ -8,7 +8,7 @@ export interface CardCatalogEntry {
   type: CardType
   network: string
   annualFee: number
-  rewards: { cat: CategoryKey; rate: number }[]
+  rewards: { cat: CategoryKey; rate: number; note?: string }[]
 }
 
 const WHITE = '#fff'
@@ -78,13 +78,14 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     network: 'Visa Signature',
     annualFee: 95,
     rewards: [
-      { cat: 'travel', rate: 2 },
+      { cat: 'travel', rate: 2, note: "5x on Lyft" },
       { cat: 'transit', rate: 2 },
-      { cat: 'hotels', rate: 2 },
+      { cat: 'hotels', rate: 2, note: "3x on Airbnb" },
+      { cat: 'gas', rate: 3 },
       { cat: 'dining', rate: 3 },
       { cat: 'streaming', rate: 3 },
       { cat: 'portal', rate: 5 },
-      { cat: 'groceries', rate: 3},
+      { cat: 'groceries', rate: 3, note: "Online groceries only"},
       { cat: 'base', rate: 1 },
     ],
   },

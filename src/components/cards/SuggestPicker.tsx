@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import Tooltip from '@mui/material/Tooltip'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { CatIcon } from './CatIcon'
 import { RateBadge } from './RateBadge'
 import { RewardIcon } from './RewardIcon'
@@ -96,58 +98,79 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
             </Eyebrow>
           </Box>
 
-          <Box sx={{ mt: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <Box sx={{ mt: '16px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {winners.map(({ card, reward }) => {
               const th = themeOf(card)
               return (
-                <Box key={card.id} sx={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                  <Box
-                    sx={{
-                      width: 52,
-                      height: 52,
-                      borderRadius: '13px',
-                      flexShrink: 0,
-                      background: th.gradient,
-                      display: 'grid',
-                      placeItems: 'center',
-                      boxShadow: brand.shadow.sm,
-                    }}
-                  >
-                    <RewardIcon name="anchor" size={22} strokeWidth={2} color="#fff" />
-                  </Box>
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Typography
+                <Box key={card.id} sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                    <Box
                       sx={{
-                        fontSize: '19px',
-                        fontWeight: 600,
-                        letterSpacing: '-0.015em',
-                        color: brand.anchor[900],
-                        lineHeight: 1.15,
+                        width: 52,
+                        height: 52,
+                        borderRadius: '13px',
+                        flexShrink: 0,
+                        background: th.gradient,
+                        display: 'grid',
+                        placeItems: 'center',
+                        boxShadow: brand.shadow.sm,
                       }}
                     >
-                      {card.name}
-                    </Typography>
-                    <Typography sx={{ fontSize: '12.5px', color: brand.anchor[700], mt: '2px' }}>
-                      {card.issuer} · {TYPE_META[card.type].label}
-                    </Typography>
+                      <RewardIcon name="anchor" size={22} strokeWidth={2} color="#fff" />
+                    </Box>
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Typography
+                        sx={{
+                          fontSize: '19px',
+                          fontWeight: 600,
+                          letterSpacing: '-0.015em',
+                          color: brand.anchor[900],
+                          lineHeight: 1.15,
+                        }}
+                      >
+                        {card.name}
+                      </Typography>
+                      <Typography sx={{ fontSize: '12.5px', color: brand.anchor[700], mt: '2px' }}>
+                        {card.issuer} · {TYPE_META[card.type].label}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'right', flexShrink: 0 }}>
+                      <Typography
+                        sx={{
+                          fontSize: '34px',
+                          fontWeight: 700,
+                          letterSpacing: '-0.03em',
+                          color: brand.anchor[800],
+                          fontVariantNumeric: 'tabular-nums',
+                          lineHeight: 1,
+                        }}
+                      >
+                        {fmtRate(reward)}
+                      </Typography>
+                      <Typography sx={{ fontSize: '11px', color: brand.anchor[700], mt: '3px', letterSpacing: '0.02em' }}>
+                        {card.type === 'points' ? 'points' : 'cash back'}
+                      </Typography>
+                    </Box>
                   </Box>
-                  <Box sx={{ textAlign: 'right', flexShrink: 0 }}>
-                    <Typography
+                  {reward.note && (
+                    <Box
                       sx={{
-                        fontSize: '34px',
-                        fontWeight: 700,
-                        letterSpacing: '-0.03em',
-                        color: brand.anchor[800],
-                        fontVariantNumeric: 'tabular-nums',
-                        lineHeight: 1,
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '8px',
+                        p: '9px 12px',
+                        borderRadius: '10px',
+                        background: 'rgba(255,255,255,0.62)',
+                        border: '1px solid',
+                        borderColor: brand.anchor[100],
                       }}
                     >
-                      {fmtRate(reward)}
-                    </Typography>
-                    <Typography sx={{ fontSize: '11px', color: brand.anchor[700], mt: '3px', letterSpacing: '0.02em' }}>
-                      {card.type === 'points' ? 'points' : 'cash back'}
-                    </Typography>
-                  </Box>
+                      <InfoOutlinedIcon sx={{ fontSize: 14, color: brand.anchor[600], mt: '1px', flexShrink: 0 }} />
+                      <Typography sx={{ fontSize: '12.5px', lineHeight: 1.45, color: brand.anchor[800], letterSpacing: '-0.005em' }}>
+                        <Box component="strong" sx={{ fontWeight: 600 }}>To earn it · </Box>{reward.note}
+                      </Typography>
+                    </Box>
+                  )}
                 </Box>
               )
             })}
@@ -181,7 +204,7 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
                           gap: '6px',
                           height: '28px',
                           pl: '8px',
-                          pr: '10px',
+                          pr: r.note ? '8px' : '10px',
                           borderRadius: '999px',
                           background: 'rgba(255,255,255,0.7)',
                           border: '1px solid',
@@ -203,6 +226,11 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
                         >
                           {fmtRate(r)}
                         </Typography>
+                        {r.note && (
+                          <Tooltip title={r.note} arrow placement="top">
+                            <InfoOutlinedIcon sx={{ fontSize: 12, color: brand.anchor[600], cursor: 'help' }} />
+                          </Tooltip>
+                        )}
                       </Box>
                     )
                   })}
@@ -275,6 +303,11 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
                   {card.issuer}{viaBase ? ' · base rate' : ''}
                 </Typography>
               </Box>
+              {reward.note && (
+                <Tooltip title={reward.note} arrow placement="top">
+                  <InfoOutlinedIcon sx={{ fontSize: 14, color: winner ? brand.anchor[600] : brand.zinc[400], cursor: 'help', flexShrink: 0 }} />
+                </Tooltip>
+              )}
               <RateBadge reward={reward} winner={winner} muted={!winner} size="sm" />
             </Box>
           ))}

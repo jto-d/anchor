@@ -3,7 +3,9 @@
 import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import Tooltip from '@mui/material/Tooltip'
 import AnchorIcon from '@mui/icons-material/Anchor'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { CatIcon } from './CatIcon'
 import { TypeBadge } from './TypeBadge'
 import IconButton from '@mui/material/IconButton'
@@ -79,21 +81,23 @@ export function CardListRow({ card, density = 'comfortable', onAction }: {
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '7px', flex: 1, minWidth: 0 }}>
         {rewards.map((r) => {
           const cat = CAT[r.cat]
+          const noted = !!r.note
           return (
             <Box
               key={r.cat}
-              title={`${fmtRate(r)} on ${cat.label}`}
+              title={noted ? undefined : `${fmtRate(r)} on ${cat.label}`}
               sx={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
                 height: '26px',
                 pl: '7px',
-                pr: '9px',
+                pr: noted ? '7px' : '9px',
                 borderRadius: '999px',
                 background: '#fff',
                 border: '1px solid',
-                borderColor: 'divider',
+                borderColor: noted ? 'primary.100' : 'divider',
+                boxShadow: noted ? `inset 0 0 0 1px ${brand.anchor[50]}` : 'none',
               }}
             >
               <CatIcon cat={cat} size={18} />
@@ -111,6 +115,11 @@ export function CardListRow({ card, density = 'comfortable', onAction }: {
               >
                 {fmtRate(r)}
               </Typography>
+              {noted && (
+                <Tooltip title={r.note} arrow placement="top">
+                  <InfoOutlinedIcon sx={{ fontSize: 13, color: 'primary.main', cursor: 'help' }} />
+                </Tooltip>
+              )}
             </Box>
           )
         })}

@@ -2,6 +2,8 @@
 
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import Tooltip from '@mui/material/Tooltip'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { RewardIcon } from './RewardIcon'
 import { CatIcon } from './CatIcon'
 import { Eyebrow } from '@/components/ui/Eyebrow'
@@ -151,21 +153,28 @@ export function SuggestMatrix({ cards }: SuggestMatrixProps) {
                         }}
                       >
                         {reward ? (
-                          <Typography
-                            sx={{
-                              fontSize: '14px',
-                              fontWeight: isWin ? 700 : 500,
-                              fontVariantNumeric: 'tabular-nums',
-                              letterSpacing: '-0.02em',
-                              color: isWin
-                                ? brand.anchor[700]
-                                : reward.viaBase
-                                ? brand.zinc[400]
-                                : 'text.secondary',
-                            }}
-                          >
-                            {fmtRate(reward)}
-                          </Typography>
+                          <Box sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                            <Typography
+                              sx={{
+                                fontSize: '14px',
+                                fontWeight: isWin ? 700 : 500,
+                                fontVariantNumeric: 'tabular-nums',
+                                letterSpacing: '-0.02em',
+                                color: isWin
+                                  ? brand.anchor[700]
+                                  : reward.viaBase
+                                  ? brand.zinc[400]
+                                  : 'text.secondary',
+                              }}
+                            >
+                              {fmtRate(reward)}
+                            </Typography>
+                            {reward.note && !reward.viaBase && (
+                              <Tooltip title={reward.note} arrow placement="top">
+                                <InfoOutlinedIcon sx={{ fontSize: 11, color: isWin ? brand.anchor[600] : brand.zinc[400], cursor: 'help' }} />
+                              </Tooltip>
+                            )}
+                          </Box>
                         ) : (
                           <Typography sx={{ color: brand.zinc[300] }}>—</Typography>
                         )}

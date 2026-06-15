@@ -21,6 +21,7 @@ export interface Reward {
   cat: CategoryKey
   rate: number
   unit: 'x' | '%'
+  note?: string
   viaBase?: boolean
 }
 
