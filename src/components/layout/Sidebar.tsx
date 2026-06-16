@@ -28,10 +28,10 @@ export const SIDEBAR_WIDTH = 220
 const NAV_ITEMS: { key: string; label: string; Icon: SvgIconComponent }[] = [
   { key: 'perks', label: 'Perks', Icon: CardGiftcardOutlinedIcon },
   { key: 'cards', label: 'Cards', Icon: CreditCardIcon },
+  { key: 'budgeting', label: 'Budgeting', Icon: PieChartOutlineIcon },
 ]
 
 const COMING_SOON_ITEMS: { key: string; label: string; Icon: SvgIconComponent }[] = [
-  { key: 'budgeting', label: 'Budgeting', Icon: PieChartOutlineIcon },
   { key: 'subscriptions', label: 'Subscriptions', Icon: RepeatIcon },
   { key: 'chatbot', label: 'Chatbot', Icon: ChatBubbleOutlineIcon },
 ]

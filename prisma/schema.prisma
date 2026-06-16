@@ -29,7 +29,108 @@ model User {
   email     String   @unique
   createdAt DateTime @default(now())
 
-  creditCards CreditCard[]
+  creditCards        CreditCard[]
+  incomeSources      IncomeSource[]
+  budgetGroups       BudgetGroup[]
+  savingsAccounts    SavingsAccount[]
+  savingsGoals       SavingsGoal[]
+  surplusAllocations SurplusAllocation[]
+}
+
+model IncomeSource {
+  id       String  @id @default(cuid())
+  userId   String
+  label    String
+  sub      String?
+  amount   Decimal @db.Decimal(10, 2)
+  position Int     @default(0)
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model BudgetGroup {
+  id         String           @id @default(cuid())
+  userId     String
+  label      String
+  icon       String
+  position   Int              @default(0)
+  user       User             @relation(fields: [userId], references: [id])
+  categories BudgetCategory[]
+}
+
+model BudgetCategory {
+  id       String         @id @default(cuid())
+  groupId  String
+  label    String
+  icon     String
+  budget   Decimal        @db.Decimal(10, 2) @default(0)
+  position Int            @default(0)
+  group    BudgetGroup    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  spends   MonthlySpend[]
+}
+
+model MonthlySpend {
+  id         String         @id @default(cuid())
+  categoryId String
+  year       Int
+  month      Int
+  amount     Decimal        @db.Decimal(10, 2)
+  category   BudgetCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, year, month])
+}
+
+model SavingsAccount {
+  id            String                @id @default(cuid())
+  userId        String
+  label         String
+  accountType   String
+  icon          String
+  monthly       Decimal               @db.Decimal(10, 2) @default(0)
+  annualLimit   Decimal?              @db.Decimal(10, 2)
+  position      Int                   @default(0)
+  user          User                  @relation(fields: [userId], references: [id])
+  contributions MonthlyContribution[]
+  goal          SavingsGoal?          @relation("LinkedAccount")
+}
+
+model MonthlyContribution {
+  id        String         @id @default(cuid())
+  accountId String
+  year      Int
+  month     Int
+  amount    Decimal        @db.Decimal(10, 2)
+  account   SavingsAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@unique([accountId, year, month])
+}
+
+model SavingsGoal {
+  id              String              @id @default(cuid())
+  userId          String
+  name            String
+  icon            String
+  target          Decimal?            @db.Decimal(10, 2)
+  base            Decimal             @db.Decimal(10, 2) @default(0)
+  targetYear      Int?
+  targetMonth     Int?
+  linkedAccountId String?             @unique
+  user            User                @relation(fields: [userId], references: [id])
+  linkedAccount   SavingsAccount?     @relation("LinkedAccount", fields: [linkedAccountId], references: [id])
+  allocations     SurplusAllocation[]
+}
+
+model SurplusAllocation {
+  id     String      @id @default(cuid())
+  goalId String
+  userId String
+  year   Int
+  month  Int
+  amount Decimal     @db.Decimal(10, 2)
+  goal   SavingsGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  user   User        @relation(fields: [userId], references: [id])
+
+  @@unique([goalId, year, month])
 }
 
 model CreditCard {

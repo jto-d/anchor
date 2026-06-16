@@ -9,5 +9,8 @@ import './perk/type'
 import './perk/queries'
 import './perkCredit/type'
 import './perkCredit/mutations'
+import './budget/types'
+import './budget/queries'
+import './budget/mutations'
 
 export const schema = builder.toSchema()

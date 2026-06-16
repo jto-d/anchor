@@ -14,6 +14,10 @@ import { LogCreditDialog } from '@/components/perks/LogCreditDialog'
 import { CardsView } from '@/components/cards/CardsView'
 import { AddCardDialog } from '@/components/cards/AddCardDialog'
 import { RemoveCardDialog } from '@/components/cards/RemoveCardDialog'
+import { BudgetView } from '@/components/budgeting/BudgetView'
+import { BudgetMonthStepper } from '@/components/budgeting/BudgetMonthStepper'
+import { stepMonth } from '@/components/budgeting/format'
+import { brand } from '@/lib/theme'
 import { CARD_CATALOG } from '@/data/cardCatalog'
 import type { Card, Perk } from '@/utils/types'
 import {
@@ -23,10 +27,14 @@ import {
   AddCardDocument,
 } from './me-view.queries'
 
-type Route = 'perks' | 'card' | 'cards'
+type Route = 'perks' | 'card' | 'cards' | 'budgeting'
 
 export function MeView() {
   const [route, setRoute] = useState<Route>('perks')
+  const [budgetSel, setBudgetSel] = useState(() => {
+    const now = new Date()
+    return { y: now.getFullYear(), m: now.getMonth() }
+  })
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
   const [dialogPerk, setDialogPerk] = useState<Perk | null>(null)
   const [addCardOpen, setAddCardOpen] = useState(false)
@@ -109,10 +117,11 @@ export function MeView() {
   return (
     <Box sx={{ display: 'flex', height: '100vh', bgcolor: 'background.default', color: 'text.primary' }}>
       <Sidebar
-        route={route === 'card' || route === 'cards' ? 'cards' : route}
+        route={route === 'card' ? 'cards' : route}
         userEmail={userEmail}
         onNavigate={(key) => {
           if (key === 'cards') setRoute('cards')
+          else if (key === 'budgeting') setRoute('budgeting')
           else setRoute('perks')
           setSelectedCardId(null)
         }}
@@ -141,6 +150,27 @@ export function MeView() {
                 if (action === 'remove') setPendingRemoveId(cardId)
               }}
             />
+          </>
+        ) : route === 'budgeting' ? (
+          <>
+            <Topbar
+              title="Budgeting"
+              subtitle="Plan the month, log what you spend, send the surplus to a goal."
+              rightSlot={
+                <BudgetMonthStepper
+                  sel={budgetSel}
+                  onStep={(dir) => {
+                    const now = new Date()
+                    setBudgetSel((prev) => {
+                      const next = stepMonth(prev.y, prev.m, dir)
+                      if (next.y > now.getFullYear() || (next.y === now.getFullYear() && next.m > now.getMonth())) return prev
+                      return next
+                    })
+                  }}
+                />
+              }
+            />
+            <BudgetView userEmail={userEmail} />
           </>
         ) : (
           <>

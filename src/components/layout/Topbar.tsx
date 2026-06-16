@@ -14,9 +14,10 @@ interface TopbarProps {
   title: string
   subtitle?: string
   onAddCard?: () => void
+  rightSlot?: React.ReactNode
 }
 
-export function Topbar({ title, subtitle, onAddCard }: TopbarProps) {
+export function Topbar({ title, subtitle, onAddCard, rightSlot }: TopbarProps) {
   return (
     <AppBar
       position="sticky"
@@ -79,6 +80,7 @@ export function Topbar({ title, subtitle, onAddCard }: TopbarProps) {
               Add a card
             </Button>
           )}
+          {rightSlot}
         </Box>
       </Toolbar>
     </AppBar>
