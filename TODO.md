@@ -17,9 +17,7 @@
 Several buttons have empty or no-op handlers (Edit card, Add a perk, Settings, Notifications). These are scattered as `// todo` comments in components rather than tracked anywhere. Should be converted to issues or a backlog.
 
 ### MISC
-ends soon pill with more fine tuned window
 Card page should have link to card listing?
-Notes/tooltips for cards (Lyft 5x for CSP, online groceries only)
 
 ### need to add a ton more cards
 
@@ -31,6 +29,9 @@ Subscription tracker
 Monthly budgeting/savings
  - Expected, acutal
   - could auto populate from bank (more likely manual for now)
+ - savings for specific things (money to buy a phone, etc.)
 Plaid integration
+Reminder to cancel a card on a specific date
+Bilt Calculator (could just be a link)
 
 Partner could also have cards?

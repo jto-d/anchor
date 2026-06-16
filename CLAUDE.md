@@ -19,28 +19,33 @@ pnpm codegen:watch     # graphql-codegen --watch (schema must already be current
 pnpm db:migrate        # prisma migrate dev (uses DIRECT_URL)
 pnpm db:seed           # prisma db seed → runs prisma/seed.ts via tsx
 pnpm db:studio         # prisma studio
+pnpm test              # vitest run — unit tests (src/utils/__tests__/)
+pnpm test:watch        # vitest watch mode
 ```
 
-There are no tests or linter wired up — `--no-eslint` was passed to `create-next-app`, and Next 16 removed `next lint` entirely. `postinstall` runs `prisma generate`.
+There is no linter wired up — `--no-eslint` was passed to `create-next-app`, and Next 16 removed `next lint` entirely. `postinstall` runs `prisma generate`. Unit tests do exist (vitest, `node` environment, `@` alias resolved in `vitest.config.ts`) but only cover pure logic in `src/utils/` (e.g. `perk.ts` cycle-window math) — no component or integration tests.
 
 ## App architecture
 
-The entire UI lives under `src/app/page.tsx` → `MeView` (client component). `MeView` owns all data fetching (urql), all mutations, and a lightweight client-side router with three routes: `'perks'` (dashboard), `'card'` (single card detail), and `'cards'` (wallet + suggest engine). Route transitions happen via `useState`; there is no Next.js routing between pages.
+`src/app/page.tsx` is a server component: it calls `auth()` and redirects to `/login` if there's no session, otherwise renders `MeView`. The actual UI lives in `src/app/me-view.tsx` → `MeView` (client component). `MeView` owns all data fetching (urql), all mutations, and a lightweight client-side router with three routes: `'perks'` (dashboard), `'card'` (single card detail), and `'cards'` (wallet + suggest engine). Route transitions happen via `useState`; there is no Next.js routing between pages.
 
 **Component tree:**
 - `MeView` — root state, urql queries/mutations, route switch
-  - `Sidebar` + `Topbar` — chrome
+  - `Sidebar` + `Topbar` — chrome (nav items not yet built wrap in `ComingSoon`)
   - `PerksDashboard` — default view, lists perks across all cards
   - `CardDetail` — per-card perk list and log-credit actions
   - `CardsView` — wallet list + suggestion engine (SuggestPicker / SuggestMatrix)
   - `AddCardDialog` — adds a card from `CARD_CATALOG`
+  - `RemoveCardDialog` — confirms and runs the `removeCard` mutation
   - `LogCreditDialog` — logs a perk credit
 
 **DB Card → UI shape:** `dbCardToRewardCard()` in `src/utils/cardRewards.ts` merges a DB `CreditCard` (id, name, issuer, lastFour, design) with the static `CARD_CATALOG` entry for its `design` slug to produce `RewardCardData` (adds type, network, rewards). The DB never stores multipliers — they come entirely from the catalog.
 
+**Annual fee / net value:** `src/utils/card.ts` derives `cardAnnualFee` (looked up from `CARD_CATALOG[card.design].annualFee`, not stored in the DB), `cardNet` (YTD captured value minus the fee), and `cardVerdict` (`noFee` | `worthIt` | `marginal` | `reviewIt`, thresholded on `cardNet`). `CardValue.tsx` and `StatusChip` render these on the dashboard.
+
 ## Static data catalogs
 
-`src/data/cardCatalog.ts` — the master product registry. Each key is a `design` slug (e.g. `chase-sapphire-preferred`). Entries define `name`, `issuer`, gradient/text for rendering, `type` (cashback | points), `network`, and `rewards` (category → multiplier). **Multipliers live here only**, not in the DB.
+`src/data/cardCatalog.ts` — the master product registry. Each key is a `design` slug (e.g. `chase-sapphire-preferred`). Entries define `name`, `issuer`, gradient/text for rendering, `type` (cashback | points), `network`, `annualFee` (dollars/yr, drives the verdict calc above), and `rewards` (category → multiplier, with an optional per-entry `note` — e.g. caps or exclusions — surfaced as an info-icon tooltip on `RewardCard`/`SuggestMatrix`/`SuggestPicker`). **Multipliers and fees live here only**, not in the DB.
 
 `src/data/perkCatalog.ts` — perk templates keyed by the same design slug. When `addCard` runs, it bulk-creates the template perks from this file onto the new card. Users can log credits against those perks but cannot create or edit perks or multipliers through the UI.
 
@@ -61,8 +66,8 @@ The chain is one-way and must run in this order whenever Prisma models or Pothos
 `src/graphql/schema.ts` is the entry point — it imports all type/query/mutation files for side effects and then calls `builder.toSchema()`. Each domain has its own subfolder:
 
 - `src/graphql/user/` — type, queries (`me`)
-- `src/graphql/creditCard/` — type, queries, mutations (`addCard`)
-- `src/graphql/perk/` — type, queries
+- `src/graphql/creditCard/` — type, queries, mutations (`addCard`, `removeCard`)
+- `src/graphql/perk/` — type, queries (`perks`, `perkCredits` — both scoped to `ctx.userId` via a `creditCard: { userId }` filter)
 - `src/graphql/perkCredit/` — type, mutations (`logPerkCredit`)
 
 ## Pothos conventions
@@ -73,7 +78,12 @@ The chain is one-way and must run in this order whenever Prisma models or Pothos
 
 ## Auth / user context
 
-There is no real auth. The Yoga context in `src/app/api/graphql/route.ts` returns a hardcoded `{ userId: '<cuid>' }`. All queries and mutations resolve against this single user. Any future auth system would replace that context factory.
+Real auth via **Auth.js v5** (`next-auth@5.0.0-beta.31`), Google OAuth only, JWT session strategy. `src/auth.ts` exports `{ handlers, auth, signIn, signOut }`; `src/app/api/auth/[...nextauth]/route.ts` re-exports `handlers` as `GET`/`POST`. On first sign-in the `jwt` callback upserts a `User` row by `profile.email` and stamps the Prisma `id` onto the token/session as `userId`.
+
+- **Page-level gate** — `src/app/page.tsx` (server component) calls `auth()` and `redirect('/login')` if there's no `session.userId`. `/login` (`src/app/login/page.tsx`) is a client component that calls `signIn('google', { callbackUrl: '/' })`.
+- **Provider** — `AuthSessionProvider` (`src/app/session-provider.tsx`) wraps `next-auth/react`'s `SessionProvider` and sits inside `ThemeProvider`/above `Providers` (urql) in `layout.tsx`.
+- **GraphQL context** — `src/app/api/graphql/route.ts` reads the JWT directly with `getToken({ req: request, secret: process.env.AUTH_SECRET })` rather than calling `auth()` — Yoga's request handling doesn't reliably preserve the async-context `headers()` relies on. Throws `Unauthorized` if there's no `token.userId`. All resolvers scope their Prisma queries through `ctx.userId` (see `me`, `perks`, `perkCredits`, `addCard`, `removeCard`, `logPerkCredit`).
+- **Env vars** — `AUTH_SECRET` (generate with `openssl rand -base64 32`), `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, all in `.env`.
 
 ## Database access
 
@@ -100,11 +110,11 @@ The UI is built entirely with **Material UI v9** (`@mui/material`, `@mui/icons-m
 - **Theme** — `src/lib/theme.ts` holds the single `createTheme`: the "Anchor" brand (teal `primary`, Switzer typography, soft radii). It also exports a `brand` object of raw scales (anchor/zinc, `shadow`, `accentSoft`). Use theme tokens (`sx`, `palette.*`) first; use `brand` only when no token fits.
 - **Card designs** — `src/utils/cardDesigns.ts` maps a `design` slug to `{ gradient, text }`. `resolveCardDesign(slug)` falls back to the teal design. `CardTile` drives every on-surface tint from the single `text` color via `alpha()`.
 - **Providers** — `src/app/layout.tsx` wraps the tree in `AppRouterCacheProvider` (from `@mui/material-nextjs/v16-appRouter` — import path is version-pinned) → `ThemeProvider` → `CssBaseline`. Drop the cache provider and you get hydration class mismatches.
-- **Icons** come from `@mui/icons-material` at call sites. Shared primitives live in `src/components/ui/`: `Eyebrow` (themed Typography) and `StatusChip` (perk StatusKey → colored Chip).
+- **Icons** come from `@mui/icons-material` at call sites. Shared primitives live in `src/components/ui/`: `Eyebrow` (themed Typography), `StatusChip` (perk `StatusKey`/`VerdictKey` → colored Chip), `Tooltip` (themed wrapper over MUI's, with `dark`/`light`/`teal` variants and an `auto` placement — see its own doc comment), and `ComingSoon` (wraps any element in a "Coming soon" `Tooltip` + dims it via `opacity`/`pointerEvents: 'none'` — used for not-yet-built nav items in `Sidebar`/`Topbar`).
 
 ## Verification
 
-The app requires Google OAuth to reach the dashboard — headless browser screenshots are not possible. Use `pnpm build` (runs full `tsc` type-check) as the verification signal for UI changes. The `/verify` skill will SKIP browser steps accordingly.
+Real Google OAuth now gates `/` (see Auth / user context) — headless browser screenshots can't get past the login redirect without real credentials. Use `pnpm build` (runs full `tsc` type-check) as the verification signal for UI changes; `pnpm test` for logic changes under `src/utils/`. The `/verify` skill will SKIP browser steps accordingly.
 
 ## When something looks off
 
