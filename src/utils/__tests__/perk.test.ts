@@ -244,21 +244,37 @@ describe('perkStatus', () => {
     expect(perkStatus(perk, null, NOW).key).toBe('partial')
   })
 
-  it('returns expiring for MONTHLY perk with no credits this month', () => {
+  it('returns open for MONTHLY perk with no credits, outside the final 5 days', () => {
+    const perk = p({ period: 'MONTHLY', totalAmount: '25' })
+    expect(perkStatus(perk, null, NOW).key).toBe('open')
+  })
+
+  it('returns expiring for MONTHLY perk with no credits inside the final 5 days', () => {
+    const lateJune = new Date(2026, 5, 29) // Jun 29 — within 5 days of the Jul 1 reset
     const perk = p({
       period: 'MONTHLY',
       totalAmount: '25',
       perkCredits: [credit('2026-05-15', '25')],
     })
-    expect(perkStatus(perk, null, NOW).key).toBe('expiring')
+    expect(perkStatus(perk, null, lateJune).key).toBe('expiring')
   })
 
-  it('returns partial for MONTHLY perk with some credits this month', () => {
+  it('returns partial for MONTHLY perk with some credits this month, outside the final 5 days', () => {
     const perk = p({
       period: 'MONTHLY',
       totalAmount: '25',
       perkCredits: [credit('2026-06-01', '10')],
     })
     expect(perkStatus(perk, null, NOW).key).toBe('partial')
+  })
+
+  it('returns expiring for ANNUAL perk inside its final calendar month, even with partial progress', () => {
+    const december = new Date(2026, 11, 15) // within the final month before the Jan 1 2027 reset
+    const perk = p({
+      period: 'ANNUAL',
+      totalAmount: '100',
+      perkCredits: [credit('2026-03-01', '50')],
+    })
+    expect(perkStatus(perk, null, december).key).toBe('expiring')
   })
 })

@@ -122,6 +122,22 @@ export function nextResetDate(
   return cycleWindow(perk, cardOpenedDate, now).end
 }
 
+// Final stretch of a cycle: last 5 days for MONTHLY, last calendar month for everything else.
+function isInResetWindow(
+  perk: { period: string; resetType: string },
+  cardOpenedDate?: string | null,
+  now = new Date()
+): boolean {
+  const { end } = cycleWindow(perk, cardOpenedDate, now)
+  const windowStart = new Date(end)
+  if (perk.period === 'MONTHLY') {
+    windowStart.setDate(windowStart.getDate() - 5)
+  } else {
+    windowStart.setMonth(windowStart.getMonth() - 1)
+  }
+  return now >= windowStart
+}
+
 // ── Credit aggregation ────────────────────────────────────────────────────────
 
 export function capturedInCycle(perk: Perk, cardOpenedDate?: string | null, now = new Date()): number {
@@ -168,7 +184,7 @@ export function perkStatus(
 ): { key: StatusKey; label: string } {
   const pct = perkPct(perk, cardOpenedDate, now)
   if (pct >= 1) return { key: 'captured', label: 'Captured' }
-  if (perk.period === 'MONTHLY' && capturedThisMonth(perk, now) === 0) return { key: 'expiring', label: 'Resets soon' }
+  if (isInResetWindow(perk, cardOpenedDate, now)) return { key: 'expiring', label: 'Resets soon' }
   if (pct === 0) return { key: 'open', label: 'Available' }
   return { key: 'partial', label: 'In progress' }
 }
