@@ -1,6 +1,94 @@
 import { builder } from '../builder'
 
-// ---- Nested shapes -------------------------------------------------------
+// ---- Year query shapes ---------------------------------------------------
+
+export const MonthlySpendItemPayload = builder.objectRef<{
+  categoryId: string
+  amount: string
+}>('MonthlySpendItemPayload')
+
+builder.objectType(MonthlySpendItemPayload, {
+  fields: (t) => ({
+    categoryId: t.string({ resolve: (x) => x.categoryId }),
+    amount: t.string({ resolve: (x) => x.amount }),
+  }),
+})
+
+export const MonthlyContribItemPayload = builder.objectRef<{
+  accountId: string
+  amount: string
+}>('MonthlyContribItemPayload')
+
+builder.objectType(MonthlyContribItemPayload, {
+  fields: (t) => ({
+    accountId: t.string({ resolve: (x) => x.accountId }),
+    amount: t.string({ resolve: (x) => x.amount }),
+  }),
+})
+
+export const SurplusAllocItemPayload = builder.objectRef<{
+  goalId: string
+  amount: string
+}>('SurplusAllocItemPayload')
+
+builder.objectType(SurplusAllocItemPayload, {
+  fields: (t) => ({
+    goalId: t.string({ resolve: (x) => x.goalId }),
+    amount: t.string({ resolve: (x) => x.amount }),
+  }),
+})
+
+export const BudgetMonthDataPayload = builder.objectRef<{
+  month: number
+  hasData: boolean
+  categorySpends: { categoryId: string; amount: string }[]
+  savingsContribs: { accountId: string; amount: string }[]
+  surplusAllocations: { goalId: string; amount: string }[]
+}>('BudgetMonthDataPayload')
+
+builder.objectType(BudgetMonthDataPayload, {
+  fields: (t) => ({
+    month: t.int({ resolve: (x) => x.month }),
+    hasData: t.boolean({ resolve: (x) => x.hasData }),
+    categorySpends: t.field({ type: [MonthlySpendItemPayload], resolve: (x) => x.categorySpends }),
+    savingsContribs: t.field({ type: [MonthlyContribItemPayload], resolve: (x) => x.savingsContribs }),
+    surplusAllocations: t.field({ type: [SurplusAllocItemPayload], resolve: (x) => x.surplusAllocations }),
+  }),
+})
+
+export const BudgetYearPayload = builder.objectRef<{
+  incomeSources: { id: string; label: string; sub: string | null; amount: string; position: number }[]
+  groups: {
+    id: string; label: string; icon: string; position: number;
+    categories: { id: string; label: string; icon: string; budget: string; position: number; monthSpent: string }[]
+  }[]
+  savings: {
+    id: string; label: string; accountType: string; icon: string; monthly: string;
+    annualLimit: string | null; position: number; monthContrib: string; ytd: string;
+  }[]
+  goals: {
+    id: string; name: string; icon: string; target: string | null; base: string;
+    targetYear: number | null; targetMonth: number | null; running: string; monthAllocated: string;
+  }[]
+  monthlyData: {
+    month: number; hasData: boolean;
+    categorySpends: { categoryId: string; amount: string }[];
+    savingsContribs: { accountId: string; amount: string }[];
+    surplusAllocations: { goalId: string; amount: string }[];
+  }[]
+}>('BudgetYearPayload')
+
+builder.objectType(BudgetYearPayload, {
+  fields: (t) => ({
+    incomeSources: t.field({ type: [IncomeSourcePayload], resolve: (p) => p.incomeSources }),
+    groups: t.field({ type: [BudgetGroupPayload], resolve: (p) => p.groups }),
+    savings: t.field({ type: [SavingsAccountPayload], resolve: (p) => p.savings }),
+    goals: t.field({ type: [SavingsGoalPayload], resolve: (p) => p.goals }),
+    monthlyData: t.field({ type: [BudgetMonthDataPayload], resolve: (p) => p.monthlyData }),
+  }),
+})
+
+// ---- Month query shapes --------------------------------------------------
 
 export const BudgetCategoryPayload = builder.objectRef<{
   id: string

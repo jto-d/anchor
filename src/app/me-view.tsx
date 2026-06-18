@@ -15,6 +15,7 @@ import { CardsView } from '@/components/cards/CardsView'
 import { AddCardDialog } from '@/components/cards/AddCardDialog'
 import { RemoveCardDialog } from '@/components/cards/RemoveCardDialog'
 import { BudgetView } from '@/components/budgeting/BudgetView'
+import { YearView } from '@/components/budgeting/YearView'
 import { BudgetMonthStepper } from '@/components/budgeting/BudgetMonthStepper'
 import { stepMonth } from '@/components/budgeting/format'
 import { brand } from '@/lib/theme'
@@ -31,6 +32,7 @@ type Route = 'perks' | 'card' | 'cards' | 'budgeting'
 
 export function MeView() {
   const [route, setRoute] = useState<Route>('perks')
+  const [budgetView, setBudgetView] = useState<'monthly' | 'yearly'>('monthly')
   const [budgetSel, setBudgetSel] = useState(() => {
     const now = new Date()
     return { y: now.getFullYear(), m: now.getMonth() }
@@ -157,20 +159,76 @@ export function MeView() {
               title="Budgeting"
               subtitle="Plan the month, log what you spend, send the surplus to a goal."
               rightSlot={
-                <BudgetMonthStepper
-                  sel={budgetSel}
-                  onStep={(dir) => {
-                    const now = new Date()
-                    setBudgetSel((prev) => {
-                      const next = stepMonth(prev.y, prev.m, dir)
-                      if (next.y > now.getFullYear() || (next.y === now.getFullYear() && next.m > now.getMonth())) return prev
-                      return next
-                    })
-                  }}
-                />
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  {/* Monthly / Yearly toggle */}
+                  <Box sx={{ display: 'inline-flex', p: '3px', gap: '2px', bgcolor: 'grey.100', border: '1px solid', borderColor: 'divider', borderRadius: '9px' }}>
+                    {(['monthly', 'yearly'] as const).map((v) => (
+                      <Box
+                        key={v}
+                        component="button"
+                        onClick={() => setBudgetView(v)}
+                        sx={{
+                          display: 'inline-flex', alignItems: 'center', height: 28, px: '12px',
+                          border: 'none', cursor: 'pointer', borderRadius: '7px',
+                          fontFamily: 'inherit', fontSize: 13, fontWeight: 600,
+                          bgcolor: budgetView === v ? '#fff' : 'transparent',
+                          color: budgetView === v ? 'text.primary' : 'text.secondary',
+                          boxShadow: budgetView === v ? brand.shadow.sm : 'none',
+                          transition: 'background 150ms ease, color 150ms ease',
+                        }}
+                      >
+                        {v === 'monthly' ? 'Monthly' : 'Yearly'}
+                      </Box>
+                    ))}
+                  </Box>
+
+                  {budgetView === 'monthly' ? (
+                    <BudgetMonthStepper
+                      sel={budgetSel}
+                      onStep={(dir) => {
+                        const now = new Date()
+                        setBudgetSel((prev) => {
+                          const next = stepMonth(prev.y, prev.m, dir)
+                          if (next.y > now.getFullYear() || (next.y === now.getFullYear() && next.m > now.getMonth())) return prev
+                          return next
+                        })
+                      }}
+                    />
+                  ) : (
+                    /* Year stepper */
+                    <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: '2px', p: '3px', bgcolor: 'grey.100', border: '1px solid', borderColor: 'divider', borderRadius: '9px' }}>
+                      <Box
+                        component="button"
+                        onClick={() => setBudgetSel((prev) => ({ ...prev, y: prev.y - 1 }))}
+                        sx={{ width: 32, height: 32, display: 'grid', placeItems: 'center', border: 'none', borderRadius: '7px', cursor: 'pointer', color: 'text.secondary', bgcolor: 'transparent', '&:hover': { bgcolor: '#fff', boxShadow: brand.shadow.sm } }}
+                      >
+                        ‹
+                      </Box>
+                      <Box sx={{ minWidth: 52, textAlign: 'center', fontSize: 13.5, fontWeight: 600, letterSpacing: '-0.01em', fontVariantNumeric: 'tabular-nums' }}>
+                        {budgetSel.y}
+                      </Box>
+                      <Box
+                        component="button"
+                        onClick={() => setBudgetSel((prev) => {
+                          const now = new Date()
+                          if (prev.y >= now.getFullYear()) return prev
+                          return { ...prev, y: prev.y + 1 }
+                        })}
+                        disabled={budgetSel.y >= new Date().getFullYear()}
+                        sx={{ width: 32, height: 32, display: 'grid', placeItems: 'center', border: 'none', borderRadius: '7px', cursor: budgetSel.y >= new Date().getFullYear() ? 'default' : 'pointer', color: budgetSel.y >= new Date().getFullYear() ? 'text.disabled' : 'text.secondary', bgcolor: 'transparent', '&:hover': { bgcolor: budgetSel.y >= new Date().getFullYear() ? 'transparent' : '#fff' } }}
+                      >
+                        ›
+                      </Box>
+                    </Box>
+                  )}
+                </Box>
               }
             />
-            <BudgetView userEmail={userEmail} />
+            {budgetView === 'monthly' ? (
+              <BudgetView userEmail={userEmail} />
+            ) : (
+              <YearView year={budgetSel.y} />
+            )}
           </>
         ) : (
           <>

@@ -1,6 +1,6 @@
 import { builder } from '../builder'
 import { prisma } from '@/lib/prisma'
-import { BudgetMonthPayload } from './types'
+import { BudgetMonthPayload, BudgetYearPayload } from './types'
 import {
   DEFAULT_GROUPS,
   DEFAULT_INCOME,
@@ -135,6 +135,90 @@ builder.queryField('budgetMonth', (t) =>
       })
 
       return { incomeSources: incomeSourcesOut, groups: groupsOut, savings: savingsOut, goals: goalsOut }
+    },
+  })
+)
+
+builder.queryField('budgetYear', (t) =>
+  t.field({
+    type: BudgetYearPayload,
+    args: { year: t.arg.int({ required: true }) },
+    resolve: async (_root, { year }, ctx) => {
+      const userId = ctx.userId
+
+      const [incomeSources, groups, savings, goals] = await Promise.all([
+        prisma.incomeSource.findMany({ where: { userId }, orderBy: { position: 'asc' } }),
+        prisma.budgetGroup.findMany({
+          where: { userId },
+          orderBy: { position: 'asc' },
+          include: {
+            categories: {
+              orderBy: { position: 'asc' },
+              include: { spends: { where: { year } } },
+            },
+          },
+        }),
+        prisma.savingsAccount.findMany({
+          where: { userId },
+          orderBy: { position: 'asc' },
+          include: { contributions: { where: { year } } },
+        }),
+        prisma.savingsGoal.findMany({
+          where: { userId },
+          include: { allocations: { where: { year } } },
+        }),
+      ])
+
+      const incomeSourcesOut = incomeSources.map((s) => ({
+        id: s.id, label: s.label, sub: s.sub,
+        amount: s.amount.toString(), position: s.position,
+      }))
+
+      const groupsOut = groups.map((g) => ({
+        id: g.id, label: g.label, icon: g.icon, position: g.position,
+        categories: g.categories.map((c) => ({
+          id: c.id, label: c.label, icon: c.icon,
+          budget: c.budget.toString(), position: c.position, monthSpent: '0',
+        })),
+      }))
+
+      const savingsOut = savings.map((s) => ({
+        id: s.id, label: s.label, accountType: s.accountType, icon: s.icon,
+        monthly: s.monthly.toString(), annualLimit: s.annualLimit?.toString() ?? null,
+        position: s.position, monthContrib: '0', ytd: '0',
+      }))
+
+      // Goals: running = base + all allocations this year
+      const goalsOut = goals.map((g) => {
+        const running = Number(g.base) + g.allocations.reduce((sum, a) => sum + Number(a.amount), 0)
+        return {
+          id: g.id, name: g.name, icon: g.icon, target: g.target?.toString() ?? null,
+          base: g.base.toString(), targetYear: g.targetYear, targetMonth: g.targetMonth,
+          running: running.toString(), monthAllocated: '0',
+        }
+      })
+
+      // Per-month data for all 12 months of the requested year
+      const monthlyData = Array.from({ length: 12 }, (_, month) => {
+        const categorySpends = groups.flatMap((g) =>
+          g.categories.flatMap((c) => {
+            const spend = c.spends.find((s) => s.month === month)
+            return spend ? [{ categoryId: c.id, amount: spend.amount.toString() }] : []
+          })
+        )
+        const savingsContribs = savings.flatMap((s) => {
+          const contrib = s.contributions.find((c) => c.month === month)
+          return contrib ? [{ accountId: s.id, amount: contrib.amount.toString() }] : []
+        })
+        const surplusAllocations = goals.flatMap((g) => {
+          const alloc = g.allocations.find((a) => a.month === month)
+          return alloc ? [{ goalId: g.id, amount: alloc.amount.toString() }] : []
+        })
+        const hasData = categorySpends.length > 0 || savingsContribs.length > 0
+        return { month, hasData, categorySpends, savingsContribs, surplusAllocations }
+      })
+
+      return { incomeSources: incomeSourcesOut, groups: groupsOut, savings: savingsOut, goals: goalsOut, monthlyData }
     },
   })
 )

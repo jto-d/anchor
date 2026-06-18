@@ -21,6 +21,9 @@ import TargetIcon from '@mui/icons-material/TrackChangesOutlined'
 import SparklesIcon from '@mui/icons-material/AutoAwesomeOutlined'
 import BanknoteIcon from '@mui/icons-material/PaidOutlined'
 import HeartPulseIcon from '@mui/icons-material/MonitorHeartOutlined'
+import TrendingUpIcon from '@mui/icons-material/TrendingUpOutlined'
+import BalanceIcon from '@mui/icons-material/BalanceOutlined'
+import CalendarIcon from '@mui/icons-material/CalendarMonthOutlined'
 import type { SxProps } from '@mui/material/styles'
 
 const ICON_MAP: Record<string, React.ElementType> = {
@@ -49,6 +52,9 @@ const ICON_MAP: Record<string, React.ElementType> = {
   heartPulse: HeartPulseIcon,
   car: DirectionsCarIcon,
   palmtree: BeachAccessIcon,
+  trendingUp: TrendingUpIcon,
+  scale: BalanceIcon,
+  calendar: CalendarIcon,
 }
 
 const TONE_STYLES = {

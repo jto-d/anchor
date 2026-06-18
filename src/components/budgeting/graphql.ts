@@ -53,6 +53,26 @@ export const BudgetMonthDocument = graphql(`
   }
 `)
 
+export const BudgetYearDocument = graphql(`
+  query BudgetYear($year: Int!) {
+    budgetYear(year: $year) {
+      incomeSources { id label sub amount position }
+      groups {
+        id label icon position
+        categories { id label icon budget position }
+      }
+      savings { id label accountType icon monthly annualLimit position }
+      goals { id name icon target base targetYear targetMonth running }
+      monthlyData {
+        month hasData
+        categorySpends { categoryId amount }
+        savingsContribs { accountId amount }
+        surplusAllocations { goalId amount }
+      }
+    }
+  }
+`)
+
 export const SetIncomeAmountDocument = graphql(`mutation SetIncomeAmount($id: String!, $amount: Float!) { setIncomeAmount(id: $id, amount: $amount) }`)
 export const AddIncomeSourceDocument = graphql(`mutation AddIncomeSource($label: String!, $amount: Float!) { addIncomeSource(label: $label, amount: $amount) }`)
 export const RemoveIncomeSourceDocument = graphql(`mutation RemoveIncomeSource($id: String!) { removeIncomeSource(id: $id) }`)
