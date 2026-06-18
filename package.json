@@ -39,6 +39,9 @@
     "urql": "^5.0.2",
     "ws": "^8.21.0"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@prisma/engines", "esbuild", "prisma", "sharp"]
+  },
   "devDependencies": {
     "@graphql-codegen/cli": "^7.1.0",
     "@graphql-codegen/client-preset": "^6.0.1",
