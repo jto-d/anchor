@@ -54,3 +54,6 @@ steps:
 images:
   - $_REGION-docker.pkg.dev/$PROJECT_ID/$_AR_REPO/$_SERVICE:$COMMIT_SHA
   - $_REGION-docker.pkg.dev/$PROJECT_ID/$_AR_REPO/$_SERVICE:latest
+
+options:
+  logging: CLOUD_LOGGING_ONLY
