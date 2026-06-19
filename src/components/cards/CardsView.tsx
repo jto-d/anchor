@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import { Segmented } from './Segmented'
+import { Segmented } from '@/components/ui/Segmented'
 import { CardListRow } from './RewardCard'
 import { SuggestPicker } from './SuggestPicker'
 import { SuggestMatrix } from './SuggestMatrix'

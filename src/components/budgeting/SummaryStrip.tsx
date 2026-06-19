@@ -2,7 +2,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { brand } from '@/lib/theme'
 import { Eyebrow } from '@/components/ui/Eyebrow'
-import { SurfaceCard } from './SurfaceCard'
+import { SurfaceCard } from '@/components/ui/SurfaceCard'
 import { fmtMoney, fmtSigned } from '@/utils/format'
 import type { Totals } from '@/utils/budget'
 

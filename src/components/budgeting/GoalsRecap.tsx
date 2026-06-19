@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { CatGlyph } from '@/components/ui/CatGlyph'
-import { SurfaceCard } from './SurfaceCard'
+import { SurfaceCard } from '@/components/ui/SurfaceCard'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { brand } from '@/lib/theme'
 import { fmtMoney, monthShort, clamp01 } from '@/utils/format'
