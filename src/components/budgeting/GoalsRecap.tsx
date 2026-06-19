@@ -2,7 +2,8 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { CatGlyph } from '@/components/ui/CatGlyph'
 import { SurfaceCard } from './SurfaceCard'
-import { ThinProgressBar } from './ThinProgressBar'
+import { ProgressBar } from '@/components/ui/ProgressBar'
+import { brand } from '@/lib/theme'
 import { fmtMoney, monthShort, clamp01 } from '@/utils/format'
 import type { GoalData } from '@/utils/budget'
 
@@ -30,7 +31,7 @@ export function GoalsRecap({ goals }: { goals: GoalData[] }) {
                 {Math.round(ratio * 100)}%
               </Typography>
             </Box>
-            <ThinProgressBar value={ratio} tone={done ? 'pos' : 'accent'} height={5} />
+            <ProgressBar value={ratio} color={brand.anchor[600]} thin />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: '7px' }}>
               <Typography sx={{ fontSize: 11.5, color: 'text.secondary', fontVariantNumeric: 'tabular-nums' }}>
                 {fmtMoney(current)}

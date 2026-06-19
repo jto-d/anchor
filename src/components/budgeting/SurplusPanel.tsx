@@ -5,7 +5,7 @@ import { brand } from '@/lib/theme'
 import { CatGlyph } from '@/components/ui/CatGlyph'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { SurfaceCard } from './SurfaceCard'
-import { ThinProgressBar } from './ThinProgressBar'
+import { ProgressBar } from '@/components/ui/ProgressBar'
 import { GoalAllocRow } from './GoalAllocRow'
 import { fmtMoney } from '@/utils/format'
 import type { GoalData, MonthSel, Totals } from '@/utils/budget'
@@ -61,7 +61,7 @@ export function SurplusPanel({ goals, totals, sel, onSet }: SurplusPanelProps) {
       {active ? (
         <>
           <Box sx={{ px: 2.75, pt: 1.75 }}>
-            <ThinProgressBar value={baseSurplus > 0 ? allocated / baseSurplus : 0} tone="amber" height={6} />
+            <ProgressBar value={baseSurplus > 0 ? allocated / baseSurplus : 0} color={allocated > baseSurplus * 1.001 ? brand.red[500] : brand.gold[500]} thin sx={{ height: 6 }} />
             {unallocated > 0 ? (
               <Typography sx={{ fontSize: 12, color: 'text.secondary', mt: '9px', mb: '2px' }}>
                 {fmtMoney(unallocated)} still on the table — assign it to a goal so it doesn't drift.

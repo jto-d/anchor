@@ -8,7 +8,7 @@ import { brand } from '@/lib/theme'
 import { CatGlyph } from '@/components/ui/CatGlyph'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { SurfaceCard } from './SurfaceCard'
-import { ThinProgressBar } from './ThinProgressBar'
+import { ProgressBar } from '@/components/ui/ProgressBar'
 import { fmtMoney, fmtSigned, clamp01, monthShort } from '@/utils/format'
 import { useBudgetYear } from '@/hooks/useBudgetYear'
 import type { YearMonth, CatYearData, SavingsYearData, GoalYearData, YearAnnual } from '@/hooks/useBudgetYear'
@@ -409,7 +409,7 @@ function CategoryTotals({ catYear, total }: { catYear: CatYearData[]; total: num
                 <Typography sx={{ fontSize: 11, color: 'text.disabled' }}>{c.group}</Typography>
               </Box>
               <Box sx={{ mt: '7px', maxWidth: 360 }}>
-                <ThinProgressBar value={c.total / max} tone="accent" height={5} />
+                <ProgressBar value={c.total / max} color={brand.anchor[600]} thin />
               </Box>
             </Box>
             <Box sx={{ textAlign: 'right', flexShrink: 0, minWidth: 92 }}>
@@ -443,7 +443,7 @@ function SavingsYear({ savYear, total }: { savYear: SavingsYearData[]; total: nu
 
       {savYear.map((sv, i) => {
         const lr = sv.annualLimit ? sv.ytd / sv.annualLimit : 0
-        const limitTone = lr >= 1 ? 'red' : lr >= 0.85 ? 'amber' : 'pos'
+        const limitBarColor = lr >= 1 ? brand.red[500] : lr >= 0.85 ? brand.gold[500] : brand.anchor[600]
         const limitColor = lr >= 1 ? brand.red[600] : lr >= 0.85 ? brand.amber[700] : 'text.secondary'
 
         return (
@@ -465,7 +465,7 @@ function SavingsYear({ savYear, total }: { savYear: SavingsYearData[]; total: nu
                     {fmtMoney(sv.ytd)} of {fmtMoney(sv.annualLimit)}
                   </Typography>
                 </Box>
-                <ThinProgressBar value={clamp01(lr)} tone={limitTone} height={4} />
+                <ProgressBar value={lr} color={limitBarColor} thin sx={{ height: 4 }} />
               </Box>
             )}
           </Box>
@@ -500,7 +500,7 @@ function GoalsYear({ goals }: { goals: GoalYearData[] }) {
                 {Math.round(ratio * 100)}%
               </Typography>
             </Box>
-            <ThinProgressBar value={ratio} tone={done ? 'pos' : 'accent'} height={5} />
+            <ProgressBar value={ratio} color={brand.anchor[600]} thin />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: '7px' }}>
               <Typography sx={{ fontSize: 11.5, color: 'text.secondary', fontVariantNumeric: 'tabular-nums' }}>
                 {fmtMoney(g.current)}

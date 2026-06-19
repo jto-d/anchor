@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography'
 import { brand } from '@/lib/theme'
 import { CatGlyph } from '@/components/ui/CatGlyph'
 import { EditableMoney } from './EditableMoney'
-import { ThinProgressBar } from './ThinProgressBar'
+import { ProgressBar } from '@/components/ui/ProgressBar'
 import { COL_W } from './ColHeader'
 import { fmtMoney, fmtSigned } from '@/utils/format'
 
@@ -29,7 +29,7 @@ export function LedgerRow({ id, label, icon, budget, spent, isSavings, ytd, annu
   let irsBar: React.ReactNode = null
   if (isSavings && annualLimit && ytd !== undefined) {
     const lr = ytd / annualLimit
-    const tone = lr >= 1 ? 'red' : lr >= 0.85 ? 'amber' : 'accent'
+    const barColor = lr >= 1 ? brand.red[500] : lr >= 0.85 ? brand.gold[500] : brand.anchor[600]
     const tColor = lr >= 1 ? brand.red[600] : lr >= 0.85 ? brand.amber[700] : 'text.secondary'
     irsBar = (
       <Box sx={{ mt: 1, maxWidth: 340 }}>
@@ -39,7 +39,7 @@ export function LedgerRow({ id, label, icon, budget, spent, isSavings, ytd, annu
             {fmtMoney(ytd)} of {fmtMoney(annualLimit)}
           </Typography>
         </Box>
-        <ThinProgressBar value={lr} tone={tone} height={4} />
+        <ProgressBar value={lr} color={barColor} thin sx={{ height: 4 }} />
       </Box>
     )
   }

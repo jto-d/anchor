@@ -6,7 +6,6 @@ import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
-import LinearProgress from '@mui/material/LinearProgress'
 import Typography from '@mui/material/Typography'
 import AddIcon from '@mui/icons-material/Add'
 import CheckIcon from '@mui/icons-material/Check'
@@ -14,6 +13,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined'
 import ScheduleOutlinedIcon from '@mui/icons-material/ScheduleOutlined'
 import { StatusChip } from '@/components/ui/StatusChip'
+import { ProgressBar } from '@/components/ui/ProgressBar'
 import { tabularNums } from '@/lib/sx'
 import { capturedYTD, capturedThisMonth, capturedInCycle, annualValue, perkPct, perkStatus, periodLabel, nextResetDate } from '@/utils/perk'
 import { fmtDollars, fmtCents, fmtDate, toAmount } from '@/utils/format'
@@ -92,11 +92,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
             </Typography>
           ) : isMonthly ? (
             <>
-              <LinearProgress
-                variant="determinate"
-                value={monthPct * 100}
-                sx={{ height: 8, bgcolor: 'grey.100', '& .MuiLinearProgress-bar': { bgcolor: 'primary.main' } }}
-              />
+              <ProgressBar value={monthPct} />
               <Typography
                 sx={{ ...tabularNums, fontSize: 11, color: 'grey.500', mt: '5px', textAlign: 'right' }}
               >
@@ -105,11 +101,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
                 </Box>{' '}
                 of {fmtDollars(perPeriod)} this mo
               </Typography>
-              <LinearProgress
-                variant="determinate"
-                value={annual > 0 ? Math.min(1, ytd / annual) * 100 : 0}
-                sx={{ height: 5, mt: '8px', bgcolor: 'grey.100', '& .MuiLinearProgress-bar': { bgcolor: 'grey.400' } }}
-              />
+              <ProgressBar value={annual > 0 ? ytd / annual : 0} color="grey.400" thin sx={{ mt: '8px' }} />
               <Typography
                 sx={{ ...tabularNums, fontSize: 10, color: 'grey.400', mt: '3px', textAlign: 'right' }}
               >
@@ -118,11 +110,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
             </>
           ) : (
             <>
-              <LinearProgress
-                variant="determinate"
-                value={pct * 100}
-                sx={{ height: 8, bgcolor: 'grey.100', '& .MuiLinearProgress-bar': { bgcolor: 'primary.main' } }}
-              />
+              <ProgressBar value={pct} />
               <Typography
                 sx={{ ...tabularNums, fontSize: 11, color: 'grey.500', mt: '5px', textAlign: 'right' }}
               >

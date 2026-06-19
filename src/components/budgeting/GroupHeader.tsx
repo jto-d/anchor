@@ -5,7 +5,7 @@ import AddIcon from '@mui/icons-material/Add'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { brand } from '@/lib/theme'
 import { CatGlyph } from '@/components/ui/CatGlyph'
-import { ThinProgressBar } from './ThinProgressBar'
+import { ProgressBar } from '@/components/ui/ProgressBar'
 import { fmtMoney } from '@/utils/format'
 import type { GroupData } from '@/utils/budget'
 
@@ -55,7 +55,7 @@ export function GroupHeader({
           <Box component="span" sx={{ color: 'text.disabled' }}>/ {fmtMoney(budget)}</Box>
         </Typography>
         <Box sx={{ width: 52 }}>
-          <ThinProgressBar value={ratio} tone={over ? 'red' : 'accent'} />
+          <ProgressBar value={ratio} color={over ? brand.red[500] : brand.anchor[600]} thin />
         </Box>
         <IconButton
           size="small"

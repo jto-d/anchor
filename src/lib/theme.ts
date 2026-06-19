@@ -126,11 +126,5 @@ export const theme = createTheme({
         label: { letterSpacing: '-0.005em' },
       },
     },
-    MuiLinearProgress: {
-      styleOverrides: {
-        root: { borderRadius: 999 },
-        bar: { borderRadius: 999 },
-      },
-    },
   },
 })

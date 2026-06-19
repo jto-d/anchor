@@ -1,10 +1,10 @@
 'use client'
 
 import Box from '@mui/material/Box'
-import LinearProgress from '@mui/material/LinearProgress'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import { Eyebrow } from '../ui/Eyebrow'
+import { ProgressBar } from '../ui/ProgressBar'
 import { CardTile } from './CardTile'
 import { PerkRow } from './PerkRow'
 import { SummaryFigures, CardValueSection } from './CardValue'
@@ -54,11 +54,7 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
           </Typography>
         </Box>
         <Box sx={{ mt: 2, maxWidth: 500 }}>
-          <LinearProgress
-            variant="determinate"
-            value={Math.min(1, pct) * 100}
-            sx={{ height: 7, bgcolor: 'rgba(11,99,96,0.15)', '& .MuiLinearProgress-bar': { bgcolor: 'primary.main' } }}
-          />
+          <ProgressBar value={pct} track="rgba(11,99,96,0.15)" sx={{ height: 7 }} />
           <Typography sx={{ fontSize: 12, color: 'primary.main', mt: '7px', fontWeight: 500 }}>
             {Math.round(pct * 100)}% of active cycles captured
           </Typography>

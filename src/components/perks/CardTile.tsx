@@ -2,12 +2,12 @@
 
 import Box from '@mui/material/Box'
 import CardActionArea from '@mui/material/CardActionArea'
-import LinearProgress from '@mui/material/LinearProgress'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
 import AnchorIcon from '@mui/icons-material/Anchor'
 import { brand } from '@/lib/theme'
+import { ProgressBar } from '@/components/ui/ProgressBar'
 import { truncate, tabularNums } from '@/lib/sx'
 import { resolveCardDesign } from '@/utils/cardDesigns'
 import { cardCapturedYTD, cardAvailable, cardNet, cardVerdict } from '@/utils/card'
@@ -72,11 +72,7 @@ export function CardTile({ card, onOpen }: CardTileProps) {
         </Typography>
       )}
       <Box sx={{ mt: 2 }}>
-        <LinearProgress
-          variant="determinate"
-          value={pct * 100}
-          sx={{ height: 5, bgcolor: alpha(design.text, 0.22), '& .MuiLinearProgress-bar': { bgcolor: design.text } }}
-        />
+        <ProgressBar value={pct} color={design.text} track={alpha(design.text, 0.22)} thin />
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mt: 1.25 }}>
           <Box>
             <Typography sx={{ fontSize: 10, opacity: 0.65, textTransform: 'uppercase', letterSpacing: '0.06em' }}>

@@ -4,7 +4,7 @@ import { brand } from '@/lib/theme'
 import { CatGlyph } from '@/components/ui/CatGlyph'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { EditableMoney } from './EditableMoney'
-import { ThinProgressBar } from './ThinProgressBar'
+import { ProgressBar } from '@/components/ui/ProgressBar'
 import { fmtMoney, monthShort, clamp01 } from '@/utils/format'
 import type { GoalData, MonthSel } from '@/utils/budget'
 
@@ -36,7 +36,7 @@ export function GoalAllocRow({ goal, amount, sel, onSet, last }: GoalAllocRowPro
         <Typography sx={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.005em' }}>{goal.name}</Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, my: '7px' }}>
           <Box sx={{ flex: 1, maxWidth: 230 }}>
-            <ThinProgressBar value={ratio} tone={done ? 'pos' : 'accent'} />
+            <ProgressBar value={ratio} color={brand.anchor[600]} thin />
           </Box>
           <Typography sx={{ fontSize: 11.5, color: 'text.secondary', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
             {fmtMoney(current)}{goal.target && <Box component="span" sx={{ color: 'text.disabled' }}> / {fmtMoney(goal.target)}</Box>}
