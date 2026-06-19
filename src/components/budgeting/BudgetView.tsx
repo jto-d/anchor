@@ -11,7 +11,7 @@ import { BudgetLedger } from './BudgetLedger'
 import { SurplusPanel } from './SurplusPanel'
 import { IncomePanel } from './IncomePanel'
 import { GoalsRecap } from './GoalsRecap'
-import { useBudgetMonth } from './useBudgetMonth'
+import { useBudgetMonth } from '@/hooks/useBudgetMonth'
 
 /**
  * Budgeting screen. Owns view-only state (selected month, collapsed groups,

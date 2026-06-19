@@ -7,8 +7,8 @@ import { Eyebrow } from '@/components/ui/Eyebrow'
 import { SurfaceCard } from './SurfaceCard'
 import { ThinProgressBar } from './ThinProgressBar'
 import { GoalAllocRow } from './GoalAllocRow'
-import { fmtMoney } from './format'
-import type { GoalData, MonthSel, Totals } from './types'
+import { fmtMoney } from '@/utils/format'
+import type { GoalData, MonthSel, Totals } from '@/utils/budget'
 
 interface SurplusPanelProps {
   goals: GoalData[]
@@ -86,7 +86,7 @@ export function SurplusPanel({ goals, totals, sel, onSet }: SurplusPanelProps) {
         <Box sx={{ px: 2.75, py: 4.25, textAlign: 'center' }}>
           <Typography sx={{ fontSize: 13.5, color: 'text.secondary', maxWidth: 380, mx: 'auto', lineHeight: 1.5 }}>
             {baseSurplus < 0
-              ? <><strong style={{ color: '#D03036' }}>You're {fmtMoney(-baseSurplus)} over budget</strong> this month. Trim a category or lower a contribution to free up surplus.</>
+              ? <><strong style={{ color: brand.red[600] }}>You're {fmtMoney(-baseSurplus)} over budget</strong> this month. Trim a category or lower a contribution to free up surplus.</>
               : 'Income exactly meets everything budgeted — no surplus to allocate this month.'}
           </Typography>
         </Box>

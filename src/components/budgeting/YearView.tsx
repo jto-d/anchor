@@ -9,9 +9,9 @@ import { CatGlyph } from '@/components/ui/CatGlyph'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { SurfaceCard } from './SurfaceCard'
 import { ThinProgressBar } from './ThinProgressBar'
-import { fmtMoney, fmtSigned, clamp01, monthShort } from './format'
-import { useBudgetYear } from './useBudgetYear'
-import type { YearMonth, CatYearData, SavingsYearData, GoalYearData, YearAnnual } from './useBudgetYear'
+import { fmtMoney, fmtSigned, clamp01, monthShort } from '@/utils/format'
+import { useBudgetYear } from '@/hooks/useBudgetYear'
+import type { YearMonth, CatYearData, SavingsYearData, GoalYearData, YearAnnual } from '@/hooks/useBudgetYear'
 
 const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const MONTHS_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -56,7 +56,7 @@ function YearSummary({ annual, completed, projected, currentLabel }: {
           fmtSigned(annual.surplus),
           `${Math.round(rate * 100)}% kept or saved`,
           true,
-          deficit ? '#D03036' : brand.anchor[700],
+          deficit ? brand.red[600] : brand.anchor[700],
         )}
       </Box>
       <Box sx={{ px: 3.25, pb: 2, display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
@@ -75,7 +75,7 @@ function Chip({ tone, icon, children }: { tone: 'accent' | 'amber' | 'neutral'; 
   const styles = {
     accent: { bgcolor: brand.accentSoft, color: brand.anchor[700] },
     neutral: { bgcolor: 'grey.100', color: 'text.secondary' },
-    amber: { bgcolor: '#FFF8EB', color: '#A6630A' },
+    amber: { bgcolor: brand.gold[50], color: brand.amber[700] },
   }
   return (
     <Box sx={{
@@ -146,7 +146,7 @@ function CashflowBars({ months }: { months: YearMonth[] }) {
                   display: 'flex', flexDirection: 'column', overflow: 'hidden',
                   opacity: dim, position: 'relative', flexShrink: 0,
                 }}>
-                  <Box sx={{ height: `${savH}px`, bgcolor: '#F59E0B', position: 'relative', flexShrink: 0 }}>
+                  <Box sx={{ height: `${savH}px`, bgcolor: brand.gold[500], position: 'relative', flexShrink: 0 }}>
                     {mo.estimated && <Box sx={stripeStyle} />}
                   </Box>
                   <Box sx={{ flex: 1, bgcolor: brand.anchor[600], position: 'relative' }}>
@@ -159,8 +159,8 @@ function CashflowBars({ months }: { months: YearMonth[] }) {
                     position: 'absolute', top: '-2px', left: '50%',
                     transform: 'translateX(-50%)',
                     width: 6, height: 6, borderRadius: 999,
-                    bgcolor: '#F59E0B',
-                    boxShadow: '0 0 0 3px #FFF8EB',
+                    bgcolor: brand.gold[500],
+                    boxShadow: `0 0 0 3px ${brand.gold[50]}`,
                   }} />
                 )}
               </Box>
@@ -185,7 +185,7 @@ function CashflowBars({ months }: { months: YearMonth[] }) {
           actual: 'Logged', current: 'In progress', assumed: 'On-track est.', projected: 'Projected',
         }
         const statusColors: Record<string, string> = {
-          actual: brand.anchor[600], current: '#F59E0B', assumed: 'rgba(255,255,255,0.14)', projected: 'rgba(255,255,255,0.14)',
+          actual: brand.anchor[600], current: brand.gold[500], assumed: 'rgba(255,255,255,0.14)', projected: 'rgba(255,255,255,0.14)',
         }
         const offsetPct = ((hovered + 0.5) / 12) * 100
         const translateX = hovered < 2 ? '-20%' : hovered > 9 ? '-80%' : '-50%'
@@ -217,7 +217,7 @@ function CashflowBars({ months }: { months: YearMonth[] }) {
             {([
               ['Income', fmtMoney(mo.income), brand.anchor[200]],
               ['Spent', fmtMoney(mo.catSpent), brand.anchor[300]],
-              ['Saved', fmtMoney(mo.savContrib), '#F59E0B'],
+              ['Saved', fmtMoney(mo.savContrib), brand.gold[500]],
               [mo.surplus < 0 ? 'Over' : 'Surplus', fmtSigned(mo.surplus), null],
             ] as [string, string, string | null][]).map(([k, v, dot], i, arr) => (
               <Box key={k} sx={{
@@ -231,7 +231,7 @@ function CashflowBars({ months }: { months: YearMonth[] }) {
                 </Box>
                 <Typography sx={{
                   fontSize: 12, fontWeight: 600, fontVariantNumeric: 'tabular-nums',
-                  color: k === 'Over' ? '#FCA5A5' : '#fff',
+                  color: k === 'Over' ? brand.red[300] : '#fff',
                 }}>{v}</Typography>
               </Box>
             ))}
@@ -265,15 +265,15 @@ function CumulativeArea({ months, currentIdx }: { months: YearMonth[]; currentId
     <Box sx={{ position: 'relative', pt: '6px' }}>
       <svg viewBox={`0 0 ${W} ${PLOT_H}`} preserveAspectRatio="none" width="100%" height={PLOT_H} style={{ display: 'block', overflow: 'visible' }}>
         {[0.25, 0.5, 0.75, 1].map((g) => (
-          <line key={g} x1="0" x2={W} y1={yv(top * g / 1.1)} y2={yv(top * g / 1.1)} stroke="var(--mui-palette-divider,#e2e8f0)" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+          <line key={g} x1="0" x2={W} y1={yv(top * g / 1.1)} y2={yv(top * g / 1.1)} stroke={`var(--mui-palette-divider,${brand.zinc[200]})`} strokeWidth="1" vectorEffect="non-scaling-stroke" />
         ))}
         <path d={area('total')} fill={brand.anchor[50]} />
         <path d={area('saved')} fill={brand.anchor[100]} opacity="0.9" />
         <rect x={splitX} y="0" width={W - splitX} height={PLOT_H} fill="#fff" opacity="0.45" />
-        <path d={line('saved')} fill="none" stroke="#F59E0B" strokeWidth="2" vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
+        <path d={line('saved')} fill="none" stroke={brand.gold[500]} strokeWidth="2" vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
         <path d={line('total')} fill="none" stroke={brand.anchor[600]} strokeWidth="2.5" vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
         {currentIdx >= 0 && currentIdx < n - 1 && (
-          <line x1={splitX} x2={splitX} y1="0" y2={PLOT_H} stroke="#F59E0B" strokeWidth="1.5" strokeDasharray="3 3" vectorEffect="non-scaling-stroke" />
+          <line x1={splitX} x2={splitX} y1="0" y2={PLOT_H} stroke={brand.gold[500]} strokeWidth="1.5" strokeDasharray="3 3" vectorEffect="non-scaling-stroke" />
         )}
       </svg>
 
@@ -312,11 +312,11 @@ function HeroChart({ months, currentIdx }: { months: YearMonth[]; currentIdx: nu
     ? [
         [brand.anchor[200], 'Income'],
         [brand.anchor[600], 'Spent'],
-        ['#F59E0B', 'Saved'],
+        [brand.gold[500], 'Saved'],
       ]
     : [
         [brand.anchor[600], 'Saved + surplus'],
-        ['#F59E0B', 'Into accounts'],
+        [brand.gold[500], 'Into accounts'],
       ]
 
   return (
@@ -444,7 +444,7 @@ function SavingsYear({ savYear, total }: { savYear: SavingsYearData[]; total: nu
       {savYear.map((sv, i) => {
         const lr = sv.annualLimit ? sv.ytd / sv.annualLimit : 0
         const limitTone = lr >= 1 ? 'red' : lr >= 0.85 ? 'amber' : 'pos'
-        const limitColor = lr >= 1 ? '#D03036' : lr >= 0.85 ? '#A6630A' : 'text.secondary'
+        const limitColor = lr >= 1 ? brand.red[600] : lr >= 0.85 ? brand.amber[700] : 'text.secondary'
 
         return (
           <Box key={sv.id} sx={{ px: 2.25, py: '13px', borderBottom: i < savYear.length - 1 ? '1px solid' : 'none', borderColor: 'divider' }}>

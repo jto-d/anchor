@@ -3,8 +3,8 @@ import Typography from '@mui/material/Typography'
 import { CatGlyph } from '@/components/ui/CatGlyph'
 import { SurfaceCard } from './SurfaceCard'
 import { ThinProgressBar } from './ThinProgressBar'
-import { fmtMoney, monthShort, clamp01 } from './format'
-import type { GoalData } from './types'
+import { fmtMoney, monthShort, clamp01 } from '@/utils/format'
+import type { GoalData } from '@/utils/budget'
 
 /** Read-only sidebar recap of every goal's running progress to date. */
 export function GoalsRecap({ goals }: { goals: GoalData[] }) {

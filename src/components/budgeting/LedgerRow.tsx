@@ -1,10 +1,11 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import { brand } from '@/lib/theme'
 import { CatGlyph } from '@/components/ui/CatGlyph'
 import { EditableMoney } from './EditableMoney'
 import { ThinProgressBar } from './ThinProgressBar'
 import { COL_W } from './ColHeader'
-import { fmtMoney, fmtSigned } from './format'
+import { fmtMoney, fmtSigned } from '@/utils/format'
 
 interface LedgerRowProps {
   id: string
@@ -29,7 +30,7 @@ export function LedgerRow({ id, label, icon, budget, spent, isSavings, ytd, annu
   if (isSavings && annualLimit && ytd !== undefined) {
     const lr = ytd / annualLimit
     const tone = lr >= 1 ? 'red' : lr >= 0.85 ? 'amber' : 'accent'
-    const tColor = lr >= 1 ? '#D03036' : lr >= 0.85 ? '#A6630A' : 'text.secondary'
+    const tColor = lr >= 1 ? brand.red[600] : lr >= 0.85 ? brand.amber[700] : 'text.secondary'
     irsBar = (
       <Box sx={{ mt: 1, maxWidth: 340 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, mb: 0.5 }}>
@@ -59,7 +60,7 @@ export function LedgerRow({ id, label, icon, budget, spent, isSavings, ytd, annu
         <Box sx={{ width: COL_W, display: 'flex', justifyContent: 'flex-end', pr: 1 }}>
           <Typography sx={{
             fontVariantNumeric: 'tabular-nums', fontSize: 14, fontWeight: 600,
-            color: over ? '#D03036' : remaining < budget * 0.12 ? '#A6630A' : 'text.secondary',
+            color: over ? brand.red[600] : remaining < budget * 0.12 ? brand.amber[700] : 'text.secondary',
           }}>
             {fmtSigned(remaining)}
           </Typography>

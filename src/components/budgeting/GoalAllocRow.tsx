@@ -5,8 +5,8 @@ import { CatGlyph } from '@/components/ui/CatGlyph'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { EditableMoney } from './EditableMoney'
 import { ThinProgressBar } from './ThinProgressBar'
-import { fmtMoney, monthShort, clamp01 } from './format'
-import type { GoalData, MonthSel } from './types'
+import { fmtMoney, monthShort, clamp01 } from '@/utils/format'
+import type { GoalData, MonthSel } from '@/utils/budget'
 
 interface GoalAllocRowProps {
   goal: GoalData

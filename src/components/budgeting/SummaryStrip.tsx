@@ -3,13 +3,13 @@ import Typography from '@mui/material/Typography'
 import { brand } from '@/lib/theme'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { SurfaceCard } from './SurfaceCard'
-import { fmtMoney, fmtSigned } from './format'
-import type { Totals } from './types'
+import { fmtMoney, fmtSigned } from '@/utils/format'
+import type { Totals } from '@/utils/budget'
 
 const LEGEND = [
   { c: brand.anchor[600], label: 'Spent + saved' },
   { c: brand.anchor[200], label: 'Budgeted, not yet spent' },
-  { c: '#F59E0B', label: 'Sent to goals' },
+  { c: brand.gold[500], label: 'Sent to goals' },
   { c: 'grey.200', label: 'Unallocated surplus' },
 ]
 
@@ -22,7 +22,7 @@ export function SummaryStrip({ totals }: { totals: Totals }) {
     ? [
         { w: spentSaved / income, c: brand.anchor[600] },
         { w: Math.max(0, budgeted - spentSaved) / income, c: brand.anchor[200] },
-        { w: allocated / income, c: '#F59E0B' },
+        { w: allocated / income, c: brand.gold[500] },
       ]
     : []
 
@@ -54,7 +54,7 @@ export function SummaryStrip({ totals }: { totals: Totals }) {
           fmtSigned(surplus),
           deficit ? 'Over budget this month' : allocated > 0 ? `${fmtMoney(allocated)} sent to goals` : 'Unallocated',
           true,
-          deficit ? '#D03036' : brand.anchor[700],
+          deficit ? brand.red[600] : brand.anchor[700],
         )}
       </Box>
       <Box sx={{ px: 3.25, pb: 2.5 }}>

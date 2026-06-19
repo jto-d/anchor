@@ -4,8 +4,8 @@ import Typography from '@mui/material/Typography'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import { brand } from '@/lib/theme'
-import { monthLabel } from './format'
-import type { MonthSel } from './types'
+import { monthLabel } from '@/utils/format'
+import type { MonthSel } from '@/utils/budget'
 
 /** Prev/next month control, rendered in the Topbar's right slot. Forward navigation stops at the current month. */
 export function BudgetMonthStepper({ sel, onStep }: { sel: MonthSel; onStep: (dir: number) => void }) {

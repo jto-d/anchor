@@ -45,7 +45,8 @@ export const brand = {
   zinc,
   anchor,
   amber: { 50: '#FEF6E7', 700: '#A6630A' },
-  red: { 50: '#FDECEC', 600: '#D03036' },
+  gold: { 50: '#FFF8EB', 500: '#F59E0B' },
+  red: { 50: '#FDECEC', 300: '#FCA5A5', 500: '#EF4444', 600: '#D03036' },
   accentSoft: anchor[50],
   shadow: {
     sm: '0 1px 2px rgba(16,24,32,.04), 0 1px 3px rgba(16,24,32,.06)',

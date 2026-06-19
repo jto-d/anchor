@@ -3,10 +3,11 @@ import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import AddIcon from '@mui/icons-material/Add'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { brand } from '@/lib/theme'
 import { CatGlyph } from '@/components/ui/CatGlyph'
 import { ThinProgressBar } from './ThinProgressBar'
-import { fmtMoney } from './format'
-import type { GroupData } from './types'
+import { fmtMoney } from '@/utils/format'
+import type { GroupData } from '@/utils/budget'
 
 /** Collapsible section header for a budget group: rolled-up spend/budget, progress, and an add button. */
 export function GroupHeader({
@@ -49,7 +50,7 @@ export function GroupHeader({
         </Box>
       </Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        <Typography sx={{ fontSize: 12.5, color: over ? '#D03036' : 'text.secondary', fontVariantNumeric: 'tabular-nums', fontWeight: 500 }}>
+        <Typography sx={{ fontSize: 12.5, color: over ? brand.red[600] : 'text.secondary', fontVariantNumeric: 'tabular-nums', fontWeight: 500 }}>
           {fmtMoney(spent)}{' '}
           <Box component="span" sx={{ color: 'text.disabled' }}>/ {fmtMoney(budget)}</Box>
         </Typography>

@@ -14,8 +14,8 @@ import {
   SetSurplusAllocationDocument,
   AddBudgetCategoryDocument,
   AddSavingsAccountDocument,
-} from './graphql'
-import type { GoalData, GroupData, IncomeSource, MonthSel, SavingsData, Totals } from './types'
+} from './budget.queries'
+import type { GoalData, GroupData, IncomeSource, MonthSel, SavingsData, Totals } from '@/utils/budget'
 
 /**
  * Owns all server interaction for one budget month: the `budgetMonth` query,

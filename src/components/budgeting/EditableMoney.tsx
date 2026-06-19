@@ -5,7 +5,7 @@ import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { brand } from '@/lib/theme'
-import { fmtMoney } from './format'
+import { fmtMoney } from '@/utils/format'
 
 interface EditableMoneyProps {
   value: number

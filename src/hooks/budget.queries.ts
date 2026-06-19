@@ -1,5 +1,6 @@
-// All GraphQL documents for the budgeting feature, in one place so the data
-// hook (`useBudgetMonth`) stays focused on wiring rather than query text.
+// All client GraphQL documents for the budgeting feature, in one place so the
+// data hooks (`useBudgetMonth`/`useBudgetYear`) stay focused on wiring rather
+// than query text.
 
 import { graphql } from '@/gql'
 

@@ -5,8 +5,8 @@ import AddIcon from '@mui/icons-material/Add'
 import { CatGlyph } from '@/components/ui/CatGlyph'
 import { SurfaceCard } from './SurfaceCard'
 import { EditableMoney } from './EditableMoney'
-import { fmtMoney } from './format'
-import type { IncomeSource } from './types'
+import { fmtMoney } from '@/utils/format'
+import type { IncomeSource } from '@/utils/budget'
 
 interface IncomePanelProps {
   income: IncomeSource[]

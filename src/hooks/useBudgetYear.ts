@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import { useQuery } from '@urql/next'
-import { BudgetYearDocument } from './graphql'
+import { BudgetYearDocument } from './budget.queries'
 
 export type MonthStatus = 'actual' | 'current' | 'assumed' | 'projected'
 

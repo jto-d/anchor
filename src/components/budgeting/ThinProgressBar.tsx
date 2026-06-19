@@ -1,14 +1,14 @@
 import Box from '@mui/material/Box'
 import { brand } from '@/lib/theme'
-import { clamp01 } from './format'
+import { clamp01 } from '@/utils/format'
 
 export type ProgressTone = 'accent' | 'pos' | 'amber' | 'red'
 
 const TONE_COLORS: Record<ProgressTone, string> = {
   accent: brand.anchor[600],
   pos: brand.anchor[600],
-  amber: '#F59E0B',
-  red: '#EF4444',
+  amber: brand.gold[500],
+  red: brand.red[500],
 }
 
 /** A slim track + fill bar. Values above 1 clamp to full width and flip to red. */
@@ -21,7 +21,7 @@ export function ThinProgressBar({ value, tone = 'accent', height = 5 }: { value:
         sx={{
           height: '100%',
           width: `${clamped * 100}%`,
-          bgcolor: over ? '#EF4444' : TONE_COLORS[tone],
+          bgcolor: over ? brand.red[500] : TONE_COLORS[tone],
           borderRadius: 999,
           transition: 'width 0.3s ease',
         }}
