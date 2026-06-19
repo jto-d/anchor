@@ -2,100 +2,26 @@
 
 import { useState } from 'react'
 import { useQuery, useMutation } from '@urql/next'
-import { graphql } from '@/gql'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
-import Snackbar from '@mui/material/Snackbar'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { Sidebar } from '@/components/ui/Sidebar'
 import { Topbar } from '@/components/ui/Topbar'
+import { Toast } from '@/components/ui/Toast'
 import { PerksDashboard } from '@/components/PerksDashboard'
 import { CardDetail } from '@/components/CardDetail'
 import { LogCreditDialog } from '@/components/LogCreditDialog'
 import { CardsView } from '@/components/cards/CardsView'
 import { AddCardDialog } from '@/components/cards/AddCardDialog'
 import { RemoveCardDialog } from '@/components/cards/RemoveCardDialog'
-import { brand } from '@/lib/theme'
 import { CARD_CATALOG } from '@/data/cardCatalog'
 import type { Card, Perk } from '@/utils/types'
-
-const MeDocument = graphql(`
-  query Me {
-    me {
-      id
-      email
-      creditCards {
-        id
-        name
-        issuer
-        lastFour
-        openedDate
-        design
-        perks {
-          id
-          name
-          totalAmount
-          period
-          periodStartMonth
-          resetType
-          enrollmentRequired
-          notes
-          perkCredits {
-            id
-            amount
-            date
-            description
-          }
-        }
-      }
-    }
-  }
-`)
-
-const LogPerkCreditDocument = graphql(`
-  mutation LogPerkCredit($perkId: String!, $amount: Float!, $date: String!, $description: String) {
-    logPerkCredit(perkId: $perkId, amount: $amount, date: $date, description: $description) {
-      id
-      amount
-      date
-      description
-    }
-  }
-`)
-
-const RemoveCardDocument = graphql(`
-  mutation RemoveCard($cardId: String!) {
-    removeCard(cardId: $cardId)
-  }
-`)
-
-const AddCardDocument = graphql(`
-  mutation AddCard($catalogKey: String!, $lastFour: String, $openedDate: String) {
-    addCard(catalogKey: $catalogKey, lastFour: $lastFour, openedDate: $openedDate) {
-      id
-      name
-      issuer
-      lastFour
-      openedDate
-      design
-      perks {
-        id
-        name
-        totalAmount
-        period
-        periodStartMonth
-        notes
-        perkCredits {
-          id
-          amount
-          date
-          description
-        }
-      }
-    }
-  }
-`)
+import {
+  MeDocument,
+  LogPerkCreditDocument,
+  RemoveCardDocument,
+  AddCardDocument,
+} from './me-view.queries'
 
 type Route = 'perks' | 'card' | 'cards'
 
@@ -147,6 +73,15 @@ export function MeView() {
       const name = CARD_CATALOG[catalogKey]?.name ?? 'Card'
       setToast(`${name} added to your wallet`)
     }
+  }
+
+  async function handleRemoveCard() {
+    if (!pendingRemoveId) return
+    const name = cards.find((c) => c.id === pendingRemoveId)?.name ?? 'Card'
+    await removeCard({ cardId: pendingRemoveId })
+    reexecuteQuery({ requestPolicy: 'network-only' })
+    setPendingRemoveId(null)
+    setToast(`${name} removed from your wallet`)
   }
 
   if (fetching) {
@@ -227,41 +162,10 @@ export function MeView() {
       <RemoveCardDialog
         cardName={pendingRemoveId ? (cards.find((c) => c.id === pendingRemoveId)?.name ?? 'this card') : null}
         onClose={() => setPendingRemoveId(null)}
-        onConfirm={async () => {
-          if (!pendingRemoveId) return
-          const name = cards.find((c) => c.id === pendingRemoveId)?.name ?? 'Card'
-          await removeCard({ cardId: pendingRemoveId })
-          reexecuteQuery({ requestPolicy: 'network-only' })
-          setPendingRemoveId(null)
-          setToast(`${name} removed from your wallet`)
-        }}
+        onConfirm={handleRemoveCard}
       />
 
-      <Snackbar
-        open={!!toast}
-        autoHideDuration={2600}
-        onClose={() => setToast(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1.1,
-            bgcolor: 'grey.900',
-            color: '#fff',
-            px: '18px',
-            py: '11px',
-            borderRadius: 999,
-            fontSize: 13,
-            fontWeight: 500,
-            boxShadow: brand.shadow.lg,
-          }}
-        >
-          <CheckCircleIcon sx={{ fontSize: 15, color: brand.anchor[300] }} />
-          {toast}
-        </Box>
-      </Snackbar>
+      <Toast message={toast} onClose={() => setToast(null)} />
     </Box>
   )
 }

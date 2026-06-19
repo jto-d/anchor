@@ -3,18 +3,10 @@
 import { useState, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogTitle from '@mui/material/DialogTitle'
-import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
 import CheckIcon from '@mui/icons-material/Check'
-import CloseIcon from '@mui/icons-material/Close'
-import { Eyebrow } from './ui/Eyebrow'
-import { brand } from '@/lib/theme'
+import { AppDialog } from '@/components/ui/AppDialog'
 import { annualValue, capturedYTD } from '@/utils/perk'
 import { fmtCents, toAmount } from '@/utils/format'
 import type { Perk } from '@/utils/types'
@@ -51,32 +43,16 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
   const dateInvalid = touched && !date
 
   return (
-    <Dialog
+    <AppDialog
       open={!!perk}
       onClose={onClose}
-      slotProps={{ paper: { sx: { width: 420, maxWidth: '100%', borderRadius: '20px', boxShadow: brand.shadow.lg } } }}
+      title={shown?.name ?? ''}
+      subtitle={shown ? `${fmtCents(remaining)} still available this period` : undefined}
+      width={420}
     >
       {shown && (
         <>
-          <DialogTitle
-            component="div"
-            sx={{ p: '20px 22px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}
-          >
-            <Box>
-              <Eyebrow>Log a credit</Eyebrow>
-              <Typography variant="h6" sx={{ fontSize: 20, mt: 1 }}>
-                {shown.name}
-              </Typography>
-              <Typography sx={{ fontSize: 13, color: 'grey.500', mt: '3px' }}>
-                {fmtCents(remaining)} still available this period
-              </Typography>
-            </Box>
-            <IconButton onClick={onClose} sx={{ color: 'text.disabled', mt: '-4px', mr: '-8px' }}>
-              <CloseIcon sx={{ fontSize: 20 }} />
-            </IconButton>
-          </DialogTitle>
-
-          <DialogContent sx={{ p: '20px 22px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ p: '8px 22px 20px', display: 'flex', flexDirection: 'column', gap: 2 }}>
             <TextField
               label="Amount"
               value={amount}
@@ -111,10 +87,10 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
               size="small"
               slotProps={{ inputLabel: { shrink: true } }}
             />
-          </DialogContent>
+          </Box>
 
-          <DialogActions sx={{ p: '0 22px 22px', gap: 1.25 }}>
-            <Button onClick={onClose} sx={{ color: 'text.secondary', '&:hover': { bgcolor: 'grey.100' } }}>
+          <Box sx={{ p: '0 22px 22px', display: 'flex', gap: 1.25, justifyContent: 'flex-end' }}>
+            <Button variant="subtle" onClick={onClose}>
               Cancel
             </Button>
             <Button
@@ -129,9 +105,9 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
             >
               Save credit
             </Button>
-          </DialogActions>
+          </Box>
         </>
       )}
-    </Dialog>
+    </AppDialog>
   )
 }

@@ -2,6 +2,12 @@
 
 import { createTheme } from '@mui/material/styles'
 
+declare module '@mui/material/Button' {
+  interface ButtonPropsVariantOverrides {
+    subtle: true
+  }
+}
+
 // --- Anchor brand scales (migrated from the old globals.css design tokens) ---
 const zinc = {
   50: '#FAFAFA',
@@ -87,10 +93,31 @@ export const theme = createTheme({
     MuiButton: {
       defaultProps: { disableElevation: true },
       styleOverrides: { root: { borderRadius: 8 } },
+      variants: [
+        {
+          props: { variant: 'subtle' },
+          style: {
+            color: zinc[600],
+            '&:hover': { backgroundColor: zinc[100] },
+          },
+        },
+      ],
     },
     MuiPaper: {
       defaultProps: { elevation: 0 },
       styleOverrides: { root: { backgroundImage: 'none' } },
+    },
+    MuiDialog: {
+      defaultProps: {
+        slotProps: { backdrop: { sx: { backgroundColor: 'rgba(16,24,32,0.42)' } } },
+      },
+      styleOverrides: {
+        paper: {
+          borderRadius: 20,
+          maxWidth: '100%',
+          boxShadow: brand.shadow.lg,
+        },
+      },
     },
     MuiChip: {
       styleOverrides: {

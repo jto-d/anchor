@@ -3,13 +3,10 @@
 import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import CircularProgress from '@mui/material/CircularProgress'
-import CloseIcon from '@mui/icons-material/Close'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
-import { brand } from '@/lib/theme'
+import { AppDialog } from '@/components/ui/AppDialog'
 
 interface RemoveCardDialogProps {
   cardName: string | null
@@ -30,31 +27,21 @@ export function RemoveCardDialog({ cardName, onClose, onConfirm }: RemoveCardDia
   }
 
   return (
-    <Dialog
+    <AppDialog
       open={!!cardName}
-      onClose={submitting ? undefined : onClose}
-      maxWidth={false}
-      slotProps={{
-        paper: { sx: { width: 400, maxWidth: '100%', borderRadius: '20px', boxShadow: brand.shadow.lg } },
-        backdrop: { sx: { backgroundColor: 'rgba(16,24,32,0.42)' } },
-      }}
+      onClose={onClose}
+      title="Remove card"
+      width={400}
+      disableClose={submitting}
     >
-      <Box sx={{ p: '20px 22px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <Box>
-          <Typography component="h2" sx={{ m: 0, fontSize: '18px', fontWeight: 600, letterSpacing: '-0.015em', color: 'text.primary' }}>
-            Remove card
-          </Typography>
-          <Typography sx={{ mt: '5px', fontSize: '13.5px', color: 'grey.500', maxWidth: '30ch', lineHeight: 1.5 }}>
-            Remove <Box component="span" sx={{ fontWeight: 600, color: 'text.primary' }}>{cardName}</Box> from your wallet? This also deletes all its perks and credit history.
-          </Typography>
-        </Box>
-        <IconButton onClick={onClose} disabled={submitting} aria-label="Close" sx={{ color: 'text.disabled', mt: '-2px', mr: '-6px', '&:hover': { bgcolor: 'grey.100', color: 'text.secondary' } }}>
-          <CloseIcon sx={{ fontSize: 18 }} />
-        </IconButton>
+      <Box sx={{ px: '22px', pb: '4px' }}>
+        <Typography sx={{ fontSize: '13.5px', color: 'grey.500', maxWidth: '30ch', lineHeight: 1.5 }}>
+          Remove <Box component="span" sx={{ fontWeight: 600, color: 'text.primary' }}>{cardName}</Box> from your wallet? This also deletes all its perks and credit history.
+        </Typography>
       </Box>
 
-      <Box sx={{ p: '8px 22px 20px', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-        <Button onClick={onClose} disabled={submitting} sx={{ color: 'text.secondary', '&:hover': { bgcolor: 'grey.100' } }}>
+      <Box sx={{ p: '16px 22px 20px', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+        <Button variant="subtle" onClick={onClose} disabled={submitting}>
           Cancel
         </Button>
         <Button
@@ -67,6 +54,6 @@ export function RemoveCardDialog({ cardName, onClose, onConfirm }: RemoveCardDia
           Remove
         </Button>
       </Box>
-    </Dialog>
+    </AppDialog>
   )
 }

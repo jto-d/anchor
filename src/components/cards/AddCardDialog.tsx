@@ -3,26 +3,22 @@
 import { useState, useMemo, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import CircularProgress from '@mui/material/CircularProgress'
+import TextField from '@mui/material/TextField'
+import InputAdornment from '@mui/material/InputAdornment'
 import AddIcon from '@mui/icons-material/Add'
 import CheckIcon from '@mui/icons-material/Check'
-import CloseIcon from '@mui/icons-material/Close'
 import SearchIcon from '@mui/icons-material/Search'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import { AppDialog } from '@/components/ui/AppDialog'
 import { brand } from '@/lib/theme'
-import { fmtDollars} from '@/utils/format'
+import { truncate, tabularNums } from '@/lib/sx'
+import { fmtDollars } from '@/utils/format'
 import { CARD_CATALOG } from '@/data/cardCatalog'
 import { PERK_CATALOG, type PerkTemplate } from '@/data/perkCatalog'
 
-const FONT = "'Switzer', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
-const FOCUS_RING = `0 0 0 3px rgba(13,122,120,0.15)`
-
-
-// todo: remove quadrennial and TSA perks
 const PERIOD_SUFFIX: Record<PerkTemplate['period'], string> = {
   MONTHLY:     '/ mo',
   QUARTERLY:   '/ qtr',
@@ -73,10 +69,10 @@ function CardRow({ card, selected, onSelect }: { card: CatalogCard; selected: bo
     >
       <Swatch gradient={card.gradient} />
       <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Typography sx={{ fontSize: '14px', fontWeight: 600, letterSpacing: '-0.01em', color: 'text.primary', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <Typography sx={{ ...truncate, fontSize: '14px', fontWeight: 600, letterSpacing: '-0.01em', color: 'text.primary' }}>
           {card.name}
         </Typography>
-        <Typography sx={{ fontSize: '12.5px', color: 'grey.500', mt: '1px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <Typography sx={{ ...truncate, fontSize: '12.5px', color: 'grey.500', mt: '1px' }}>
           {card.issuer}
         </Typography>
       </Box>
@@ -123,10 +119,10 @@ function PerkPreview({ card }: { card: CatalogCard | null }) {
           return (
             <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: '10px', p: '7px 14px' }}>
               <Box sx={{ width: 5, height: 5, borderRadius: '999px', bgcolor: brand.anchor[400], flex: 'none' }} />
-              <Typography sx={{ flex: 1, minWidth: 0, fontSize: '13.5px', fontWeight: 500, color: 'text.primary', letterSpacing: '-0.005em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <Typography sx={{ ...truncate, flex: 1, minWidth: 0, fontSize: '13.5px', fontWeight: 500, color: 'text.primary', letterSpacing: '-0.005em' }}>
                 {p.name}
               </Typography>
-              <Typography sx={{ flex: 'none', fontSize: '13px', fontWeight: 600, color: val === 'Included' ? 'grey.500' : 'text.secondary', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
+              <Typography sx={{ ...tabularNums, flex: 'none', fontSize: '13px', fontWeight: 600, color: val === 'Included' ? 'grey.500' : 'text.secondary', whiteSpace: 'nowrap' }}>
                 {val}
               </Typography>
             </Box>
@@ -149,9 +145,6 @@ export function AddCardDialog({ open, existingDesigns, onClose, onAdd }: AddCard
   const [query, setQuery] = useState('')
   const [lastFour, setLastFour] = useState('')
   const [openedDate, setOpenedDate] = useState('')
-  const [searchFocus, setSearchFocus] = useState(false)
-  const [lastFocus, setLastFocus] = useState(false)
-  const [dateFocus, setDateFocus] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
   // Reset everything each time the dialog opens.
@@ -191,65 +184,33 @@ export function AddCardDialog({ open, existingDesigns, onClose, onAdd }: AddCard
     }
   }
 
-  const inputBase = {
-    boxSizing: 'border-box' as const,
-    height: 40,
-    borderRadius: '10px',
-    fontFamily: 'inherit',
-    color: brand.zinc[950],
-    background: '#fff',
-    outline: 'none',
-    transition: 'border-color 180ms, box-shadow 180ms',
-  }
-
   return (
-    <Dialog
+    <AppDialog
       open={open}
       onClose={onClose}
-      maxWidth={false}
-      slotProps={{
-        paper: { sx: { width: 480, maxWidth: '100%', maxHeight: 'calc(100vh - 48px)', borderRadius: '20px', boxShadow: brand.shadow.lg, overflow: 'hidden', display: 'flex', flexDirection: 'column' } },
-        backdrop: { sx: { backgroundColor: 'rgba(16,24,32,0.42)' } },
-      }}
+      title="Add a card"
+      subtitle="Pick from the catalog — perks load in automatically."
+      width={480}
+      disableClose={submitting}
     >
-      {/* Header */}
-      <Box sx={{ p: '20px 22px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flex: 'none' }}>
-        <Box>
-          <Typography component="h2" sx={{ m: 0, fontSize: '20px', fontWeight: 600, letterSpacing: '-0.015em', color: 'text.primary' }}>
-            Add a card
-          </Typography>
-          <Typography sx={{ mt: '4px', fontSize: '13px', color: 'grey.500' }}>
-            Pick from the catalog — perks load in automatically.
-          </Typography>
-        </Box>
-        <IconButton onClick={onClose} aria-label="Close" sx={{ color: 'text.disabled', mt: '-2px', mr: '-6px', '&:hover': { bgcolor: 'grey.100', color: 'text.secondary' } }}>
-          <CloseIcon sx={{ fontSize: 18 }} />
-        </IconButton>
-      </Box>
-
       {/* Search */}
       <Box sx={{ p: '0 22px 12px', flex: 'none' }}>
-        <Box sx={{ position: 'relative' }}>
-          <SearchIcon sx={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'text.disabled', pointerEvents: 'none', fontSize: 16 }} />
-          <Box
-            component="input"
-            value={query}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
-            onFocus={() => setSearchFocus(true)}
-            onBlur={() => setSearchFocus(false)}
-            placeholder="Search cards or issuers"
-            sx={{
-              ...inputBase,
-              width: '100%',
-              pl: '36px',
-              pr: '12px',
-              fontSize: '14px',
-              border: `1px solid ${searchFocus ? brand.anchor[600] : brand.zinc[300]}`,
-              boxShadow: searchFocus ? FOCUS_RING : 'none',
-              '&::placeholder': { color: brand.zinc[400] },
-            }}
-          />
-        </Box>
+        <TextField
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search cards or issuers"
+          fullWidth
+          size="small"
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ fontSize: 16, color: 'text.disabled' }} />
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
       </Box>
 
       {/* Picker list */}
@@ -269,58 +230,28 @@ export function AddCardDialog({ open, existingDesigns, onClose, onAdd }: AddCard
 
       {/* Last 4 + opened date + perk preview */}
       <Box sx={{ p: '16px 22px 4px', display: 'flex', flexDirection: 'column', gap: '14px', flex: 'none' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Box component="label" htmlFor="lastfour" sx={{ fontSize: '13px', fontWeight: 600, color: 'text.primary', flex: 'none' }}>
-              Last 4
-            </Box>
-            <Box
-              component="input"
-              id="lastfour"
-              value={lastFour}
-              placeholder="1234"
-              inputMode="numeric"
-              maxLength={4}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLastFour(e.target.value.replace(/\D/g, '').slice(0, 4))}
-              onFocus={() => setLastFocus(true)}
-              onBlur={() => setLastFocus(false)}
-              sx={{
-                ...inputBase,
-                width: 88,
-                textAlign: 'center',
-                fontSize: '15px',
-                fontWeight: 500,
-                letterSpacing: '0.18em',
-                fontVariantNumeric: 'tabular-nums',
-                border: `1px solid ${lastFocus ? brand.anchor[600] : brand.zinc[300]}`,
-                boxShadow: lastFocus ? FOCUS_RING : 'none',
-                '&::placeholder': { color: brand.zinc[400], letterSpacing: '0.18em' },
-              }}
-            />
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Box component="label" htmlFor="openeddate" sx={{ fontSize: '13px', fontWeight: 600, color: 'text.primary', flex: 'none' }}>
-              Opened
-            </Box>
-            <Box
-              component="input"
-              id="openeddate"
-              type="date"
-              value={openedDate}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOpenedDate(e.target.value)}
-              onFocus={() => setDateFocus(true)}
-              onBlur={() => setDateFocus(false)}
-              sx={{
-                ...inputBase,
-                width: 148,
-                px: '10px',
-                fontSize: '13.5px',
-                fontVariantNumeric: 'tabular-nums',
-                border: `1px solid ${dateFocus ? brand.anchor[600] : brand.zinc[300]}`,
-                boxShadow: dateFocus ? FOCUS_RING : 'none',
-              }}
-            />
-          </Box>
+        <Box sx={{ display: 'flex', gap: '14px' }}>
+          <TextField
+            label="Last 4"
+            value={lastFour}
+            placeholder="1234"
+            onChange={(e) => setLastFour(e.target.value.replace(/\D/g, '').slice(0, 4))}
+            size="small"
+            sx={{ width: 120 }}
+            slotProps={{
+              inputLabel: { shrink: true },
+              htmlInput: { inputMode: 'numeric', maxLength: 4 },
+            }}
+          />
+          <TextField
+            label="Opened"
+            type="date"
+            value={openedDate}
+            onChange={(e) => setOpenedDate(e.target.value)}
+            size="small"
+            sx={{ width: 170 }}
+            slotProps={{ inputLabel: { shrink: true } }}
+          />
         </Box>
 
         <Box
@@ -336,7 +267,7 @@ export function AddCardDialog({ open, existingDesigns, onClose, onAdd }: AddCard
 
       {/* Actions */}
       <Box sx={{ p: '16px 22px 20px', display: 'flex', gap: '10px', justifyContent: 'flex-end', flex: 'none' }}>
-        <Button onClick={onClose} disabled={submitting} sx={{ color: 'text.secondary', '&:hover': { bgcolor: 'grey.100' } }}>
+        <Button variant="subtle" onClick={onClose} disabled={submitting}>
           Cancel
         </Button>
         <Button
@@ -348,6 +279,6 @@ export function AddCardDialog({ open, existingDesigns, onClose, onAdd }: AddCard
           Add card
         </Button>
       </Box>
-    </Dialog>
+    </AppDialog>
   )
 }
