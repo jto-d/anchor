@@ -2,7 +2,7 @@
 
 import Box from '@mui/material/Box'
 import { TYPE_META } from '@/utils/cardRewards'
-import { RewardIcon } from './RewardIcon'
+import { RewardIcon } from '@/components/icons/RewardIcon'
 import { brand } from '@/lib/theme'
 import type { CardType } from '@/utils/cardRewards'
 

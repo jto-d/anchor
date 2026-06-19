@@ -1,7 +1,7 @@
 'use client'
 
 import Box from '@mui/material/Box'
-import { RewardIcon } from './RewardIcon'
+import { RewardIcon } from '@/components/icons/RewardIcon'
 import { brand } from '@/lib/theme'
 
 export interface SegmentedOption {

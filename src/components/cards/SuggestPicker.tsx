@@ -5,9 +5,9 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import { CatIcon } from './CatIcon'
+import { CatIcon } from '@/components/icons/CatIcon'
 import { RateBadge } from './RateBadge'
-import { RewardIcon } from './RewardIcon'
+import { RewardIcon } from '@/components/icons/RewardIcon'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import {
   CATEGORIES, CAT, themeOf, topRewards, rankForCategory, fmtRate, TYPE_META,

@@ -16,7 +16,7 @@ import RepeatIcon from '@mui/icons-material/Repeat'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import type { SvgIconComponent } from '@mui/icons-material'
 import { brand } from '@/lib/theme'
-import { ComingSoon } from './ComingSoon'
+import { ComingSoon } from '@/components/ui/ComingSoon'
 
 export const SIDEBAR_WIDTH = 220
 

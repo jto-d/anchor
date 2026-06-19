@@ -4,14 +4,11 @@ import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
-import InputBase from '@mui/material/InputBase'
-import Paper from '@mui/material/Paper'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import AddIcon from '@mui/icons-material/Add'
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined'
-import SearchIcon from '@mui/icons-material/Search'
-import { ComingSoon } from './ComingSoon'
+import { ComingSoon } from '@/components/ui/ComingSoon'
 
 interface TopbarProps {
   title: string
