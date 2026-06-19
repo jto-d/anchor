@@ -1,11 +1,8 @@
 'use client'
 
-import { useState } from 'react'
 import Box from '@mui/material/Box'
 import LinearProgress from '@mui/material/LinearProgress'
 import Paper from '@mui/material/Paper'
-import ToggleButton from '@mui/material/ToggleButton'
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import Typography from '@mui/material/Typography'
 import { Eyebrow } from '../ui/Eyebrow'
 import { CardTile } from './CardTile'
@@ -14,7 +11,7 @@ import { SummaryFigures, CardValueSection } from './CardValue'
 import { brand } from '@/lib/theme'
 import { tabularNums } from '@/lib/sx'
 import { cardOnTheTable } from '@/utils/card'
-import { capturedYTD, capturedThisMonth, perkStatus } from '@/utils/perk'
+import { capturedYTD, perkStatus } from '@/utils/perk'
 import { fmtDollars } from '@/utils/format'
 import type { Card, Perk } from '@/utils/types'
 
@@ -25,12 +22,7 @@ interface PerksDashboardProps {
 }
 
 export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps) {
-  const [view, setView] = useState<'ytd' | 'month'>('ytd')
-
-  const captured =
-    view === 'ytd'
-      ? cards.reduce((s, c) => c.perks.reduce((ps, p) => ps + capturedYTD(p), s), 0)
-      : cards.reduce((s, c) => c.perks.reduce((ps, p) => ps + capturedThisMonth(p), s), 0)
+  const captured = cards.reduce((s, c) => c.perks.reduce((ps, p) => ps + capturedYTD(p), s), 0)
   const onTheTable = cards.reduce((s, c) => s + cardOnTheTable(c), 0)
   const pct = (captured + onTheTable) ? captured / (captured + onTheTable) : 0
 
@@ -48,19 +40,7 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
     <Box sx={{ p: '26px 30px' }}>
       {/* Headline */}
       <Paper sx={{ bgcolor: brand.accentSoft, border: 1, borderColor: brand.anchor[100], borderRadius: '18px', p: '22px 24px', mb: '22px' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Eyebrow sx={{ color: 'primary.main' }}>{view === 'ytd' ? 'This year' : 'This month'}</Eyebrow>
-          <ToggleButtonGroup
-            value={view}
-            exclusive
-            onChange={(_, v) => v && setView(v)}
-            size="small"
-            sx={{ '& .MuiToggleButton-root': { px: 1.5, py: 0.25, fontSize: 11, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', border: 1, borderColor: brand.anchor[200], color: 'primary.main' }, '& .Mui-selected': { bgcolor: 'primary.main', color: '#fff', '&:hover': { bgcolor: 'primary.dark' } } }}
-          >
-            <ToggleButton value="ytd">YTD</ToggleButton>
-            <ToggleButton value="month">Month</ToggleButton>
-          </ToggleButtonGroup>
-        </Box>
+        <Eyebrow sx={{ color: 'primary.main' }}>This year</Eyebrow>
         <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5, mt: 1.25, flexWrap: 'wrap' }}>
           <Typography
             sx={{ ...tabularNums, fontSize: 42, fontWeight: 600, letterSpacing: '-0.03em', color: brand.anchor[800], lineHeight: 1 }}
