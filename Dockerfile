@@ -13,7 +13,13 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN pnpm build
+# schema.graphql and src/gql/ are gitignored, so they aren't in the build
+# context — generate them before `next build`. Codegen imports the schema,
+# which loads src/lib/prisma.ts and reads DATABASE_URL, but makes no DB
+# connection, so a placeholder is enough. This ENV lives only in the
+# discarded builder stage; Cloud Run injects the real secret at runtime.
+ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder"
+RUN pnpm codegen && pnpm build
 
 # Production image
 FROM node:22-alpine AS runner

@@ -9,6 +9,10 @@ declare module 'next-auth' {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  // Cloud Run serves from a host next-auth doesn't recognize as trusted by
+  // default; trust it so the callback URL is inferred from the request host
+  // instead of a hardcoded NEXTAUTH_URL/AUTH_URL.
+  trustHost: true,
   providers: [Google],
   session: { strategy: 'jwt' },
   pages: { signIn: '/login' },
