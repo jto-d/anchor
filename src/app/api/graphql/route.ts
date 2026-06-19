@@ -10,7 +10,9 @@ const yoga = createYoga({
   // headers() async-context, which Yoga's request handling doesn't reliably
   // preserve — getToken({ req }) reads the session cookie directly instead.
   context: async ({ request }) => {
-    const token = await getToken({ req: request, secret: process.env.AUTH_SECRET })
+    // Yoga's request URL is the internal http:// container address; force secureCookie so getToken finds the __Secure-prefixed cookie Auth.js sets in production.
+    const secureCookie = process.env.NODE_ENV === 'production'
+    const token = await getToken({ req: request, secret: process.env.AUTH_SECRET, secureCookie })
     if (!token?.userId) throw new Error('Unauthorized')
     return { userId: token.userId as string }
   },
