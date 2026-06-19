@@ -7,6 +7,7 @@ import CheckIcon from '@mui/icons-material/Check'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import { brand } from '@/lib/theme'
+import { truncate, tabularNums } from '@/lib/sx'
 import { resolveCardDesign } from '@/utils/cardDesigns'
 import { cardAvailable, cardCapturedYTD, cardAnnualFee, cardNet, cardVerdict } from '@/utils/card'
 import { fmtDollars, fmtSigned } from '@/utils/format'
@@ -63,7 +64,7 @@ export function SummaryFigures({ cards, tone = 'panel' }: { cards: Card[]; tone?
           <Typography sx={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: labelColor }}>
             {it.label}
           </Typography>
-          <Typography sx={{ fontSize: onAccent ? 22 : 26, fontWeight: 600, letterSpacing: '-0.025em', fontVariantNumeric: 'tabular-nums', mt: 1, lineHeight: 1, color: it.color }}>
+          <Typography sx={{ ...tabularNums, fontSize: onAccent ? 22 : 26, fontWeight: 600, letterSpacing: '-0.025em', mt: 1, lineHeight: 1, color: it.color }}>
             {it.value}
           </Typography>
         </Box>
@@ -82,7 +83,7 @@ function ValueListRow({ card, onOpenCard, last }: { card: Card; onOpenCard?: (c:
       <Typography sx={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: brand.zinc[400] }}>
         {label}
       </Typography>
-      <Box sx={{ mt: '4px', fontVariantNumeric: 'tabular-nums' }}>{children}</Box>
+      <Box sx={{ ...tabularNums, mt: '4px' }}>{children}</Box>
     </Box>
   )
 
@@ -104,7 +105,7 @@ function ValueListRow({ card, onOpenCard, last }: { card: Card; onOpenCard?: (c:
       <Box sx={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
         <Box sx={{ width: 8, height: 8, borderRadius: '999px', bgcolor: dotColor(card), flexShrink: 0 }} />
         <Box sx={{ minWidth: 0 }}>
-          <Typography sx={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.01em', color: brand.zinc[900], whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <Typography sx={{ ...truncate, fontSize: 14, fontWeight: 600, letterSpacing: '-0.01em', color: brand.zinc[900] }}>
             {card.name}
           </Typography>
           <Typography sx={{ fontSize: 12, color: brand.zinc[500] }}>{card.issuer}</Typography>
@@ -118,7 +119,7 @@ function ValueListRow({ card, onOpenCard, last }: { card: Card; onOpenCard?: (c:
         <Typography sx={{ fontSize: 14, fontWeight: 500, color: brand.zinc[800] }}>{fmtDollars(cardAvailable(card))}</Typography>
       </Fig>
       <Fig label="Net">
-        <Typography sx={{ fontSize: 14, fontWeight: 600, fontVariantNumeric: 'tabular-nums', color: net < 0 ? brand.red[600] : brand.anchor[700] }}>
+        <Typography sx={{ ...tabularNums, fontSize: 14, fontWeight: 600, color: net < 0 ? brand.red[600] : brand.anchor[700] }}>
           {fmtSigned(net)}
         </Typography>
       </Fig>

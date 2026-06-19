@@ -10,6 +10,7 @@ import { Eyebrow } from '@/components/ui/Eyebrow'
 import { CATEGORIES, TYPE_META, themeOf, cardRate, rankForCategory } from '@/utils/cardRewards'
 import { fmtRate } from '@/utils/cardRewards'
 import { brand } from '@/lib/theme'
+import { tabularNums } from '@/lib/sx'
 import type { RewardCardData } from '@/utils/cardRewards'
 import AnchorIcon from '@mui/icons-material/Anchor'
 
@@ -157,8 +158,8 @@ export function SuggestMatrix({ cards }: SuggestMatrixProps) {
                             <Typography
                               sx={{
                                 fontSize: '14px',
+                                ...tabularNums,
                                 fontWeight: isWin ? 700 : 500,
-                                fontVariantNumeric: 'tabular-nums',
                                 letterSpacing: '-0.02em',
                                 color: isWin
                                   ? brand.anchor[700]

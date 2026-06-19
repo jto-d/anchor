@@ -3,6 +3,7 @@
 import Box from '@mui/material/Box'
 import { fmtRate } from '@/utils/cardRewards'
 import { brand } from '@/lib/theme'
+import { tabularNums } from '@/lib/sx'
 import type { Reward } from '@/utils/cardRewards'
 
 interface RateBadgeProps {
@@ -39,8 +40,8 @@ export function RateBadge({ reward, winner, muted, size = 'md' }: RateBadgeProps
         borderRadius: '7px',
         fontSize: s.fontSize,
         fontWeight: 700,
+        ...tabularNums,
         letterSpacing: '-0.02em',
-        fontVariantNumeric: 'tabular-nums',
         flexShrink: 0,
         background: bg,
         color,

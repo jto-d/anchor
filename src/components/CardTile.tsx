@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
 import AnchorIcon from '@mui/icons-material/Anchor'
 import { brand } from '@/lib/theme'
+import { truncate, tabularNums } from '@/lib/sx'
 import { resolveCardDesign } from '@/utils/cardDesigns'
 import { cardCapturedYTD, cardAvailable, cardNet, cardVerdict } from '@/utils/card'
 import { fmtDollars, fmtSigned } from '@/utils/format'
@@ -39,7 +40,7 @@ export function CardTile({ card, onOpen }: CardTileProps) {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: '7px', minWidth: 0 }}>
           <AnchorIcon sx={{ fontSize: 14, opacity: 0.85, flexShrink: 0 }} />
           <Typography
-            sx={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', opacity: 0.8, textTransform: 'uppercase', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+            sx={{ ...truncate, fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', opacity: 0.8, textTransform: 'uppercase' }}
           >
             {card.issuer}
           </Typography>
@@ -50,8 +51,9 @@ export function CardTile({ card, onOpen }: CardTileProps) {
             display: 'inline-flex', alignItems: 'center', gap: '5px', flexShrink: 0,
             height: '22px', px: '9px', borderRadius: '999px',
             background: 'rgba(255,255,255,0.13)', border: '1px solid rgba(255,255,255,0.16)',
+            ...tabularNums,
             fontSize: '11px', fontWeight: 600, letterSpacing: '-0.005em',
-            fontVariantNumeric: 'tabular-nums', color: '#fff', backdropFilter: 'blur(2px)',
+            color: '#fff', backdropFilter: 'blur(2px)',
             whiteSpace: 'nowrap',
           }}
         >
@@ -62,7 +64,7 @@ export function CardTile({ card, onOpen }: CardTileProps) {
       <Typography sx={{ fontSize: 18, fontWeight: 600, letterSpacing: '-0.01em' }}>{card.name}</Typography>
       {(card.lastFour || card.openedDate) && (
         <Typography
-          sx={{ fontSize: 12, fontVariantNumeric: 'tabular-nums', letterSpacing: '0.12em', opacity: 0.8, mt: '3px' }}
+          sx={{ ...tabularNums, fontSize: 12, letterSpacing: '0.12em', opacity: 0.8, mt: '3px' }}
         >
           {card.lastFour ? `•••• •••• •••• ${card.lastFour}` : ''}
           {card.lastFour && card.openedDate ? '  ·  ' : ''}
@@ -80,7 +82,7 @@ export function CardTile({ card, onOpen }: CardTileProps) {
             <Typography sx={{ fontSize: 10, opacity: 0.65, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               Recovered
             </Typography>
-            <Typography sx={{ fontSize: 16, fontWeight: 600, fontVariantNumeric: 'tabular-nums', mt: '2px' }}>
+            <Typography sx={{ ...tabularNums, fontSize: 16, fontWeight: 600, mt: '2px' }}>
               {fmtDollars(captured)}
             </Typography>
           </Box>
@@ -88,7 +90,7 @@ export function CardTile({ card, onOpen }: CardTileProps) {
             <Typography sx={{ fontSize: 10, opacity: 0.65, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               Available
             </Typography>
-            <Typography sx={{ fontSize: 16, fontWeight: 600, fontVariantNumeric: 'tabular-nums', mt: '2px' }}>
+            <Typography sx={{ ...tabularNums, fontSize: 16, fontWeight: 600, mt: '2px' }}>
               {fmtDollars(available)}
             </Typography>
           </Box>

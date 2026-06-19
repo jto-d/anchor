@@ -13,6 +13,7 @@ import {
   CATEGORIES, CAT, themeOf, topRewards, rankForCategory, fmtRate, TYPE_META,
 } from '@/utils/cardRewards'
 import { brand } from '@/lib/theme'
+import { tabularNums } from '@/lib/sx'
 import type { RewardCardData, CategoryKey } from '@/utils/cardRewards'
 
 function RateCompareNote() {
@@ -140,8 +141,8 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
                           fontSize: '34px',
                           fontWeight: 700,
                           letterSpacing: '-0.03em',
+                          ...tabularNums,
                           color: brand.anchor[800],
-                          fontVariantNumeric: 'tabular-nums',
                           lineHeight: 1,
                         }}
                       >
@@ -219,8 +220,8 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
                           sx={{
                             fontSize: '12.5px',
                             fontWeight: 700,
+                            ...tabularNums,
                             color: brand.anchor[700],
-                            fontVariantNumeric: 'tabular-nums',
                             letterSpacing: '-0.02em',
                           }}
                         >
@@ -275,8 +276,8 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
                   width: '18px',
                   fontSize: '12px',
                   fontWeight: 600,
+                  ...tabularNums,
                   color: winner ? brand.anchor[700] : brand.zinc[400],
-                  fontVariantNumeric: 'tabular-nums',
                   textAlign: 'right',
                   flexShrink: 0,
                 }}

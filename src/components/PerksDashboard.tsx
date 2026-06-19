@@ -13,6 +13,7 @@ import { CardTile } from './CardTile'
 import { PerkRow } from './PerkRow'
 import { SummaryFigures, CardValueSection } from './CardValue'
 import { brand } from '@/lib/theme'
+import { tabularNums } from '@/lib/sx'
 import { cardOnTheTable } from '@/utils/card'
 import { capturedYTD, capturedThisMonth, perkStatus } from '@/utils/perk'
 import { fmtDollars } from '@/utils/format'
@@ -63,7 +64,7 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5, mt: 1.25, flexWrap: 'wrap' }}>
           <Typography
-            sx={{ fontSize: 42, fontWeight: 600, letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums', color: brand.anchor[800], lineHeight: 1 }}
+            sx={{ ...tabularNums, fontSize: 42, fontWeight: 600, letterSpacing: '-0.03em', color: brand.anchor[800], lineHeight: 1 }}
           >
             {fmtDollars(captured)}
           </Typography>

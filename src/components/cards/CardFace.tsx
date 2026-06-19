@@ -4,6 +4,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import AnchorIcon from '@mui/icons-material/Anchor'
 import { themeOf } from '@/utils/cardRewards'
+import { tabularNums } from '@/lib/sx'
 import type { RewardCardData } from '@/utils/cardRewards'
 
 interface CardFaceProps {
@@ -55,7 +56,7 @@ export function CardFace({ card, mini = false }: CardFaceProps) {
         {card.name}
       </Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: mini ? '3px' : '6px' }}>
-        <Typography sx={{ fontSize: mini ? 11.5 : 13, fontVariantNumeric: 'tabular-nums', letterSpacing: '0.1em', opacity: 0.78 }}>
+        <Typography sx={{ ...tabularNums, fontSize: mini ? 11.5 : 13, letterSpacing: '0.1em', opacity: 0.78 }}>
           •••• {card.lastFour}
         </Typography>
         <Typography sx={{ fontSize: mini ? 10 : 11, opacity: 0.7, letterSpacing: '0.02em' }}>

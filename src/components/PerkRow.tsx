@@ -14,6 +14,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined'
 import ScheduleOutlinedIcon from '@mui/icons-material/ScheduleOutlined'
 import { StatusChip } from './ui/StatusChip'
+import { tabularNums } from '@/lib/sx'
 import { capturedYTD, capturedThisMonth, capturedInCycle, annualValue, perkPct, perkStatus, periodLabel, nextResetDate } from '@/utils/perk'
 import { fmtDollars, fmtCents, fmtDate, toAmount } from '@/utils/format'
 import { resolveCardDesign } from '@/utils/cardDesigns'
@@ -90,7 +91,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
                 sx={{ height: 8, bgcolor: 'grey.100', '& .MuiLinearProgress-bar': { bgcolor: 'primary.main' } }}
               />
               <Typography
-                sx={{ fontSize: 11, color: 'grey.500', mt: '5px', fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}
+                sx={{ ...tabularNums, fontSize: 11, color: 'grey.500', mt: '5px', textAlign: 'right' }}
               >
                 <Box component="span" sx={{ fontWeight: 600, color: monthPct >= 1 ? 'primary.main' : 'text.primary' }}>
                   {fmtDollars(thisMonth)}
@@ -103,7 +104,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
                 sx={{ height: 5, mt: '8px', bgcolor: 'grey.100', '& .MuiLinearProgress-bar': { bgcolor: 'grey.400' } }}
               />
               <Typography
-                sx={{ fontSize: 10, color: 'grey.400', mt: '3px', fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}
+                sx={{ ...tabularNums, fontSize: 10, color: 'grey.400', mt: '3px', textAlign: 'right' }}
               >
                 {fmtDollars(ytd)} of {fmtDollars(annual)} / yr
               </Typography>
@@ -116,7 +117,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
                 sx={{ height: 8, bgcolor: 'grey.100', '& .MuiLinearProgress-bar': { bgcolor: 'primary.main' } }}
               />
               <Typography
-                sx={{ fontSize: 11, color: 'grey.500', mt: '5px', fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}
+                sx={{ ...tabularNums, fontSize: 11, color: 'grey.500', mt: '5px', textAlign: 'right' }}
               >
                 <Box component="span" sx={{ fontWeight: 600, color: pct >= 1 ? 'primary.main' : 'text.primary' }}>
                   {fmtDollars(captured)}
@@ -179,7 +180,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
                   </Typography>
                   <Typography
                     component="span"
-                    sx={{ fontSize: 13, fontWeight: 500, fontVariantNumeric: 'tabular-nums', color: 'primary.main' }}
+                    sx={{ ...tabularNums, fontSize: 13, fontWeight: 500, color: 'primary.main' }}
                   >
                     +{fmtCents(toAmount(c.amount))}
                   </Typography>

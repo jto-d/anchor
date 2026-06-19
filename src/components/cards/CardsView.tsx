@@ -10,6 +10,7 @@ import { SuggestMatrix } from './SuggestMatrix'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { dbCardToRewardCard } from '@/utils/cardRewards'
 import { brand } from '@/lib/theme'
+import { tabularNums } from '@/lib/sx'
 import type { SuggestMode } from '@/utils/cardRewards'
 import type { Card } from '@/utils/types'
 
@@ -98,7 +99,7 @@ export function CardsView({ cards: dbCards, onAddCard, onManageCard }: CardsView
           eyebrow="Your cards"
           title="Wallet"
           right={
-            <Typography sx={{ fontSize: '12.5px', color: 'text.disabled', fontVariantNumeric: 'tabular-nums' }}>
+            <Typography sx={{ ...tabularNums, fontSize: '12.5px', color: 'text.disabled' }}>
               {cards.length} cards · {pointsCount} points · {cashbackCount} cash back
             </Typography>
           }

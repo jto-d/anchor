@@ -12,6 +12,7 @@ import IconButton from '@mui/material/IconButton'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import { themeOf, topRewards, baseReward, CAT, fmtRate } from '@/utils/cardRewards'
 import { brand } from '@/lib/theme'
+import { tabularNums } from '@/lib/sx'
 import type { RewardCardData, Density } from '@/utils/cardRewards'
 
 
@@ -65,7 +66,7 @@ export function CardListRow({ card, density = 'comfortable', onAction }: {
           </Typography>
           <Typography sx={{ fontSize: '12px', color: 'text.disabled', mt: '1px' }}>
             {card.issuer} ·{' '}
-            <Box component="span" sx={{ fontVariantNumeric: 'tabular-nums', letterSpacing: '0.04em' }}>
+            <Box component="span" sx={{ ...tabularNums, letterSpacing: '0.04em' }}>
               •••• {card.lastFour}
             </Box>
           </Typography>
@@ -108,8 +109,8 @@ export function CardListRow({ card, density = 'comfortable', onAction }: {
                 sx={{
                   fontSize: '12.5px',
                   fontWeight: 700,
+                  ...tabularNums,
                   color: brand.anchor[700],
-                  fontVariantNumeric: 'tabular-nums',
                   letterSpacing: '-0.02em',
                 }}
               >
