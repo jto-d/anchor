@@ -56,6 +56,7 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
             onSavingsMonthly={budget.setSavingsMonthly} onContribute={budget.contribute}
             onRenameSavings={budget.renameSavings} onRemoveSavings={budget.removeSavings}
             onAddCategory={budget.addCategory} onAddSavings={budget.addSavings}
+            onAddGroup={budget.addGroup} onRenameGroup={budget.renameGroup} onRemoveGroup={budget.removeGroup}
             totals={budget.totals}
           />
           <SurplusPanel goals={budget.goals} totals={budget.totals} sel={sel} onSet={budget.setAllocation} />

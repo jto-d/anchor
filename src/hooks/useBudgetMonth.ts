@@ -19,6 +19,9 @@ import {
   AddSavingsAccountDocument,
   RenameSavingsAccountDocument,
   RemoveSavingsAccountDocument,
+  AddBudgetGroupDocument,
+  RenameBudgetGroupDocument,
+  RemoveBudgetGroupDocument,
 } from './budget.queries'
 import type { GoalData, GroupData, IncomeSource, MonthSel, SavingsData, Totals } from '@/utils/budget'
 
@@ -60,6 +63,9 @@ export function useBudgetMonth(sel: MonthSel) {
   const [, renameSavingsAccountMut] = useMutation(RenameSavingsAccountDocument)
   const [, removeSavingsAccountMut] = useMutation(RemoveSavingsAccountDocument)
   const [, renameIncomeSourceMut] = useMutation(RenameIncomeSourceDocument)
+  const [, addBudgetGroupMut] = useMutation(AddBudgetGroupDocument)
+  const [, renameBudgetGroupMut] = useMutation(RenameBudgetGroupDocument)
+  const [, removeBudgetGroupMut] = useMutation(RemoveBudgetGroupDocument)
 
   const raw = data?.budgetMonth
 
@@ -171,6 +177,20 @@ export function useBudgetMonth(sel: MonthSel) {
     await renameIncomeSourceMut({ id, label }); refetch()
   }, [renameIncomeSourceMut, refetch])
 
+  const addGroup = useCallback(async () => {
+    await addBudgetGroupMut({ label: 'New group', icon: 'tag' })
+    refetch()
+    flash('Group added — name it and add categories.')
+  }, [addBudgetGroupMut, refetch, flash])
+
+  const renameGroup = useCallback(async (id: string, label: string) => {
+    await renameBudgetGroupMut({ id, label }); refetch()
+  }, [renameBudgetGroupMut, refetch])
+
+  const removeGroup = useCallback(async (id: string) => {
+    await removeBudgetGroupMut({ id }); refetch()
+  }, [removeBudgetGroupMut, refetch])
+
   const setAllocation = useCallback(async (goalId: string, v: number) => {
     await setSurplusAllocation({ goalId, year: sel.y, month: sel.m, amount: v }); refetch()
   }, [setSurplusAllocation, sel, refetch])
@@ -200,5 +220,8 @@ export function useBudgetMonth(sel: MonthSel) {
     removeSavings,
     renameIncome,
     setAllocation,
+    addGroup,
+    renameGroup,
+    removeGroup,
   }
 }

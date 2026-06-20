@@ -58,6 +58,42 @@ builder.mutationFields((t) => ({
     },
   }),
 
+  // ---- Groups --------------------------------------------------------------
+
+  addBudgetGroup: t.field({
+    type: 'Boolean',
+    args: {
+      label: t.arg.string({ required: true }),
+      icon: t.arg.string({ required: true }),
+    },
+    resolve: async (_root, { label, icon }, ctx) => {
+      const count = await prisma.budgetGroup.count({ where: { userId: ctx.userId } })
+      await prisma.budgetGroup.create({ data: { userId: ctx.userId, label, icon, position: count } })
+      return true
+    },
+  }),
+
+  renameBudgetGroup: t.field({
+    type: 'Boolean',
+    args: {
+      id: t.arg.string({ required: true }),
+      label: t.arg.string({ required: true }),
+    },
+    resolve: async (_root, { id, label }, ctx) => {
+      await prisma.budgetGroup.updateMany({ where: { id, userId: ctx.userId }, data: { label } })
+      return true
+    },
+  }),
+
+  removeBudgetGroup: t.field({
+    type: 'Boolean',
+    args: { id: t.arg.string({ required: true }) },
+    resolve: async (_root, { id }, ctx) => {
+      await prisma.budgetGroup.deleteMany({ where: { id, userId: ctx.userId } })
+      return true
+    },
+  }),
+
   // ---- Categories ----------------------------------------------------------
 
   addBudgetCategory: t.field({

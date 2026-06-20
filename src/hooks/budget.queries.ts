@@ -89,3 +89,6 @@ export const AddSavingsAccountDocument = graphql(`mutation AddSavingsAccount($la
 export const RenameSavingsAccountDocument = graphql(`mutation RenameSavingsAccount($id: String!, $label: String!) { renameSavingsAccount(id: $id, label: $label) }`)
 export const RemoveSavingsAccountDocument = graphql(`mutation RemoveSavingsAccount($id: String!) { removeSavingsAccount(id: $id) }`)
 export const RenameIncomeSourceDocument = graphql(`mutation RenameIncomeSource($id: String!, $label: String!) { renameIncomeSource(id: $id, label: $label) }`)
+export const AddBudgetGroupDocument = graphql(`mutation AddBudgetGroup($label: String!, $icon: String!) { addBudgetGroup(label: $label, icon: $icon) }`)
+export const RenameBudgetGroupDocument = graphql(`mutation RenameBudgetGroup($id: String!, $label: String!) { renameBudgetGroup(id: $id, label: $label) }`)
+export const RemoveBudgetGroupDocument = graphql(`mutation RemoveBudgetGroup($id: String!) { removeBudgetGroup(id: $id) }`)

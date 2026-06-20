@@ -2,16 +2,17 @@ import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import AddIcon from '@mui/icons-material/Add'
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { brand } from '@/lib/theme'
-import { CatGlyph, ProgressBar, Row } from '@/components/ui'
+import { CatGlyph, EditableLabel, ProgressBar, Row } from '@/components/ui'
 import { tabularNums } from '@/lib/sx'
 import { fmtMoney } from '@/utils/format'
 import type { GroupData } from '@/utils/budget'
 
 /** Collapsible section header for a budget group: rolled-up spend/budget, progress, and an add button. */
 export function GroupHeader({
-  group, spent, budget, collapsed, onToggle, onAdd,
+  group, spent, budget, collapsed, onToggle, onAdd, onRename, onRemove,
 }: {
   group: GroupData
   spent: number
@@ -19,6 +20,8 @@ export function GroupHeader({
   collapsed: boolean
   onToggle: () => void
   onAdd: () => void
+  onRename?: (label: string) => void
+  onRemove?: () => void
 }) {
   const ratio = budget > 0 ? spent / budget : 0
   const over = spent - budget > 0.001
@@ -44,12 +47,25 @@ export function GroupHeader({
         }}
       />
       <CatGlyph icon={group.icon} size={26} />
-      <Typography sx={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.01em', textTransform: 'uppercase', flex: 1 }}>
-        {group.label}
-        <Box component="span" sx={{ ml: 1.1, fontSize: 11, fontWeight: 600, letterSpacing: '0.04em', color: 'text.disabled' }}>
+      <Box sx={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: 0.75 }}>
+        {onRename ? (
+          <Box onClick={(e) => e.stopPropagation()}>
+            <EditableLabel
+              value={group.label}
+              onChange={onRename}
+              size={13}
+              weight={700}
+            />
+          </Box>
+        ) : (
+          <Typography sx={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.01em', textTransform: 'uppercase' }}>
+            {group.label}
+          </Typography>
+        )}
+        <Box component="span" sx={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.04em', color: 'text.disabled' }}>
           {group.categories.length}
         </Box>
-      </Typography>
+      </Box>
       <Row gap={1.5}>
         <Typography variant="label" sx={{ color: over ? brand.red[600] : 'text.secondary', ...tabularNums }}>
           {fmtMoney(spent)}{' '}
@@ -66,6 +82,16 @@ export function GroupHeader({
         >
           <AddIcon sx={{ fontSize: 16 }} />
         </IconButton>
+        {onRemove && (
+          <IconButton
+            size="small"
+            title="Delete group"
+            onClick={(e) => { e.stopPropagation(); onRemove() }}
+            sx={{ width: 28, height: 28, borderRadius: '7px', color: 'text.disabled', '&:hover': { color: brand.red[500], bgcolor: brand.red[50] } }}
+          >
+            <DeleteOutlinedIcon sx={{ fontSize: 15 }} />
+          </IconButton>
+        )}
       </Row>
     </Row>
   )
