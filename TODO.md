@@ -6,10 +6,6 @@
 ### 4. Hardcoded catalogs won't scale
 `src/data/cardCatalog.ts` and `src/data/perkCatalog.ts` are parallel static files with no runtime cross-validation. Adding a card requires edits in both, and there is no mechanism for card reward changes (issuers change rates quarterly). At ~50+ cards this becomes a maintenance problem. Long-term fix: move catalogs to the database with an admin UI.
 
----
-
-## Maintainability
-
 ### 6. `MeView` owns too much state
 `src/app/me-view.tsx` has 9 `useState` calls managing route, selected card, all dialog visibility, toast, and remove confirmation. Adding features here will compound the problem. State should be colocated with the components that own it, or moved to a lightweight store (Zustand).
 
@@ -26,6 +22,10 @@ Remove card from card page
 
 ### Budgeting
 Remove the lag from updating EditableMoney
+Make it possible to have different budgets for categories across months
+CRUD for surplus allocation
+ - make this a separate folder
+Budget should start from a specific month
 
 ### Features?
 Onboarding flow (?)

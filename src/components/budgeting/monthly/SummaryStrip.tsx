@@ -12,7 +12,6 @@ const LEGEND = [
   { c: 'grey.200', label: 'Unallocated surplus' },
 ]
 
-/** Sticky top strip: income / budgeted / spent + saved / surplus, plus an allocation bar. */
 export function SummaryStrip({ totals }: { totals: Totals }) {
   const { income, budgeted, spentSaved, allocated, surplus } = totals
   const deficit = surplus < 0

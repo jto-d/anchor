@@ -14,7 +14,6 @@ interface GoalAllocRowProps {
   last: boolean
 }
 
-/** One allocatable goal in the surplus panel: progress, a pace recommendation, and this-month input. */
 export function GoalAllocRow({ goal, amount, sel, onSet, last }: GoalAllocRowProps) {
   const current = goal.running + amount
   const ratio = clamp01(goal.target ? current / goal.target : 0)

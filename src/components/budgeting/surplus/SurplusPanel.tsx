@@ -15,7 +15,6 @@ interface SurplusPanelProps {
   onSet: (goalId: string, v: number) => void
 }
 
-/** Surplus allocation: routes leftover income to goals once income covers everything budgeted. */
 export function SurplusPanel({ goals, totals, sel, onSet }: SurplusPanelProps) {
   const { baseSurplus, allocated } = totals
   const unallocated = baseSurplus - allocated

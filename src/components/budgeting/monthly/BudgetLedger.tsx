@@ -39,7 +39,6 @@ interface BudgetLedgerProps {
 
 const SAVINGS_GROUP: GroupData = { id: '__savings', label: 'Savings', icon: 'savings', position: 999, categories: [] }
 
-/** The full editable ledger: every spending group plus the savings group, with footer totals. */
 export function BudgetLedger({
   groups, savings, collapsed, onToggle,
   onBudget, onSpent, onRenameCategory, onRemoveCategory,
@@ -80,7 +79,6 @@ export function BudgetLedger({
           )
         })}
 
-        {/* Add group row */}
         <Row sx={{ px: 2.5, py: 1.25, borderBottom: '1px solid', borderColor: 'divider' }}>
           <Button
             size="small"
@@ -92,7 +90,6 @@ export function BudgetLedger({
           </Button>
         </Row>
 
-        {/* Savings group */}
         <Box>
           <GroupHeader
             group={SAVINGS_GROUP}
@@ -119,7 +116,6 @@ export function BudgetLedger({
           </Collapse>
         </Box>
 
-        {/* Footer totals */}
         <Row gap={1} sx={{ px: 2.5, py: 1.875, borderTop: '1px solid', borderColor: 'grey.300', bgcolor: 'grey.50' }}>
           <Typography sx={{ flex: 1, fontSize: 13, fontWeight: 700, letterSpacing: '0.01em', textTransform: 'uppercase', color: 'text.secondary' }}>Total budgeted</Typography>
           {[totals.budgeted, totals.spentSaved, totals.budgeted - totals.spentSaved].map((v, i) => (

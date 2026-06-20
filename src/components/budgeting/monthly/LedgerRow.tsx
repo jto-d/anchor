@@ -24,7 +24,6 @@ interface LedgerRowProps {
   onRemove?: () => void
 }
 
-/** One editable line item: budget / spent / remaining, with an optional IRS-limit bar for savings. */
 export function LedgerRow({ id, label, icon, budget, spent, isSavings, ytd, annualLimit, last, onBudget, onSpent, onRename, onRemove }: LedgerRowProps) {
   const remaining = budget - spent
   const over = remaining < -0.001

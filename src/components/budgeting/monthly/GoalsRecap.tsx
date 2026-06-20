@@ -6,7 +6,6 @@ import { tabularNums } from '@/lib/sx'
 import { fmtMoney, monthShort, clamp01 } from '@/utils/format'
 import type { GoalData } from '@/utils/budget'
 
-/** Read-only sidebar recap of every goal's running progress to date. */
 export function GoalsRecap({ goals }: { goals: GoalData[] }) {
   return (
     <SurfaceCard>

@@ -10,7 +10,6 @@ import { tabularNums } from '@/lib/sx'
 import { fmtMoney } from '@/utils/format'
 import type { GroupData } from '@/utils/budget'
 
-/** Collapsible section header for a budget group: rolled-up spend/budget, progress, and an add button. */
 export function GroupHeader({
   group, spent, budget, collapsed, onToggle, onAdd, onRename, onRemove,
 }: {

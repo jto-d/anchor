@@ -1,10 +1,8 @@
 import Box from '@mui/material/Box'
 import { Eyebrow, Row } from '@/components/ui'
 
-/** Fixed width of each numeric ledger column (Budget / Spent / Left). */
 export const COL_W = 102
 
-/** The column-label row at the top of the budget ledger. */
 export function ColHeader() {
   const col = (label: string) => (
     <Box sx={{ width: COL_W, textAlign: 'right' }}>

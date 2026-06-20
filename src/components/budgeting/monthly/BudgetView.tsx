@@ -9,16 +9,11 @@ import { brand } from '@/lib/theme'
 import { Row, Stack } from '@/components/ui'
 import { SummaryStrip } from './SummaryStrip'
 import { BudgetLedger } from './BudgetLedger'
-import { SurplusPanel } from './SurplusPanel'
+import { SurplusPanel } from '../surplus/SurplusPanel'
 import { IncomePanel } from './IncomePanel'
 import { GoalsRecap } from './GoalsRecap'
 import { useBudgetMonth } from '@/hooks/useBudgetMonth'
 
-/**
- * Budgeting screen. Owns view-only state (selected month, collapsed groups,
- * snackbar mount) and the page layout; all data and server interaction lives
- * in `useBudgetMonth`.
- */
 export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
   const now = new Date()
   const [sel] = useState({ y: now.getFullYear(), m: now.getMonth() })
@@ -40,12 +35,10 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
 
   return (
     <Box sx={{ flex: 1, overflow: 'auto' }}>
-      {/* Sticky summary */}
       <Box sx={{ position: 'sticky', top: 0, zIndex: 20, px: 4, pt: 2.75, pb: 1.75, bgcolor: 'background.default' }}>
         <SummaryStrip totals={budget.totals} />
       </Box>
 
-      {/* Two-column body */}
       <Box sx={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 344px', gap: 3, alignItems: 'start', px: 4, pb: 5.5 }}>
         <Stack gap={3} sx={{ minWidth: 0 }}>
           <BudgetLedger

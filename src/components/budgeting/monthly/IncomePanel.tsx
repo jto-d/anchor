@@ -18,7 +18,6 @@ interface IncomePanelProps {
   onRemove: (id: string) => void
 }
 
-/** Sidebar list of monthly income sources with an editable amount and a running total. */
 export function IncomePanel({ income, total, onSetAmount, onRename, onAdd, onRemove }: IncomePanelProps) {
   return (
     <SurfaceCard>
