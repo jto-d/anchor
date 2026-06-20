@@ -52,7 +52,9 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
             groups={budget.groups} savings={budget.savings} collapsed={collapsed}
             onToggle={handleToggle}
             onBudget={budget.setBudget} onSpent={budget.setSpent}
+            onRenameCategory={budget.renameCategory} onRemoveCategory={budget.removeCategory}
             onSavingsMonthly={budget.setSavingsMonthly} onContribute={budget.contribute}
+            onRenameSavings={budget.renameSavings} onRemoveSavings={budget.removeSavings}
             onAddCategory={budget.addCategory} onAddSavings={budget.addSavings}
             totals={budget.totals}
           />
@@ -61,7 +63,8 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
         <Stack gap={3}>
           <IncomePanel
             income={budget.incomeSources} total={budget.totals.income}
-            onSetAmount={budget.setIncome} onAdd={budget.addIncome} onRemove={budget.removeIncome}
+            onSetAmount={budget.setIncome} onRename={budget.renameIncome}
+            onAdd={budget.addIncome} onRemove={budget.removeIncome}
           />
           <GoalsRecap goals={budget.goals} />
         </Stack>

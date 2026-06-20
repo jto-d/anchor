@@ -1,7 +1,9 @@
 import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import { brand } from '@/lib/theme'
-import { CatGlyph, EditableMoney, ListRow, ProgressBar, Row } from '@/components/ui'
+import { CatGlyph, EditableLabel, EditableMoney, ListRow, ProgressBar, Row } from '@/components/ui'
 import { COL_W } from './ColHeader'
 import { tabularNums } from '@/lib/sx'
 import { fmtMoney, fmtSigned } from '@/utils/format'
@@ -18,10 +20,12 @@ interface LedgerRowProps {
   last?: boolean
   onBudget: (v: number) => void
   onSpent: (v: number) => void
+  onRename?: (v: string) => void
+  onRemove?: () => void
 }
 
 /** One editable line item: budget / spent / remaining, with an optional IRS-limit bar for savings. */
-export function LedgerRow({ id, label, icon, budget, spent, isSavings, ytd, annualLimit, last, onBudget, onSpent }: LedgerRowProps) {
+export function LedgerRow({ id, label, icon, budget, spent, isSavings, ytd, annualLimit, last, onBudget, onSpent, onRename, onRemove }: LedgerRowProps) {
   const remaining = budget - spent
   const over = remaining < -0.001
 
@@ -48,7 +52,10 @@ export function LedgerRow({ id, label, icon, budget, spent, isSavings, ytd, annu
       <Row gap={1}>
         <Row gap={1.375} min0 sx={{ flex: 1 }}>
           <CatGlyph icon={icon} size={32} tone={isSavings ? 'accent' : 'neutral'} />
-          <Typography sx={{ fontSize: 14, fontWeight: 500 }}>{label}</Typography>
+          {onRename
+            ? <EditableLabel value={label} onChange={onRename} size={14} weight={500} />
+            : <Typography sx={{ fontSize: 14, fontWeight: 500 }}>{label}</Typography>
+          }
         </Row>
         <Row justify="end" sx={{ width: COL_W }}>
           <EditableMoney value={budget} onChange={onBudget} weight={500} />
@@ -64,7 +71,18 @@ export function LedgerRow({ id, label, icon, budget, spent, isSavings, ytd, annu
             {fmtSigned(remaining)}
           </Typography>
         </Row>
-        <Box sx={{ width: 28 }} />
+        <Box sx={{ width: 28, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {onRemove && (
+            <IconButton
+              size="small"
+              onClick={onRemove}
+              title="Remove"
+              sx={{ width: 24, height: 24, borderRadius: '6px', color: 'text.disabled', '&:hover': { color: brand.red[500], bgcolor: brand.red[50] } }}
+            >
+              <DeleteOutlinedIcon sx={{ fontSize: 15 }} />
+            </IconButton>
+          )}
+        </Box>
       </Row>
       {irsBar}
     </ListRow>

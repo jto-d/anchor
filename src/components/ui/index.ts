@@ -18,6 +18,7 @@ export { CatGlyph } from './data-display/CatGlyph'
 
 // Inputs
 export { EditableMoney } from './inputs/EditableMoney'
+export { EditableLabel } from './inputs/EditableLabel'
 export { Segmented } from './inputs/Segmented'
 export type { SegmentedOption } from './inputs/Segmented'
 

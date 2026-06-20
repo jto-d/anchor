@@ -17,8 +17,12 @@ interface BudgetLedgerProps {
   onToggle: (key: string) => void
   onBudget: (catId: string, v: number) => void
   onSpent: (catId: string, v: number) => void
+  onRenameCategory: (catId: string, label: string) => void
+  onRemoveCategory: (catId: string) => void
   onSavingsMonthly: (id: string, v: number) => void
   onContribute: (id: string, v: number) => void
+  onRenameSavings: (id: string, label: string) => void
+  onRemoveSavings: (id: string) => void
   onAddCategory: (groupId: string) => void
   onAddSavings: () => void
   totals: Totals
@@ -29,7 +33,8 @@ const SAVINGS_GROUP: GroupData = { id: '__savings', label: 'Savings', icon: 'sav
 /** The full editable ledger: every spending group plus the savings group, with footer totals. */
 export function BudgetLedger({
   groups, savings, collapsed, onToggle,
-  onBudget, onSpent, onSavingsMonthly, onContribute,
+  onBudget, onSpent, onRenameCategory, onRemoveCategory,
+  onSavingsMonthly, onContribute, onRenameSavings, onRemoveSavings,
   onAddCategory, onAddSavings, totals,
 }: BudgetLedgerProps) {
   const savBudget = savings.reduce((s, x) => s + x.monthly, 0)
@@ -50,6 +55,8 @@ export function BudgetLedger({
               {g.categories.map((c, i) => (
                 <LedgerRow key={c.id} {...c} budget={c.budget} spent={c.monthSpent}
                   onBudget={(v) => onBudget(c.id, v)} onSpent={(v) => onSpent(c.id, v)}
+                  onRename={(label) => onRenameCategory(c.id, label)}
+                  onRemove={() => onRemoveCategory(c.id)}
                   last={i === g.categories.length - 1} />
               ))}
             </Collapse>
@@ -72,6 +79,8 @@ export function BudgetLedger({
               isSavings ytd={sv.ytd} annualLimit={sv.annualLimit}
               onBudget={(v) => onSavingsMonthly(sv.id, v)}
               onSpent={(v) => onContribute(sv.id, v)}
+              onRename={(label) => onRenameSavings(sv.id, label)}
+              onRemove={() => onRemoveSavings(sv.id)}
               last={i === savings.length - 1} />
           ))}
           {savings.length === 0 && (

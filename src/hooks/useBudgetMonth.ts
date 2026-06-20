@@ -7,13 +7,18 @@ import {
   SetIncomeAmountDocument,
   AddIncomeSourceDocument,
   RemoveIncomeSourceDocument,
+  RenameIncomeSourceDocument,
   SetCategoryBudgetDocument,
   SetMonthlySpendDocument,
   SetSavingsMonthlyDocument,
   SetMonthlyContributionDocument,
   SetSurplusAllocationDocument,
   AddBudgetCategoryDocument,
+  RenameCategoryDocument,
+  RemoveBudgetCategoryDocument,
   AddSavingsAccountDocument,
+  RenameSavingsAccountDocument,
+  RemoveSavingsAccountDocument,
 } from './budget.queries'
 import type { GoalData, GroupData, IncomeSource, MonthSel, SavingsData, Totals } from '@/utils/budget'
 
@@ -49,7 +54,12 @@ export function useBudgetMonth(sel: MonthSel) {
   const [, setMonthlyContribution] = useMutation(SetMonthlyContributionDocument)
   const [, setSurplusAllocation] = useMutation(SetSurplusAllocationDocument)
   const [, addBudgetCategory] = useMutation(AddBudgetCategoryDocument)
+  const [, renameCategoryMut] = useMutation(RenameCategoryDocument)
+  const [, removeBudgetCategoryMut] = useMutation(RemoveBudgetCategoryDocument)
   const [, addSavingsAccount] = useMutation(AddSavingsAccountDocument)
+  const [, renameSavingsAccountMut] = useMutation(RenameSavingsAccountDocument)
+  const [, removeSavingsAccountMut] = useMutation(RemoveSavingsAccountDocument)
+  const [, renameIncomeSourceMut] = useMutation(RenameIncomeSourceDocument)
 
   const raw = data?.budgetMonth
 
@@ -135,11 +145,31 @@ export function useBudgetMonth(sel: MonthSel) {
     flash('Category added — name it and set a budget.')
   }, [addBudgetCategory, refetch, flash])
 
+  const renameCategory = useCallback(async (id: string, label: string) => {
+    await renameCategoryMut({ id, label }); refetch()
+  }, [renameCategoryMut, refetch])
+
+  const removeCategory = useCallback(async (id: string) => {
+    await removeBudgetCategoryMut({ id }); refetch()
+  }, [removeBudgetCategoryMut, refetch])
+
   const addSavings = useCallback(async () => {
     await addSavingsAccount({ label: 'New account', accountType: 'Custom', icon: 'banknote', monthly: 0 })
     refetch()
     flash('Savings account added.')
   }, [addSavingsAccount, refetch, flash])
+
+  const renameSavings = useCallback(async (id: string, label: string) => {
+    await renameSavingsAccountMut({ id, label }); refetch()
+  }, [renameSavingsAccountMut, refetch])
+
+  const removeSavings = useCallback(async (id: string) => {
+    await removeSavingsAccountMut({ id }); refetch()
+  }, [removeSavingsAccountMut, refetch])
+
+  const renameIncome = useCallback(async (id: string, label: string) => {
+    await renameIncomeSourceMut({ id, label }); refetch()
+  }, [renameIncomeSourceMut, refetch])
 
   const setAllocation = useCallback(async (goalId: string, v: number) => {
     await setSurplusAllocation({ goalId, year: sel.y, month: sel.m, amount: v }); refetch()
@@ -163,7 +193,12 @@ export function useBudgetMonth(sel: MonthSel) {
     addIncome,
     removeIncome,
     addCategory,
+    renameCategory,
+    removeCategory,
     addSavings,
+    renameSavings,
+    removeSavings,
+    renameIncome,
     setAllocation,
   }
 }
