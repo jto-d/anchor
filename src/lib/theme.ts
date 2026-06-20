@@ -1,11 +1,33 @@
 'use client'
 
+import type { CSSProperties } from 'react'
 import { createTheme } from '@mui/material/styles'
 
 declare module '@mui/material/Button' {
   interface ButtonPropsVariantOverrides {
     subtle: true
   }
+}
+
+/** Shared text scale (see `typography` below) — additive custom variants. */
+type CustomTextVariant =
+  | 'statXl'
+  | 'statLg'
+  | 'cardTitle'
+  | 'panelTitle'
+  | 'bodyStrong'
+  | 'body'
+  | 'label'
+  | 'note'
+  | 'micro'
+
+declare module '@mui/material/styles' {
+  interface TypographyVariants extends Record<CustomTextVariant, CSSProperties> {}
+  interface TypographyVariantsOptions extends Partial<Record<CustomTextVariant, CSSProperties>> {}
+}
+
+declare module '@mui/material/Typography' {
+  interface TypographyPropsVariantOverrides extends Record<CustomTextVariant, true> {}
 }
 
 // --- Anchor brand scales (migrated from the old globals.css design tokens) ---
@@ -89,8 +111,28 @@ export const theme = createTheme({
       textTransform: 'uppercase',
       lineHeight: 1.4,
     },
+    // --- Shared text scale (snapped) — replaces ad-hoc inline fontSize/weight ---
+    statXl: { fontSize: 28, fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1, fontVariantNumeric: 'tabular-nums' },
+    statLg: { fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.05, fontVariantNumeric: 'tabular-nums' },
+    cardTitle: { fontSize: 16, fontWeight: 600, letterSpacing: '-0.01em', lineHeight: 1.2 },
+    panelTitle: { fontSize: 15, fontWeight: 600, letterSpacing: '-0.01em', lineHeight: 1.25 },
+    bodyStrong: { fontSize: 14, fontWeight: 600, letterSpacing: '-0.005em', lineHeight: 1.4 },
+    body: { fontSize: 13, fontWeight: 500, lineHeight: 1.45 },
+    label: { fontSize: 12, fontWeight: 500, lineHeight: 1.4 },
+    note: { fontSize: 11, fontWeight: 500, lineHeight: 1.4 },
+    micro: { fontSize: 10, fontWeight: 500, lineHeight: 1.4 },
   },
   components: {
+    MuiTypography: {
+      defaultProps: {
+        variantMapping: {
+          h1: 'h1', h2: 'h2', h3: 'h3', h4: 'h4', h5: 'h5', h6: 'h6',
+          subtitle1: 'h6', subtitle2: 'h6', body1: 'p', body2: 'p', inherit: 'p',
+          statXl: 'div', statLg: 'div', cardTitle: 'div', panelTitle: 'div',
+          bodyStrong: 'div', body: 'div', label: 'div', note: 'div', micro: 'div',
+        },
+      },
+    },
     MuiButton: {
       defaultProps: { disableElevation: true },
       styleOverrides: { root: { borderRadius: 8 } },

@@ -13,9 +13,6 @@
 ### 6. `MeView` owns too much state
 `src/app/me-view.tsx` has 9 `useState` calls managing route, selected card, all dialog visibility, toast, and remove confirmation. Adding features here will compound the problem. State should be colocated with the components that own it, or moved to a lightweight store (Zustand).
 
-### 9. Incomplete features tracked only as inline TODOs
-Several buttons have empty or no-op handlers (Edit card, Add a perk, Settings, Notifications). These are scattered as `// todo` comments in components rather than tracked anywhere. Should be converted to issues or a backlog.
-
 ### MISC
 Card page should have link to card listing?
 Notes/tooltips for cards (Lyft 5x for CSP, online groceries only)
@@ -27,10 +24,15 @@ Remove card from card page
 
 ### need to add a ton more cards
 
+### Budgeting
+Remove the lag from updating EditableMoney
+
 ### Features?
 Onboarding flow (?)
 Preview how a card fits into your spending
  - recommendations based on weak spending categories?
+ - catalog of cards (compare cards spending cats in grid view?)
+
 Subscription tracker
 Monthly budgeting/savings
  - Expected, acutal
