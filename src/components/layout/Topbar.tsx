@@ -8,7 +8,7 @@ import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import AddIcon from '@mui/icons-material/Add'
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined'
-import { ComingSoon } from '@/components/ui/ComingSoon'
+import { ComingSoon, Row } from '@/components/ui'
 
 interface TopbarProps {
   title: string
@@ -44,7 +44,7 @@ export function Topbar({ title, subtitle, onAddCard, rightSlot }: TopbarProps) {
             </Typography>
           )}
         </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, flex: 'none' }}>
+        <Row gap={1.25} sx={{ flex: 'none' }}>
           {/* <Paper
             variant="outlined"
             sx={{
@@ -81,7 +81,7 @@ export function Topbar({ title, subtitle, onAddCard, rightSlot }: TopbarProps) {
             </Button>
           )}
           {rightSlot}
-        </Box>
+        </Row>
       </Toolbar>
     </AppBar>
   )

@@ -1,9 +1,9 @@
 'use client'
 
-import Box from '@mui/material/Box'
 import Snackbar from '@mui/material/Snackbar'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { brand } from '@/lib/theme'
+import { Row } from '../layout/Flex'
 
 export function Toast({
   message,
@@ -19,11 +19,9 @@ export function Toast({
       onClose={onClose}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
     >
-      <Box
+      <Row
+        gap={1.1}
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1.1,
           bgcolor: 'grey.900',
           color: '#fff',
           px: '18px',
@@ -36,7 +34,7 @@ export function Toast({
       >
         <CheckCircleIcon sx={{ fontSize: 15, color: brand.anchor[300] }} />
         {message}
-      </Box>
+      </Row>
     </Snackbar>
   )
 }

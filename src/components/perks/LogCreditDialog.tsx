@@ -6,7 +6,7 @@ import Button from '@mui/material/Button'
 import InputAdornment from '@mui/material/InputAdornment'
 import TextField from '@mui/material/TextField'
 import CheckIcon from '@mui/icons-material/Check'
-import { AppDialog } from '@/components/ui/AppDialog'
+import { AppDialog, Row, Stack } from '@/components/ui'
 import { annualValue, capturedYTD } from '@/utils/perk'
 import { fmtCents, toAmount } from '@/utils/format'
 import type { Perk } from '@/utils/types'
@@ -56,7 +56,7 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
     >
       {shown && (
         <>
-          <Box sx={{ p: '8px 22px 20px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Stack gap={2} sx={{ p: '8px 22px 20px' }}>
             <TextField
               label="Amount"
               value={amount}
@@ -91,9 +91,9 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
               size="small"
               slotProps={{ inputLabel: { shrink: true } }}
             />
-          </Box>
+          </Stack>
 
-          <Box sx={{ p: '0 22px 22px', display: 'flex', gap: 1.25, justifyContent: 'flex-end' }}>
+          <Row justify="end" gap={1.25} sx={{ p: '0 22px 22px' }}>
             <Button variant="subtle" onClick={onClose}>
               Cancel
             </Button>
@@ -109,7 +109,7 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
             >
               Save credit
             </Button>
-          </Box>
+          </Row>
         </>
       )}
     </AppDialog>

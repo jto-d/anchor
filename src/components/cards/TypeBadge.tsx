@@ -1,8 +1,8 @@
 'use client'
 
-import Box from '@mui/material/Box'
 import { TYPE_META } from '@/utils/cardRewards'
 import { RewardIcon } from '@/components/icons/RewardIcon'
+import { Row } from '@/components/ui'
 import { brand } from '@/lib/theme'
 import type { CardType } from '@/utils/cardRewards'
 
@@ -15,11 +15,10 @@ export function TypeBadge({ type, size = 'md' }: TypeBadgeProps) {
   const meta = TYPE_META[type]
   const sm = size === 'sm'
   return (
-    <Box
+    <Row
+      inline
+      gap={sm ? '4px' : '5px'}
       sx={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: sm ? '4px' : '5px',
         height: sm ? '20px' : '24px',
         px: sm ? '7px' : '9px',
         borderRadius: '999px',
@@ -35,6 +34,6 @@ export function TypeBadge({ type, size = 'md' }: TypeBadgeProps) {
     >
       <RewardIcon name={meta.icon} size={sm ? 11 : 13} strokeWidth={2} style={{ color: brand.zinc[500] }} />
       {meta.label}
-    </Box>
+    </Row>
   )
 }

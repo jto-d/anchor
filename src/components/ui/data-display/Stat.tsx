@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import type { SxProps, Theme } from '@mui/material/styles'
-import { Eyebrow } from '@/components/ui/Eyebrow'
+import { Eyebrow } from './Eyebrow'
 
 interface StatProps {
   label: React.ReactNode

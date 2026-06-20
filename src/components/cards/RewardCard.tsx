@@ -7,6 +7,7 @@ import Tooltip from '@mui/material/Tooltip'
 import AnchorIcon from '@mui/icons-material/Anchor'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { CatIcon } from '@/components/icons/CatIcon'
+import { Row } from '@/components/ui'
 import { TypeBadge } from './TypeBadge'
 import IconButton from '@mui/material/IconButton'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
@@ -29,20 +30,18 @@ export function CardListRow({ card, density = 'comfortable', onAction }: {
   const [hover, setHover] = useState(false)
 
   return (
-    <Box
+    <Row
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
+      gap="18px"
       sx={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '18px',
         p: dense ? '12px 16px' : '16px 18px',
         background: hover ? brand.zinc[50] : '#fff',
         transition: 'background 180ms ease',
       }}
     >
       {/* identity */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: '13px', width: '272px', flexShrink: 0 }}>
+      <Row gap="13px" sx={{ width: '272px', flexShrink: 0 }}>
         <Box
           sx={{
             width: 44,
@@ -71,7 +70,7 @@ export function CardListRow({ card, density = 'comfortable', onAction }: {
             </Box>
           </Typography>
         </Box>
-      </Box>
+      </Row>
 
       {/* type */}
       <Box sx={{ width: '108px', flexShrink: 0 }}>
@@ -79,18 +78,17 @@ export function CardListRow({ card, density = 'comfortable', onAction }: {
       </Box>
 
       {/* reward chips */}
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '7px', flex: 1, minWidth: 0 }}>
+      <Row wrap gap="7px" sx={{ flex: 1, minWidth: 0 }}>
         {rewards.map((r) => {
           const cat = CAT[r.cat]
           const noted = !!r.note
           return (
-            <Box
+            <Row
               key={r.cat}
+              inline
+              gap="6px"
               title={noted ? undefined : `${fmtRate(r)} on ${cat.label}`}
               sx={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
                 height: '26px',
                 pl: '7px',
                 pr: noted ? '7px' : '9px',
@@ -121,17 +119,17 @@ export function CardListRow({ card, density = 'comfortable', onAction }: {
                   <InfoOutlinedIcon sx={{ fontSize: 13, color: 'primary.main', cursor: 'help' }} />
                 </Tooltip>
               )}
-            </Box>
+            </Row>
           )
         })}
         {base && (
-          <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: '5px', height: '26px', px: '9px', color: 'text.disabled' }}>
+          <Row inline gap="5px" sx={{ height: '26px', px: '9px', color: 'text.disabled' }}>
             <Typography sx={{ fontSize: '12.5px', fontWeight: 500 }}>
               {fmtRate(base)} on everything else
             </Typography>
-          </Box>
+          </Row>
         )}
-      </Box>
+      </Row>
 
       <IconButton
         size="small"
@@ -140,6 +138,6 @@ export function CardListRow({ card, density = 'comfortable', onAction }: {
       >
         <DeleteOutlinedIcon fontSize="small" />
       </IconButton>
-    </Box>
+    </Row>
   )
 }

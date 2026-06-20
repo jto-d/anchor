@@ -5,6 +5,7 @@ import Dialog from '@mui/material/Dialog'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import CloseIcon from '@mui/icons-material/Close'
+import { Row } from '../layout/Flex'
 
 export function AppDialog({
   open,
@@ -40,14 +41,10 @@ export function AppDialog({
         },
       }}
     >
-      <Box
-        sx={{
-          p: '20px 22px 14px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          flex: 'none',
-        }}
+      <Row
+        align="start"
+        justify="between"
+        sx={{ p: '20px 22px 14px', flex: 'none' }}
       >
         <Box>
           <Typography
@@ -73,7 +70,7 @@ export function AppDialog({
         >
           <CloseIcon sx={{ fontSize: 18 }} />
         </IconButton>
-      </Box>
+      </Row>
       {children}
     </Dialog>
   )

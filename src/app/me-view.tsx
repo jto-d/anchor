@@ -7,7 +7,7 @@ import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { Topbar } from '@/components/layout/Topbar'
-import { Toast } from '@/components/ui/Toast'
+import { Row, Segmented, Stack, Toast } from '@/components/ui'
 import { PerksDashboard } from '@/components/perks/PerksDashboard'
 import { CardDetail } from '@/components/perks/CardDetail'
 import { LogCreditDialog } from '@/components/perks/LogCreditDialog'
@@ -96,19 +96,19 @@ export function MeView() {
 
   if (fetching) {
     return (
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+      <Row justify="center" sx={{ height: '100vh' }}>
         <CircularProgress />
-      </Box>
+      </Row>
     )
   }
 
   if (error) {
     return (
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', p: 3 }}>
+      <Row justify="center" sx={{ height: '100vh', p: 3 }}>
         <Alert severity="error" variant="outlined">
           {error.message}
         </Alert>
-      </Box>
+      </Row>
     )
   }
 
@@ -117,7 +117,7 @@ export function MeView() {
   const userEmail = data.me.email
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh', bgcolor: 'background.default', color: 'text.primary' }}>
+    <Row align="stretch" sx={{ height: '100vh', bgcolor: 'background.default', color: 'text.primary' }}>
       <Sidebar
         route={route === 'card' ? 'cards' : route}
         userEmail={userEmail}
@@ -129,7 +129,7 @@ export function MeView() {
         }}
       />
 
-      <Box component="main" sx={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
+      <Stack component="main" sx={{ flex: 1, overflow: 'auto' }}>
         {route === 'card' && selectedCard ? (
           <>
             <Topbar
@@ -159,28 +159,14 @@ export function MeView() {
               title="Budgeting"
               subtitle="Plan the month, log what you spend, send the surplus to a goal."
               rightSlot={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <Row gap={1.5}>
                   {/* Monthly / Yearly toggle */}
-                  <Box sx={{ display: 'inline-flex', p: '3px', gap: '2px', bgcolor: 'grey.100', border: '1px solid', borderColor: 'divider', borderRadius: '9px' }}>
-                    {(['monthly', 'yearly'] as const).map((v) => (
-                      <Box
-                        key={v}
-                        component="button"
-                        onClick={() => setBudgetView(v)}
-                        sx={{
-                          display: 'inline-flex', alignItems: 'center', height: 28, px: '12px',
-                          border: 'none', cursor: 'pointer', borderRadius: '7px',
-                          fontFamily: 'inherit', fontSize: 13, fontWeight: 600,
-                          bgcolor: budgetView === v ? '#fff' : 'transparent',
-                          color: budgetView === v ? 'text.primary' : 'text.secondary',
-                          boxShadow: budgetView === v ? brand.shadow.sm : 'none',
-                          transition: 'background 150ms ease, color 150ms ease',
-                        }}
-                      >
-                        {v === 'monthly' ? 'Monthly' : 'Yearly'}
-                      </Box>
-                    ))}
-                  </Box>
+                  <Segmented
+                    size="sm"
+                    value={budgetView}
+                    onChange={(v) => setBudgetView(v as 'monthly' | 'yearly')}
+                    options={[{ value: 'monthly', label: 'Monthly' }, { value: 'yearly', label: 'Yearly' }]}
+                  />
 
                   {budgetView === 'monthly' ? (
                     <BudgetMonthStepper
@@ -196,7 +182,7 @@ export function MeView() {
                     />
                   ) : (
                     /* Year stepper */
-                    <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: '2px', p: '3px', bgcolor: 'grey.100', border: '1px solid', borderColor: 'divider', borderRadius: '9px' }}>
+                    <Row inline gap="2px" sx={{ p: '3px', bgcolor: 'grey.100', border: '1px solid', borderColor: 'divider', borderRadius: '9px' }}>
                       <Box
                         component="button"
                         onClick={() => setBudgetSel((prev) => ({ ...prev, y: prev.y - 1 }))}
@@ -219,9 +205,9 @@ export function MeView() {
                       >
                         ›
                       </Box>
-                    </Box>
+                    </Row>
                   )}
-                </Box>
+                </Row>
               }
             />
             {budgetView === 'monthly' ? (
@@ -236,7 +222,7 @@ export function MeView() {
             <PerksDashboard cards={cards} onOpenCard={openCard} onLog={setDialogPerk} />
           </>
         )}
-      </Box>
+      </Stack>
 
       <LogCreditDialog perk={livePerk} onClose={() => setDialogPerk(null)} onSave={handleSaveCredit} />
 
@@ -254,6 +240,6 @@ export function MeView() {
       />
 
       <Toast message={toast} onClose={() => setToast(null)} />
-    </Box>
+    </Row>
   )
 }

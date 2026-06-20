@@ -6,7 +6,7 @@ import Tooltip from '@mui/material/Tooltip'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { RewardIcon } from '@/components/icons/RewardIcon'
 import { CatIcon } from '@/components/icons/CatIcon'
-import { Eyebrow } from '@/components/ui/Eyebrow'
+import { Eyebrow, Row, Stack } from '@/components/ui'
 import { CATEGORIES, TYPE_META, themeOf, cardRate, rankForCategory } from '@/utils/cardRewards'
 import { fmtRate } from '@/utils/cardRewards'
 import { brand } from '@/lib/theme'
@@ -67,7 +67,7 @@ export function SuggestMatrix({ cards }: SuggestMatrixProps) {
                       verticalAlign: 'bottom',
                     }}
                   >
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                    <Stack align="center" gap="6px">
                       <Box
                         sx={{
                           width: 34,
@@ -98,7 +98,7 @@ export function SuggestMatrix({ cards }: SuggestMatrixProps) {
                         strokeWidth={2}
                         style={{ color: brand.zinc[400] }}
                       />
-                    </Box>
+                    </Stack>
                   </Box>
                 )
               })}
@@ -125,12 +125,12 @@ export function SuggestMatrix({ cards }: SuggestMatrixProps) {
                       borderColor: 'divider',
                     }}
                   >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <Row gap="10px">
                       <CatIcon cat={c} size={28} />
                       <Typography sx={{ fontSize: '13.5px', fontWeight: 500, color: 'text.primary', letterSpacing: '-0.005em' }}>
                         {c.label}
                       </Typography>
-                    </Box>
+                    </Row>
                   </Box>
 
                   {cards.map((card) => {
@@ -154,7 +154,7 @@ export function SuggestMatrix({ cards }: SuggestMatrixProps) {
                         }}
                       >
                         {reward ? (
-                          <Box sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                          <Row inline justify="center" gap="4px">
                             <Typography
                               sx={{
                                 fontSize: '14px',
@@ -175,7 +175,7 @@ export function SuggestMatrix({ cards }: SuggestMatrixProps) {
                                 <InfoOutlinedIcon sx={{ fontSize: 11, color: isWin ? brand.anchor[600] : brand.zinc[400], cursor: 'help' }} />
                               </Tooltip>
                             )}
-                          </Box>
+                          </Row>
                         ) : (
                           <Typography sx={{ color: brand.zinc[300] }}>—</Typography>
                         )}
@@ -189,12 +189,12 @@ export function SuggestMatrix({ cards }: SuggestMatrixProps) {
         </Box>
       </Box>
 
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: '7px', mt: '14px', color: brand.zinc[400] }}>
+      <Row gap="7px" sx={{ mt: '14px', color: brand.zinc[400] }}>
         <RewardIcon name="alert" size={13} strokeWidth={1.8} />
         <Typography sx={{ fontSize: '12px', letterSpacing: '-0.005em', color: brand.zinc[400] }}>
           Ranked by rate. Points (×) and cash back (%) aren&apos;t a direct dollar comparison.
         </Typography>
-      </Box>
+      </Row>
     </Box>
   )
 }

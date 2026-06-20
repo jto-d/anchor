@@ -12,8 +12,7 @@ import CheckIcon from '@mui/icons-material/Check'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined'
 import ScheduleOutlinedIcon from '@mui/icons-material/ScheduleOutlined'
-import { StatusChip } from '@/components/ui/StatusChip'
-import { ProgressBar } from '@/components/ui/ProgressBar'
+import { Dot, ProgressBar, Row, StatusChip } from '@/components/ui'
 import { tabularNums } from '@/lib/sx'
 import { capturedYTD, capturedThisMonth, capturedInCycle, annualValue, perkPct, perkStatus, periodLabel, nextResetDate } from '@/utils/perk'
 import { fmtDollars, fmtCents, fmtDate, toAmount } from '@/utils/format'
@@ -49,7 +48,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
 
   return (
     <Box sx={{ borderBottom: 1, borderColor: 'divider', '&:last-of-type': { borderBottom: 0 } }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.75, py: '15px', px: '4px' }}>
+      <Row gap={1.75} sx={{ py: '15px', px: '4px' }}>
         <IconButton
           size="small"
           onClick={() => setOpen(!open)}
@@ -59,14 +58,14 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
         </IconButton>
 
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, flexWrap: 'wrap' }}>
+          <Row gap={1.25} wrap>
             <Typography sx={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.01em' }}>{perk.name}</Typography>
             <StatusChip status={status.key} label={status.label} icon={statusIcon} />
             {card && (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: '5px', px: '7px', py: '2px', borderRadius: '99px', border: 1, borderColor: 'divider', bgcolor: 'grey.50', flex: 'none', whiteSpace: 'nowrap' }}>
-                <Box sx={{ width: 8, height: 8, borderRadius: '50%', background: resolveCardDesign(card.design).gradient, flex: 'none' }} />
+              <Row inline gap="5px" sx={{ px: '7px', py: '2px', borderRadius: '99px', border: 1, borderColor: 'divider', bgcolor: 'grey.50', whiteSpace: 'nowrap' }}>
+                <Dot size={8} color={resolveCardDesign(card.design).gradient} />
                 <Typography sx={{ fontSize: 11, fontWeight: 600, color: 'text.secondary' }}>{card.name}</Typography>
-              </Box>
+              </Row>
             )}
             {perk.enrollmentRequired && (
               <Chip
@@ -76,7 +75,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
                 sx={{ fontSize: 11, height: 20, bgcolor: 'warning.50', color: 'warning.800', border: 1, borderColor: 'warning.200', '& .MuiChip-icon': { color: 'warning.600' } }}
               />
             )}
-          </Box>
+          </Row>
           <Typography sx={{ fontSize: 12, color: 'grey.500', mt: '3px' }}>
             {isOpenEnded
               ? `${perk.perkCredits.length} visit${perk.perkCredits.length !== 1 ? 's' : ''} logged`
@@ -131,7 +130,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
         >
           Log
         </Button>
-      </Box>
+      </Row>
 
       <Collapse in={open} unmountOnExit>
         <Box sx={{ pl: '36px', pr: '4px', pb: '14px' }}>
@@ -160,10 +159,11 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
           ) : (
             <Box component="ul" sx={{ listStyle: 'none', m: 0, p: 0, borderLeft: 1, borderColor: 'divider' }}>
               {perk.perkCredits.map((c) => (
-                <Box
+                <Row
                   component="li"
                   key={c.id}
-                  sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: '14px', py: '7px' }}
+                  justify="between"
+                  sx={{ px: '14px', py: '7px' }}
                 >
                   <Typography component="span" sx={{ fontSize: 13, color: 'text.secondary' }}>
                     {fmtDate(c.date)}
@@ -179,7 +179,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
                   >
                     +{fmtCents(toAmount(c.amount))}
                   </Typography>
-                </Box>
+                </Row>
               ))}
             </Box>
           )}

@@ -2,7 +2,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import type { SxProps, Theme } from '@mui/material/styles'
 import { Row } from '@/components/ui/layout/Flex'
-import { CatGlyph } from '@/components/ui/CatGlyph'
+import { CatGlyph } from './CatGlyph'
 
 interface PanelHeaderProps {
   /** CatGlyph icon slug. Omit to render no glyph. */

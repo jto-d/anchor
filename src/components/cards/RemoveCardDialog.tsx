@@ -6,7 +6,7 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import CircularProgress from '@mui/material/CircularProgress'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
-import { AppDialog } from '@/components/ui/AppDialog'
+import { AppDialog, Row } from '@/components/ui'
 
 interface RemoveCardDialogProps {
   cardName: string | null
@@ -35,12 +35,12 @@ export function RemoveCardDialog({ cardName, onClose, onConfirm }: RemoveCardDia
       disableClose={submitting}
     >
       <Box sx={{ px: '22px', pb: '4px' }}>
-        <Typography sx={{ fontSize: '13.5px', color: 'grey.500', maxWidth: '30ch', lineHeight: 1.5 }}>
+        <Typography variant="body" sx={{ color: 'grey.500', maxWidth: '30ch', lineHeight: 1.5 }}>
           Remove <Box component="span" sx={{ fontWeight: 600, color: 'text.primary' }}>{cardName}</Box> from your wallet? This also deletes all its perks and credit history.
         </Typography>
       </Box>
 
-      <Box sx={{ p: '16px 22px 20px', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+      <Row justify="end" gap="10px" sx={{ p: '16px 22px 20px' }}>
         <Button variant="subtle" onClick={onClose} disabled={submitting}>
           Cancel
         </Button>
@@ -53,7 +53,7 @@ export function RemoveCardDialog({ cardName, onClose, onConfirm }: RemoveCardDia
         >
           Remove
         </Button>
-      </Box>
+      </Row>
     </AppDialog>
   )
 }

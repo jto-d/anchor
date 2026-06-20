@@ -21,7 +21,7 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import type { SvgIconComponent } from '@mui/icons-material'
 import { signOut } from 'next-auth/react'
 import { brand } from '@/lib/theme'
-import { ComingSoon } from '@/components/ui/ComingSoon'
+import { ComingSoon, Row } from '@/components/ui'
 
 export const SIDEBAR_WIDTH = 220
 
@@ -72,7 +72,7 @@ export function Sidebar({ route, userEmail, onNavigate }: SidebarProps) {
       }}
     >
       {/* Logo */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.1, px: 1, pb: 2.5 }}>
+      <Row gap={1.1} sx={{ px: 1, pb: 2.5 }}>
         <Box
           sx={{
             width: 30,
@@ -89,7 +89,7 @@ export function Sidebar({ route, userEmail, onNavigate }: SidebarProps) {
         <Typography sx={{ fontSize: 18, fontWeight: 600, letterSpacing: '-0.02em' }}>
           Anchor
         </Typography>
-      </Box>
+      </Row>
 
       {/* Nav */}
       <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
@@ -138,7 +138,7 @@ export function Sidebar({ route, userEmail, onNavigate }: SidebarProps) {
           </ListItemButton>
         </ComingSoon>
         <Divider sx={{ mt: 0.5, mb: 0.5 }} />
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.1, px: 1.25, py: 1, minWidth: 0 }}>
+        <Row gap={1.1} min0 sx={{ px: 1.25, py: 1 }}>
           <Avatar
             sx={{ width: 28, height: 28, fontSize: 11, fontWeight: 700, bgcolor: 'grey.200', color: 'text.secondary' }}
           >
@@ -160,7 +160,7 @@ export function Sidebar({ route, userEmail, onNavigate }: SidebarProps) {
           >
             <LogoutIcon sx={{ fontSize: 16 }} />
           </IconButton>
-        </Box>
+        </Row>
       </Box>
     </Drawer>
   )

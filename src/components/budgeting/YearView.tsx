@@ -1,14 +1,15 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import CircularProgress from '@mui/material/CircularProgress'
 import { brand } from '@/lib/theme'
-import { CatGlyph } from '@/components/ui/CatGlyph'
-import { Eyebrow } from '@/components/ui/Eyebrow'
-import { SurfaceCard } from '@/components/ui/SurfaceCard'
-import { ProgressBar } from '@/components/ui/ProgressBar'
+import {
+  CatGlyph, Dot, Eyebrow, ListRow, PanelHeader, ProgressBar,
+  Row, Segmented, Stack, Stat, SurfaceCard, Tag, VDivider,
+} from '@/components/ui'
+import { tabularNums } from '@/lib/sx'
 import { fmtMoney, fmtSigned, clamp01, monthShort } from '@/utils/format'
 import { useBudgetYear } from '@/hooks/useBudgetYear'
 import type { YearMonth, CatYearData, SavingsYearData, GoalYearData, YearAnnual } from '@/hooks/useBudgetYear'
@@ -28,66 +29,35 @@ function YearSummary({ annual, completed, projected, currentLabel }: {
   const deficit = annual.surplus < 0
   const rate = annual.income > 0 ? (annual.saved + Math.max(0, annual.surplus)) / annual.income : 0
 
-  const divider = <Box sx={{ width: '1px', alignSelf: 'stretch', bgcolor: 'divider', my: 0.75 }} />
-
-  const cell = (label: string, value: string, sub: string, hero?: boolean, color?: string) => (
-    <Box sx={{ flex: hero ? 1.15 : 1, minWidth: 0, px: { xs: 2, sm: 2.75 } }}>
-      <Eyebrow sx={{ fontSize: '10.5px', mb: '7px', color: color ? color : 'text.secondary' }}>{label}</Eyebrow>
-      <Typography sx={{
-        fontSize: hero ? 28 : 23,
-        fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1,
-        fontVariantNumeric: 'tabular-nums', color: color || 'text.primary',
-      }}>{value}</Typography>
-      <Typography sx={{ mt: '6px', fontSize: 12, color: 'text.secondary', lineHeight: 1.3 }}>{sub}</Typography>
-    </Box>
-  )
+  const cellSx = (hero?: boolean) => ({ flex: hero ? 1.15 : 1, px: { xs: 2, sm: 2.75 } })
 
   return (
     <SurfaceCard>
-      <Box sx={{ display: 'flex', alignItems: 'stretch', py: 2.5, px: 1 }}>
-        {cell('Income', fmtMoney(annual.income), `${fmtMoney(annual.monthlyIncome)}/mo · full year`)}
-        {divider}
-        {cell('Spent', fmtMoney(annual.spent), `${Math.round(annual.income > 0 ? annual.spent / annual.income * 100 : 0)}% of income`)}
-        {divider}
-        {cell('Saved', fmtMoney(annual.saved), `${Math.round(annual.income > 0 ? annual.saved / annual.income * 100 : 0)}% to accounts`)}
-        {divider}
-        {cell(
-          deficit ? 'Net shortfall' : 'Surplus',
-          fmtSigned(annual.surplus),
-          `${Math.round(rate * 100)}% kept or saved`,
-          true,
-          deficit ? brand.red[600] : brand.anchor[700],
-        )}
-      </Box>
-      <Box sx={{ px: 3.25, pb: 2, display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
-        <Chip tone="accent" icon="check">{completed} logged</Chip>
-        {currentLabel != null && <Chip tone="amber" icon="clock">{MONTHS_LONG[currentLabel]} in progress</Chip>}
-        {projected > 0 && <Chip tone="neutral">{projected} projected</Chip>}
-        <Typography sx={{ fontSize: 12, color: 'text.secondary', ml: '2px' }}>
+      <Row align="stretch" sx={{ py: 2.5, px: 1 }}>
+        <Stat label="Income" value={fmtMoney(annual.income)} sub={`${fmtMoney(annual.monthlyIncome)}/mo · full year`} sx={cellSx()} />
+        <VDivider sx={{ my: 0.75 }} />
+        <Stat label="Spent" value={fmtMoney(annual.spent)} sub={`${Math.round(annual.income > 0 ? annual.spent / annual.income * 100 : 0)}% of income`} sx={cellSx()} />
+        <VDivider sx={{ my: 0.75 }} />
+        <Stat label="Saved" value={fmtMoney(annual.saved)} sub={`${Math.round(annual.income > 0 ? annual.saved / annual.income * 100 : 0)}% to accounts`} sx={cellSx()} />
+        <VDivider sx={{ my: 0.75 }} />
+        <Stat
+          hero
+          label={deficit ? 'Net shortfall' : 'Surplus'}
+          value={fmtSigned(annual.surplus)}
+          sub={`${Math.round(rate * 100)}% kept or saved`}
+          color={deficit ? brand.red[600] : brand.anchor[700]}
+          sx={cellSx(true)}
+        />
+      </Row>
+      <Row gap={1.5} wrap sx={{ px: 3.25, pb: 2 }}>
+        <Tag tone="accent">✓ {completed} logged</Tag>
+        {currentLabel != null && <Tag tone="amber">◷ {MONTHS_LONG[currentLabel]} in progress</Tag>}
+        {projected > 0 && <Tag tone="neutral">{projected} projected</Tag>}
+        <Typography variant="label" color="text.secondary" sx={{ ml: '2px' }}>
           Estimated months assume your budget is met on-track.
         </Typography>
-      </Box>
+      </Row>
     </SurfaceCard>
-  )
-}
-
-function Chip({ tone, icon, children }: { tone: 'accent' | 'amber' | 'neutral'; icon?: string; children: React.ReactNode }) {
-  const styles = {
-    accent: { bgcolor: brand.accentSoft, color: brand.anchor[700] },
-    neutral: { bgcolor: 'grey.100', color: 'text.secondary' },
-    amber: { bgcolor: brand.gold[50], color: brand.amber[700] },
-  }
-  return (
-    <Box sx={{
-      display: 'inline-flex', alignItems: 'center', gap: '5px',
-      height: 24, px: '10px', borderRadius: 999,
-      fontSize: 12, fontWeight: 600,
-      ...styles[tone],
-    }}>
-      {icon === 'check' && '✓ '}
-      {icon === 'clock' && '◷ '}
-      {children}
-    </Box>
   )
 }
 
@@ -106,7 +76,7 @@ function CashflowBars({ months }: { months: YearMonth[] }) {
 
   return (
     <Box sx={{ position: 'relative', pt: '6px', pb: 0 }}>
-      <Box sx={{ display: 'flex', alignItems: 'flex-end', height: `${PLOT_H}px`, gap: 0 }}>
+      <Row align="end" sx={{ height: `${PLOT_H}px` }}>
         {months.map((mo) => {
           const isHover = hovered === mo.m
           const dim = mo.estimated ? 0.62 : 1
@@ -114,18 +84,15 @@ function CashflowBars({ months }: { months: YearMonth[] }) {
           const savH = outH > 0 ? h(mo.savContrib) / outH * outH : 0
 
           return (
-            <Box
+            <Stack
               key={mo.m}
+              align="center"
               onMouseEnter={() => setHovered(mo.m)}
               onMouseLeave={() => setHovered((p) => p === mo.m ? null : p)}
-              sx={{
-                flex: 1, display: 'flex', flexDirection: 'column',
-                alignItems: 'center', height: '100%', cursor: 'default',
-              }}
+              sx={{ flex: 1, height: '100%', cursor: 'default' }}
             >
-              <Box sx={{
+              <Row align="end" justify="center" gap="5px" sx={{
                 position: 'relative', flex: 1, width: '100%',
-                display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '5px',
                 borderRadius: '6px',
                 bgcolor: isHover ? 'grey.50' : 'transparent',
                 transition: 'background 120ms ease',
@@ -141,10 +108,9 @@ function CashflowBars({ months }: { months: YearMonth[] }) {
                 </Box>
 
                 {/* outflow bar: saved (top) + spent (bottom) */}
-                <Box sx={{
+                <Stack sx={{
                   width: 13, height: `${outH}px`, borderRadius: '3px 3px 0 0',
-                  display: 'flex', flexDirection: 'column', overflow: 'hidden',
-                  opacity: dim, position: 'relative', flexShrink: 0,
+                  overflow: 'hidden', opacity: dim, position: 'relative', flexShrink: 0,
                 }}>
                   <Box sx={{ height: `${savH}px`, bgcolor: brand.gold[500], position: 'relative', flexShrink: 0 }}>
                     {mo.estimated && <Box sx={stripeStyle} />}
@@ -152,7 +118,7 @@ function CashflowBars({ months }: { months: YearMonth[] }) {
                   <Box sx={{ flex: 1, bgcolor: brand.anchor[600], position: 'relative' }}>
                     {mo.estimated && <Box sx={stripeStyle} />}
                   </Box>
-                </Box>
+                </Stack>
 
                 {mo.status === 'current' && (
                   <Box sx={{
@@ -163,7 +129,7 @@ function CashflowBars({ months }: { months: YearMonth[] }) {
                     boxShadow: `0 0 0 3px ${brand.gold[50]}`,
                   }} />
                 )}
-              </Box>
+              </Row>
 
               <Typography sx={{
                 mt: '8px', fontSize: 11,
@@ -173,10 +139,10 @@ function CashflowBars({ months }: { months: YearMonth[] }) {
               }}>
                 {MONTHS_SHORT[mo.m]}
               </Typography>
-            </Box>
+            </Stack>
           )
         })}
-      </Box>
+      </Row>
 
       {/* hover tooltip */}
       {hovered != null && (() => {
@@ -204,36 +170,35 @@ function CashflowBars({ months }: { months: YearMonth[] }) {
             p: '12px 13px',
             pointerEvents: 'none',
           }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', mb: '9px' }}>
+            <Row justify="between" gap="10px" sx={{ mb: '9px' }}>
               <Typography sx={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{MONTHS_LONG[mo.m]}</Typography>
-              <Box sx={{
+              <Row inline sx={{
                 fontSize: 10, fontWeight: 600, letterSpacing: '0.03em', textTransform: 'uppercase',
-                px: '7px', height: 20, display: 'inline-flex', alignItems: 'center', borderRadius: 999,
+                px: '7px', height: 20, borderRadius: 999,
                 bgcolor: statusColors[mo.status], color: '#fff',
               }}>
                 {statusLabels[mo.status]}
-              </Box>
-            </Box>
+              </Row>
+            </Row>
             {([
               ['Income', fmtMoney(mo.income), brand.anchor[200]],
               ['Spent', fmtMoney(mo.catSpent), brand.anchor[300]],
               ['Saved', fmtMoney(mo.savContrib), brand.gold[500]],
               [mo.surplus < 0 ? 'Over' : 'Surplus', fmtSigned(mo.surplus), null],
             ] as [string, string, string | null][]).map(([k, v, dot], i, arr) => (
-              <Box key={k} sx={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '14px',
+              <Row key={k} justify="between" gap="14px" sx={{
                 fontSize: 12, py: '3px',
                 ...(i === arr.length - 1 ? { pt: '7px', mt: '4px', borderTop: '1px solid rgba(255,255,255,0.14)' } : {}),
               }}>
-                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: '7px', color: 'rgba(255,255,255,0.7)' }}>
-                  <Box sx={{ width: 8, height: 8, borderRadius: '2px', bgcolor: dot ?? 'transparent', flexShrink: 0 }} />
+                <Row inline gap="7px" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+                  <Dot size={8} square color={dot ?? 'transparent'} />
                   <Typography sx={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>{k}</Typography>
-                </Box>
+                </Row>
                 <Typography sx={{
-                  fontSize: 12, fontWeight: 600, fontVariantNumeric: 'tabular-nums',
+                  fontSize: 12, fontWeight: 600, ...tabularNums,
                   color: k === 'Over' ? brand.red[300] : '#fff',
                 }}>{v}</Typography>
-              </Box>
+              </Row>
             ))}
           </Box>
         )
@@ -277,7 +242,7 @@ function CumulativeArea({ months, currentIdx }: { months: YearMonth[]; currentId
         )}
       </svg>
 
-      <Box sx={{ display: 'flex', mt: '8px' }}>
+      <Row sx={{ mt: '8px' }}>
         {months.map((mo) => (
           <Typography key={mo.m} sx={{
             flex: 1, textAlign: 'center', fontSize: 11,
@@ -287,14 +252,14 @@ function CumulativeArea({ months, currentIdx }: { months: YearMonth[]; currentId
             {MONTHS_SHORT[mo.m]}
           </Typography>
         ))}
-      </Box>
+      </Row>
 
       <Box sx={{ position: 'absolute', top: '2px', right: '12px', textAlign: 'right' }}>
         <Eyebrow sx={{ fontSize: '10px' }}>By year end</Eyebrow>
-        <Typography sx={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em', color: brand.anchor[700], fontVariantNumeric: 'tabular-nums', mt: '3px' }}>
+        <Typography variant="statLg" sx={{ color: brand.anchor[700], mt: '3px' }}>
           {fmtMoney(endTotal)}
         </Typography>
-        <Typography sx={{ fontSize: 11.5, color: 'text.secondary', mt: '2px', fontVariantNumeric: 'tabular-nums' }}>
+        <Typography variant="note" sx={{ color: 'text.secondary', mt: '2px', ...tabularNums }}>
           {fmtMoney(endSaved)} into accounts
         </Typography>
       </Box>
@@ -321,49 +286,36 @@ function HeroChart({ months, currentIdx }: { months: YearMonth[]; currentIdx: nu
 
   return (
     <SurfaceCard sx={{ overflow: 'visible' }}>
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, px: 2.75, pt: 2.25, pb: '6px' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+      <Row align="start" justify="between" gap={2} sx={{ px: 2.75, pt: 2.25, pb: '6px' }}>
+        <Row gap={1.5}>
           <CatGlyph icon={bars ? 'trendingUp' : 'piggyBank'} tone="accent" size={34} />
           <Box>
-            <Typography sx={{ fontSize: 16, fontWeight: 600, letterSpacing: '-0.01em' }}>
+            <Typography variant="cardTitle">
               {bars ? 'Income vs. spending' : 'Money kept, building up'}
             </Typography>
-            <Typography sx={{ fontSize: 12.5, color: 'text.secondary', mt: '2px' }}>
+            <Typography variant="label" color="text.secondary" sx={{ mt: '2px' }}>
               {bars ? 'Each month, side by side — striped months are estimates' : 'Cumulative savings + surplus across the year'}
             </Typography>
           </Box>
-        </Box>
+        </Row>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+        <Row gap={2} wrap justify="end" sx={{ flexShrink: 0 }}>
           {legend.map(([c, l]) => (
-            <Box key={l} sx={{ display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
-              <Box sx={{ width: 10, height: 10, borderRadius: '3px', bgcolor: c, flexShrink: 0 }} />
-              <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>{l}</Typography>
-            </Box>
+            <Row key={l} inline gap="7px">
+              <Dot size={10} square color={c} />
+              <Typography variant="label" color="text.secondary">{l}</Typography>
+            </Row>
           ))}
-          <Box sx={{ display: 'inline-flex', p: '3px', gap: '2px', bgcolor: 'grey.100', border: '1px solid', borderColor: 'divider', borderRadius: '9px', ml: 1 }}>
-            {(['bars', 'cumulative'] as const).map((v) => (
-              <Box
-                key={v}
-                component="button"
-                onClick={() => setMode(v)}
-                sx={{
-                  display: 'inline-flex', alignItems: 'center', height: 28, px: '12px',
-                  border: 'none', cursor: 'pointer', borderRadius: '7px',
-                  fontFamily: 'var(--font-switzer, inherit)', fontSize: 13, fontWeight: 600,
-                  letterSpacing: '-0.005em',
-                  bgcolor: mode === v ? '#fff' : 'transparent',
-                  color: mode === v ? 'text.primary' : 'text.secondary',
-                  boxShadow: mode === v ? brand.shadow.sm : 'none',
-                  transition: 'background 150ms ease, color 150ms ease',
-                }}
-              >
-                {v === 'bars' ? 'Bars' : 'Cumulative'}
-              </Box>
-            ))}
+          <Box sx={{ ml: 1 }}>
+            <Segmented
+              size="sm"
+              value={mode}
+              onChange={(v) => setMode(v as 'bars' | 'cumulative')}
+              options={[{ value: 'bars', label: 'Bars' }, { value: 'cumulative', label: 'Cumulative' }]}
+            />
           </Box>
-        </Box>
-      </Box>
+        </Row>
+      </Row>
 
       <Box sx={{ px: 2.25, pb: 2.25 }}>
         {bars
@@ -381,44 +333,40 @@ function CategoryTotals({ catYear, total }: { catYear: CatYearData[]; total: num
 
   return (
     <SurfaceCard sx={{ overflow: 'hidden' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2.5, py: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
-          <CatGlyph icon="scale" tone="accent" size={30} />
-          <Box>
-            <Typography sx={{ fontSize: 15, fontWeight: 600, letterSpacing: '-0.01em' }}>Where your money goes</Typography>
-            <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>Category totals · actuals + on-track estimate</Typography>
+      <PanelHeader
+        icon="scale"
+        title="Where your money goes"
+        subtitle="Category totals · actuals + on-track estimate"
+        sx={{ px: 2.5 }}
+        action={
+          <Box sx={{ textAlign: 'right' }}>
+            <Eyebrow sx={{ fontSize: '10px', mb: '3px' }}>Total spend</Eyebrow>
+            <Typography sx={{ fontSize: 17, fontWeight: 700, letterSpacing: '-0.02em', ...tabularNums }}>{fmtMoney(total)}</Typography>
           </Box>
-        </Box>
-        <Box sx={{ textAlign: 'right' }}>
-          <Eyebrow sx={{ fontSize: '10px', mb: '3px' }}>Total spend</Eyebrow>
-          <Typography sx={{ fontSize: 17, fontWeight: 700, letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>{fmtMoney(total)}</Typography>
-        </Box>
-      </Box>
+        }
+      />
 
       {catYear.map((c, i) => {
         const share = total > 0 ? c.total / total : 0
         return (
-          <Box key={c.id} sx={{
-            display: 'flex', alignItems: 'center', gap: 1.5, px: 2.5, py: 1.375,
-            borderBottom: i < catYear.length - 1 ? '1px solid' : 'none', borderColor: 'divider',
-          }}>
+          <ListRow key={c.id} last={i === catYear.length - 1} gap={1.5} sx={{ py: 1.375 }}>
             <CatGlyph icon={c.icon} size={32} tone="neutral" />
             <Box sx={{ flex: 1, minWidth: 0 }}>
-              <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
-                <Typography sx={{ fontSize: 13.5, fontWeight: 600, letterSpacing: '-0.005em' }}>{c.label}</Typography>
-                <Typography sx={{ fontSize: 11, color: 'text.disabled' }}>{c.group}</Typography>
-              </Box>
+              <Row align="baseline" gap={1}>
+                <Typography variant="bodyStrong">{c.label}</Typography>
+                <Typography variant="note" color="text.disabled">{c.group}</Typography>
+              </Row>
               <Box sx={{ mt: '7px', maxWidth: 360 }}>
                 <ProgressBar value={c.total / max} color={brand.anchor[600]} thin />
               </Box>
             </Box>
             <Box sx={{ textAlign: 'right', flexShrink: 0, minWidth: 92 }}>
-              <Typography sx={{ fontSize: 14, fontWeight: 600, fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.01em' }}>{fmtMoney(c.total)}</Typography>
-              <Typography sx={{ fontSize: 11.5, color: 'text.secondary', fontVariantNumeric: 'tabular-nums', mt: '2px' }}>
+              <Typography variant="bodyStrong" sx={{ ...tabularNums }}>{fmtMoney(c.total)}</Typography>
+              <Typography variant="note" sx={{ color: 'text.secondary', mt: '2px', ...tabularNums }}>
                 {(share * 100).toFixed(share < 0.1 ? 1 : 0)}% of spend
               </Typography>
             </Box>
-          </Box>
+          </ListRow>
         )
       })}
     </SurfaceCard>
@@ -430,16 +378,16 @@ function CategoryTotals({ catYear, total }: { catYear: CatYearData[]; total: num
 function SavingsYear({ savYear, total }: { savYear: SavingsYearData[]; total: number }) {
   return (
     <SurfaceCard sx={{ overflow: 'hidden' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, px: 2.25, py: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
-        <CatGlyph icon="piggyBank" tone="accent" size={30} />
-        <Box sx={{ flex: 1 }}>
-          <Typography sx={{ fontSize: 15, fontWeight: 600, letterSpacing: '-0.01em' }}>Savings this year</Typography>
-          <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>Projected annual contributions</Typography>
-        </Box>
-        <Typography sx={{ fontSize: 17, fontWeight: 700, letterSpacing: '-0.02em', color: brand.anchor[700], fontVariantNumeric: 'tabular-nums' }}>
-          {fmtMoney(total)}
-        </Typography>
-      </Box>
+      <PanelHeader
+        icon="piggyBank"
+        title="Savings this year"
+        subtitle="Projected annual contributions"
+        action={
+          <Typography sx={{ fontSize: 17, fontWeight: 700, letterSpacing: '-0.02em', color: brand.anchor[700], ...tabularNums }}>
+            {fmtMoney(total)}
+          </Typography>
+        }
+      />
 
       {savYear.map((sv, i) => {
         const lr = sv.annualLimit ? sv.ytd / sv.annualLimit : 0
@@ -447,28 +395,28 @@ function SavingsYear({ savYear, total }: { savYear: SavingsYearData[]; total: nu
         const limitColor = lr >= 1 ? brand.red[600] : lr >= 0.85 ? brand.amber[700] : 'text.secondary'
 
         return (
-          <Box key={sv.id} sx={{ px: 2.25, py: '13px', borderBottom: i < savYear.length - 1 ? '1px solid' : 'none', borderColor: 'divider' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+          <ListRow key={sv.id} direction="column" last={i === savYear.length - 1} sx={{ px: 2.25, py: '13px' }}>
+            <Row gap={1.25}>
               <CatGlyph icon={sv.icon} size={28} tone="accent" />
               <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography sx={{ fontSize: 13.5, fontWeight: 600, letterSpacing: '-0.005em' }}>{sv.label}</Typography>
-                <Typography sx={{ fontSize: 11.5, color: 'text.disabled', mt: '1px' }}>{sv.accountType}</Typography>
+                <Typography variant="bodyStrong">{sv.label}</Typography>
+                <Typography variant="note" color="text.disabled" sx={{ mt: '1px' }}>{sv.accountType}</Typography>
               </Box>
-              <Typography sx={{ fontSize: 14, fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>{fmtMoney(sv.total)}</Typography>
-            </Box>
+              <Typography variant="bodyStrong" sx={{ ...tabularNums }}>{fmtMoney(sv.total)}</Typography>
+            </Row>
 
             {sv.annualLimit != null && (
               <Box sx={{ mt: '9px' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, mb: '4px' }}>
-                  <Typography sx={{ fontSize: 11, color: 'text.disabled' }}>IRS limit · YTD</Typography>
-                  <Typography sx={{ fontSize: 11, fontWeight: 600, fontVariantNumeric: 'tabular-nums', color: limitColor }}>
+                <Row justify="between" sx={{ mb: '4px' }}>
+                  <Typography variant="note" color="text.disabled">IRS limit · YTD</Typography>
+                  <Typography variant="note" sx={{ fontWeight: 600, color: limitColor, ...tabularNums }}>
                     {fmtMoney(sv.ytd)} of {fmtMoney(sv.annualLimit)}
                   </Typography>
-                </Box>
+                </Row>
                 <ProgressBar value={lr} color={limitBarColor} thin sx={{ height: 4 }} />
               </Box>
             )}
-          </Box>
+          </ListRow>
         )
       })}
     </SurfaceCard>
@@ -480,39 +428,33 @@ function SavingsYear({ savYear, total }: { savYear: SavingsYearData[]; total: nu
 function GoalsYear({ goals }: { goals: GoalYearData[] }) {
   return (
     <SurfaceCard sx={{ overflow: 'hidden' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, px: 2.25, py: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
-        <CatGlyph icon="target" tone="accent" size={30} />
-        <Box sx={{ flex: 1 }}>
-          <Typography sx={{ fontSize: 15, fontWeight: 600, letterSpacing: '-0.01em' }}>Goal progress</Typography>
-          <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>Where each goal stands</Typography>
-        </Box>
-      </Box>
+      <PanelHeader icon="target" title="Goal progress" subtitle="Where each goal stands" />
 
       {goals.map((g, i) => {
         const ratio = clamp01(g.target ? g.current / g.target : 0)
         const done = !!g.target && g.current >= g.target
         return (
-          <Box key={g.id} sx={{ px: 2.25, py: '13px', borderBottom: i < goals.length - 1 ? '1px solid' : 'none', borderColor: 'divider' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, mb: '9px' }}>
+          <ListRow key={g.id} direction="column" last={i === goals.length - 1} sx={{ px: 2.25, py: '13px' }}>
+            <Row gap={1.25} sx={{ mb: '9px' }}>
               <CatGlyph icon={g.icon} size={26} tone={done ? 'accent' : 'neutral'} />
-              <Typography sx={{ flex: 1, fontSize: 13.5, fontWeight: 600, letterSpacing: '-0.005em' }}>{g.name}</Typography>
-              <Typography sx={{ fontSize: 12, fontWeight: 600, color: 'text.secondary', fontVariantNumeric: 'tabular-nums' }}>
+              <Typography variant="bodyStrong" sx={{ flex: 1 }}>{g.name}</Typography>
+              <Typography variant="label" sx={{ fontWeight: 600, color: 'text.secondary', ...tabularNums }}>
                 {Math.round(ratio * 100)}%
               </Typography>
-            </Box>
+            </Row>
             <ProgressBar value={ratio} color={brand.anchor[600]} thin />
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: '7px' }}>
-              <Typography sx={{ fontSize: 11.5, color: 'text.secondary', fontVariantNumeric: 'tabular-nums' }}>
+            <Row justify="between" sx={{ mt: '7px' }}>
+              <Typography variant="note" sx={{ color: 'text.secondary', ...tabularNums }}>
                 {fmtMoney(g.current)}
                 {g.target && <Box component="span" sx={{ color: 'text.disabled' }}> of {fmtMoney(g.target)}</Box>}
               </Typography>
               {g.targetYear != null && g.targetMonth != null && (
-                <Typography sx={{ fontSize: 11.5, color: 'text.disabled' }}>
+                <Typography variant="note" color="text.disabled">
                   by {monthShort(g.targetYear, g.targetMonth)}
                 </Typography>
               )}
-            </Box>
-          </Box>
+            </Row>
+          </ListRow>
         )
       })}
     </SurfaceCard>
@@ -526,9 +468,9 @@ export function YearView({ year }: { year: number }) {
 
   if (fetching && !hasData) {
     return (
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, minHeight: 400 }}>
+      <Row justify="center" sx={{ flex: 1, minHeight: 400 }}>
         <CircularProgress />
-      </Box>
+      </Row>
     )
   }
 
@@ -543,17 +485,17 @@ export function YearView({ year }: { year: number }) {
       </Box>
 
       {/* Body */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, px: 4, pb: 5.5 }}>
+      <Stack gap={3} sx={{ px: 4, pb: 5.5 }}>
         <HeroChart months={months} currentIdx={currentIdx} />
 
         <Box sx={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 344px', gap: 3, alignItems: 'start' }}>
           <CategoryTotals catYear={catYear} total={totalCatSpend} />
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Stack gap={3}>
             <SavingsYear savYear={savYear} total={totalSaved} />
             <GoalsYear goals={goalYear} />
-          </Box>
+          </Stack>
         </Box>
-      </Box>
+      </Stack>
     </Box>
   )
 }

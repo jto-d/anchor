@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
 import AnchorIcon from '@mui/icons-material/Anchor'
 import { brand } from '@/lib/theme'
-import { ProgressBar } from '@/components/ui/ProgressBar'
+import { Dot, ProgressBar, Row } from '@/components/ui'
 import { truncate, tabularNums } from '@/lib/sx'
 import { resolveCardDesign } from '@/utils/cardDesigns'
 import { cardCapturedYTD, cardAvailable, cardNet, cardVerdict } from '@/utils/card'
@@ -36,19 +36,21 @@ export function CardTile({ card, onOpen }: CardTileProps) {
 
   const content = (
     <>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: '18px' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: '7px', minWidth: 0 }}>
+      <Row justify="between" gap={1} sx={{ mb: '18px' }}>
+        <Row gap="7px" min0>
           <AnchorIcon sx={{ fontSize: 14, opacity: 0.85, flexShrink: 0 }} />
           <Typography
             sx={{ ...truncate, fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', opacity: 0.8, textTransform: 'uppercase' }}
           >
             {card.issuer}
           </Typography>
-        </Box>
-        <Box
+        </Row>
+        <Row
           component="span"
+          inline
+          gap="5px"
           sx={{
-            display: 'inline-flex', alignItems: 'center', gap: '5px', flexShrink: 0,
+            flexShrink: 0,
             height: '22px', px: '9px', borderRadius: '999px',
             background: 'rgba(255,255,255,0.13)', border: '1px solid rgba(255,255,255,0.16)',
             ...tabularNums,
@@ -57,10 +59,10 @@ export function CardTile({ card, onOpen }: CardTileProps) {
             whiteSpace: 'nowrap',
           }}
         >
-          <Box component="span" sx={{ width: 6, height: 6, borderRadius: '999px', bgcolor: VERDICT_DOT[verdict.key], flexShrink: 0 }} />
+          <Dot size={6} color={VERDICT_DOT[verdict.key]} />
           {fmtSigned(net)}<Box component="span" sx={{ opacity: 0.65, fontWeight: 500 }}>/yr</Box>
-        </Box>
-      </Box>
+        </Row>
+      </Row>
       <Typography sx={{ fontSize: 18, fontWeight: 600, letterSpacing: '-0.01em' }}>{card.name}</Typography>
       {(card.lastFour || card.openedDate) && (
         <Typography
@@ -73,7 +75,7 @@ export function CardTile({ card, onOpen }: CardTileProps) {
       )}
       <Box sx={{ mt: 2 }}>
         <ProgressBar value={pct} color={design.text} track={alpha(design.text, 0.22)} thin />
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mt: 1.25 }}>
+        <Row justify="between" align="end" sx={{ mt: 1.25 }}>
           <Box>
             <Typography sx={{ fontSize: 10, opacity: 0.65, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               Recovered
@@ -90,7 +92,7 @@ export function CardTile({ card, onOpen }: CardTileProps) {
               {fmtDollars(available)}
             </Typography>
           </Box>
-        </Box>
+        </Row>
       </Box>
     </>
   )

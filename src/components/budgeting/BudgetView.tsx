@@ -6,6 +6,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Snackbar from '@mui/material/Snackbar'
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
 import { brand } from '@/lib/theme'
+import { Row, Stack } from '@/components/ui'
 import { SummaryStrip } from './SummaryStrip'
 import { BudgetLedger } from './BudgetLedger'
 import { SurplusPanel } from './SurplusPanel'
@@ -31,9 +32,9 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
 
   if (budget.fetching && !budget.hasData) {
     return (
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+      <Row justify="center" sx={{ flex: 1 }}>
         <CircularProgress />
-      </Box>
+      </Row>
     )
   }
 
@@ -46,7 +47,7 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
 
       {/* Two-column body */}
       <Box sx={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 344px', gap: 3, alignItems: 'start', px: 4, pb: 5.5 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, minWidth: 0 }}>
+        <Stack gap={3} sx={{ minWidth: 0 }}>
           <BudgetLedger
             groups={budget.groups} savings={budget.savings} collapsed={collapsed}
             onToggle={handleToggle}
@@ -56,14 +57,14 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
             totals={budget.totals}
           />
           <SurplusPanel goals={budget.goals} totals={budget.totals} sel={sel} onSet={budget.setAllocation} />
-        </Box>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        </Stack>
+        <Stack gap={3}>
           <IncomePanel
             income={budget.incomeSources} total={budget.totals.income}
             onSetAmount={budget.setIncome} onAdd={budget.addIncome} onRemove={budget.removeIncome}
           />
           <GoalsRecap goals={budget.goals} />
-        </Box>
+        </Stack>
       </Box>
 
       <Snackbar
@@ -72,10 +73,10 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
         onClose={budget.dismissToast}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.1, bgcolor: 'grey.900', color: '#fff', px: '18px', py: '11px', borderRadius: 999, fontSize: 13, fontWeight: 500, boxShadow: brand.shadow.lg }}>
+        <Row gap={1.1} sx={{ bgcolor: 'grey.900', color: '#fff', px: '18px', py: '11px', borderRadius: 999, fontSize: 13, fontWeight: 500, boxShadow: brand.shadow.lg }}>
           <AutoAwesomeOutlinedIcon sx={{ fontSize: 15, color: brand.anchor[300] }} />
           {budget.toast}
-        </Box>
+        </Row>
       </Snackbar>
     </Box>
   )

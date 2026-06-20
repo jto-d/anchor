@@ -110,7 +110,29 @@ The UI is built entirely with **Material UI v9** (`@mui/material`, `@mui/icons-m
 - **Theme** — `src/lib/theme.ts` holds the single `createTheme`: the "Anchor" brand (teal `primary`, Switzer typography, soft radii). It also exports a `brand` object of raw scales (anchor/zinc, `shadow`, `accentSoft`). Use theme tokens (`sx`, `palette.*`) first; use `brand` only when no token fits.
 - **Card designs** — `src/utils/cardDesigns.ts` maps a `design` slug to `{ gradient, text }`. `resolveCardDesign(slug)` falls back to the teal design. `CardTile` drives every on-surface tint from the single `text` color via `alpha()`.
 - **Providers** — `src/app/layout.tsx` wraps the tree in `AppRouterCacheProvider` (from `@mui/material-nextjs/v16-appRouter` — import path is version-pinned) → `ThemeProvider` → `CssBaseline`. Drop the cache provider and you get hydration class mismatches.
-- **Icons** come from `@mui/icons-material` at call sites. Shared primitives live in `src/components/ui/`: `Eyebrow` (themed Typography), `StatusChip` (perk `StatusKey`/`VerdictKey` → colored Chip), `Tooltip` (themed wrapper over MUI's, with `dark`/`light`/`teal` variants and an `auto` placement — see its own doc comment), and `ComingSoon` (wraps any element in a "Coming soon" `Tooltip` + dims it via `opacity`/`pointerEvents: 'none'` — used for not-yet-built nav items in `Sidebar`/`Topbar`).
+- **Icons** come from `@mui/icons-material` at call sites.
+
+### Shared UI primitives — prefer these over inline `sx`
+
+All shared primitives live under `src/components/ui/`, grouped by role, and are re-exported from the **barrel** `src/components/ui/index.ts`. **Always import from the barrel** (`import { Row, Stat, SurfaceCard } from '@/components/ui'`), not from the file paths — the only exceptions are files _inside_ `ui/` (e.g. `Toast`/`AppDialog` import `Row` from `../layout/Flex` to avoid a barrel cycle).
+
+Folder layout:
+
+- `ui/layout/` — `Flex`, `Row`, `Stack`, `VDivider`, `SurfaceCard`
+- `ui/data-display/` — `Dot`, `Tag`, `PanelHeader`, `ListRow`, `Stat`, `Eyebrow`, `ProgressBar`, `StatusChip`, `CatGlyph`
+- `ui/inputs/` — `EditableMoney`, `Segmented`
+- `ui/feedback/` — `Tooltip`, `Toast`, `AppDialog`, `ComingSoon`
+
+**The golden rule: inline `sx` should be mostly spacing (margin/padding) and the occasional one-off position.** Do **not** hand-roll `display: 'flex'`, `alignItems`, `justifyContent`, `gap`, dividers, dots, pills, or stat blocks — reach for a primitive:
+
+- **Layout** — `Flex` (props: `direction`, `align`, `justify` with `between`/`center`/`end`/`start`, `gap`, `wrap`, `inline`, `min0`). `Row` = `Flex` defaulting to a vertically-centered row; `Stack` = `Flex` defaulting to a column. These accept all `Box` props (`component`, `onClick`, `sx`, …). Use `align="stretch"` when children rely on the parent stretching (full-height columns, vertical dividers, segmented bars). `VDivider` is the 1px vertical rule.
+- **Data display** — `PanelHeader` (icon + title + subtitle + optional `action`, with bottom border) for card/panel headers; `ListRow` for padded list items (handles last-row borders + optional hover; `direction="column"` for stacked rows); `Stat` for the eyebrow-label + value + sub-line pattern (`hero` bumps the size, `color` tints the value); `Dot` for legend/indicator swatches (square via `square`, and it auto-detects gradient strings); `Tag` for compact pills (`tone`, `variant`, optional `dot`/`icon`).
+
+When you add a new repeated styling pattern, add a primitive here rather than copying `sx` across call sites, and export it from the barrel.
+
+- **Typography scale** — `theme.ts` defines a snapped set of custom `Typography` variants; prefer `variant="…"` over ad-hoc `fontSize`/`fontWeight`/`letterSpacing`. Scale: `statXl` (28, hero numbers), `statLg` (22), `cardTitle` (16), `panelTitle` (15), `bodyStrong` (14/600), `body` (13), `label` (12), `note` (11), `micro` (10). The `stat*` variants already include `tabular-nums`; for other numeric text add `tabularNums` from `@/lib/sx`. All custom variants render as a `div` (see `MuiTypography.variantMapping`). When no variant fits exactly, keep the bespoke `sx` rather than forcing a mismatched variant.
+
+- **Other primitives** — `Eyebrow` (themed Typography), `StatusChip` (perk `StatusKey`/`VerdictKey` → colored Chip), `Tooltip` (themed wrapper over MUI's, with `dark`/`light`/`teal` variants and an `auto` placement — see its own doc comment), and `ComingSoon` (wraps any element in a "Coming soon" `Tooltip` + dims it via `opacity`/`pointerEvents: 'none'` — used for not-yet-built nav items in `Sidebar`/`Topbar`).
 
 ## Verification
 

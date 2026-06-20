@@ -2,7 +2,8 @@ import Box from '@mui/material/Box'
 import Collapse from '@mui/material/Collapse'
 import Typography from '@mui/material/Typography'
 import { brand } from '@/lib/theme'
-import { SurfaceCard } from '@/components/ui/SurfaceCard'
+import { Row, SurfaceCard } from '@/components/ui'
+import { tabularNums } from '@/lib/sx'
 import { ColHeader, COL_W } from './ColHeader'
 import { GroupHeader } from './GroupHeader'
 import { LedgerRow } from './LedgerRow'
@@ -75,24 +76,24 @@ export function BudgetLedger({
           ))}
           {savings.length === 0 && (
             <Box sx={{ p: 2.5, textAlign: 'center' }}>
-              <Typography sx={{ fontSize: 13, color: 'text.disabled' }}>No savings accounts yet. Add one.</Typography>
+              <Typography variant="body" color="text.disabled">No savings accounts yet. Add one.</Typography>
             </Box>
           )}
         </Collapse>
       </Box>
 
       {/* Footer totals */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.875, borderTop: '1px solid', borderColor: 'grey.300', bgcolor: 'grey.50' }}>
+      <Row gap={1} sx={{ px: 2.5, py: 1.875, borderTop: '1px solid', borderColor: 'grey.300', bgcolor: 'grey.50' }}>
         <Typography sx={{ flex: 1, fontSize: 13, fontWeight: 700, letterSpacing: '0.01em', textTransform: 'uppercase', color: 'text.secondary' }}>Total budgeted</Typography>
         {[totals.budgeted, totals.spentSaved, totals.budgeted - totals.spentSaved].map((v, i) => (
           <Box key={i} sx={{ width: COL_W, textAlign: 'right', ...(i === 2 ? { pr: '8px' } : {}) }}>
-            <Typography sx={{ fontVariantNumeric: 'tabular-nums', fontSize: 15, fontWeight: 700, color: i === 2 && v < 0 ? brand.red[600] : 'text.primary' }}>
+            <Typography sx={{ ...tabularNums, fontSize: 15, fontWeight: 700, color: i === 2 && v < 0 ? brand.red[600] : 'text.primary' }}>
               {i === 2 ? fmtSigned(v) : fmtMoney(v)}
             </Typography>
           </Box>
         ))}
         <Box sx={{ width: 28 }} />
-      </Box>
+      </Row>
     </SurfaceCard>
   )
 }

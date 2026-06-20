@@ -8,7 +8,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { CatIcon } from '@/components/icons/CatIcon'
 import { RateBadge } from './RateBadge'
 import { RewardIcon } from '@/components/icons/RewardIcon'
-import { Eyebrow } from '@/components/ui/Eyebrow'
+import { Dot, Eyebrow, Row, Stack } from '@/components/ui'
 import {
   CATEGORIES, CAT, themeOf, topRewards, rankForCategory, fmtRate, TYPE_META,
 } from '@/utils/cardRewards'
@@ -18,12 +18,12 @@ import type { RewardCardData, CategoryKey } from '@/utils/cardRewards'
 
 function RateCompareNote() {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: '7px', mt: '14px', color: brand.zinc[400] }}>
+    <Row gap="7px" sx={{ mt: '14px', color: brand.zinc[400] }}>
       <RewardIcon name="alert" size={13} strokeWidth={1.8} />
       <Typography sx={{ fontSize: '12px', letterSpacing: '-0.005em', color: brand.zinc[400] }}>
         Ranked by rate. Points (×) and cash back (%) aren&apos;t a direct dollar comparison.
       </Typography>
-    </Box>
+    </Row>
   )
 }
 
@@ -40,18 +40,17 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
   return (
     <Box>
       {/* category selector */}
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '8px', mb: '20px' }}>
+      <Row wrap gap="8px" sx={{ mb: '20px' }}>
         {CATEGORIES.filter((c) => c.key !== 'base').map((c) => {
           const active = c.key === selected
           return (
-            <Box
+            <Row
               key={c.key}
               component="button"
+              inline
               onClick={() => setSelected(c.key as CategoryKey)}
+              gap="8px"
               sx={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
                 height: '38px',
                 pl: '10px',
                 pr: '14px',
@@ -71,40 +70,38 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
             >
               <CatIcon cat={c} size={20} active={active} dark={active} />
               {c.label}
-            </Box>
+            </Row>
           )
         })}
-      </Box>
+      </Row>
 
       {/* result grid */}
       <Box sx={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '16px', alignItems: 'stretch' }}>
         {/* winner panel */}
-        <Box
+        <Stack
           sx={{
             background: brand.accentSoft,
             border: '1px solid',
             borderColor: brand.anchor[100],
             borderRadius: '14px',
             p: '22px 24px',
-            display: 'flex',
-            flexDirection: 'column',
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px', color: brand.anchor[700] }}>
+          <Row gap="8px" sx={{ color: brand.anchor[700] }}>
             <RewardIcon name="trophy" size={15} strokeWidth={2} />
             <Eyebrow sx={{ color: brand.anchor[700] }}>
               {winners.length > 1
                 ? `Top cards for ${cat.label.toLowerCase()}`
                 : `Best for ${cat.label.toLowerCase()}`}
             </Eyebrow>
-          </Box>
+          </Row>
 
-          <Box sx={{ mt: '16px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <Stack gap="14px" sx={{ mt: '16px' }}>
             {winners.map(({ card, reward }) => {
               const th = themeOf(card)
               return (
-                <Box key={card.id} sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <Stack key={card.id} gap="10px">
+                  <Row gap="14px">
                     <Box
                       sx={{
                         width: 52,
@@ -152,13 +149,12 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
                         {card.type === 'points' ? 'points' : 'cash back'}
                       </Typography>
                     </Box>
-                  </Box>
+                  </Row>
                   {reward.note && (
-                    <Box
+                    <Row
+                      align="start"
+                      gap="8px"
                       sx={{
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: '8px',
                         p: '9px 12px',
                         borderRadius: '10px',
                         background: 'rgba(255,255,255,0.62)',
@@ -170,12 +166,12 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
                       <Typography sx={{ fontSize: '12.5px', lineHeight: 1.45, color: brand.anchor[800], letterSpacing: '-0.005em' }}>
                         <Box component="strong" sx={{ fontWeight: 600 }}>Note · </Box>{reward.note}
                       </Typography>
-                    </Box>
+                    </Row>
                   )}
-                </Box>
+                </Stack>
               )
             })}
-          </Box>
+          </Stack>
 
           {/* also earns — only when there's a single winner */}
           {winners.length === 1 && (() => {
@@ -193,16 +189,15 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
                 <Eyebrow sx={{ color: brand.anchor[600], fontSize: '10px', mb: '10px' }}>
                   Also earns
                 </Eyebrow>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '7px' }}>
+                <Row wrap gap="7px">
                   {others.map((r) => {
                     const oc = CAT[r.cat]
                     return (
-                      <Box
+                      <Row
                         key={r.cat}
+                        inline
+                        gap="6px"
                         sx={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '6px',
                           height: '28px',
                           pl: '8px',
                           pr: r.note ? '8px' : '10px',
@@ -232,10 +227,10 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
                             <InfoOutlinedIcon sx={{ fontSize: 12, color: brand.anchor[600], cursor: 'help' }} />
                           </Tooltip>
                         )}
-                      </Box>
+                      </Row>
                     )
                   })}
-                </Box>
+                </Row>
               </Box>
             )
           })()}
@@ -247,7 +242,7 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
               <>Reach for your <strong style={{ fontWeight: 600 }}>{winners[0]?.card.name}</strong> on {cat.blurb.toLowerCase()}.</>
             )}
           </Typography>
-        </Box>
+        </Stack>
 
         {/* ranked board */}
         <Box
@@ -260,12 +255,10 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
           }}
         >
           {ranked.map(({ card, reward, winner, viaBase }, i) => (
-            <Box
+            <Row
               key={card.id}
+              gap="12px"
               sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
                 p: '11px 16px',
                 borderBottom: i < ranked.length - 1 ? '1px solid' : 'none',
                 borderColor: 'divider',
@@ -284,15 +277,7 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
               >
                 {i + 1}
               </Typography>
-              <Box
-                sx={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: '999px',
-                  flexShrink: 0,
-                  background: themeOf(card).gradient,
-                }}
-              />
+              <Dot size={10} color={themeOf(card).gradient} />
               <Box sx={{ flex: 1, minWidth: 0 }}>
                 <Typography
                   noWrap
@@ -310,7 +295,7 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
                 </Tooltip>
               )}
               <RateBadge reward={reward} winner={winner} muted={!winner} size="sm" />
-            </Box>
+            </Row>
           ))}
         </Box>
       </Box>

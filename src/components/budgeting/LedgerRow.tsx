@@ -1,10 +1,9 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { brand } from '@/lib/theme'
-import { CatGlyph } from '@/components/ui/CatGlyph'
-import { EditableMoney } from '@/components/ui/EditableMoney'
-import { ProgressBar } from '@/components/ui/ProgressBar'
+import { CatGlyph, EditableMoney, ListRow, ProgressBar, Row } from '@/components/ui'
 import { COL_W } from './ColHeader'
+import { tabularNums } from '@/lib/sx'
 import { fmtMoney, fmtSigned } from '@/utils/format'
 
 interface LedgerRowProps {
@@ -33,41 +32,41 @@ export function LedgerRow({ id, label, icon, budget, spent, isSavings, ytd, annu
     const tColor = lr >= 1 ? brand.red[600] : lr >= 0.85 ? brand.amber[700] : 'text.secondary'
     irsBar = (
       <Box sx={{ mt: 1, maxWidth: 340 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, mb: 0.5 }}>
-          <Typography sx={{ fontSize: 11, color: 'text.disabled' }}>IRS limit · YTD</Typography>
-          <Typography sx={{ fontSize: 11, color: tColor, fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>
+        <Row justify="between" sx={{ mb: 0.5 }}>
+          <Typography variant="note" color="text.disabled">IRS limit · YTD</Typography>
+          <Typography variant="note" sx={{ color: tColor, fontWeight: 600, ...tabularNums }}>
             {fmtMoney(ytd)} of {fmtMoney(annualLimit)}
           </Typography>
-        </Box>
+        </Row>
         <ProgressBar value={lr} color={barColor} thin sx={{ height: 4 }} />
       </Box>
     )
   }
 
   return (
-    <Box sx={{ px: 2.5, py: 1.375, borderBottom: last ? 'none' : '1px solid', borderColor: 'divider' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.375, flex: 1, minWidth: 0 }}>
+    <ListRow last={last} direction="column" sx={{ py: 1.375 }}>
+      <Row gap={1}>
+        <Row gap={1.375} min0 sx={{ flex: 1 }}>
           <CatGlyph icon={icon} size={32} tone={isSavings ? 'accent' : 'neutral'} />
           <Typography sx={{ fontSize: 14, fontWeight: 500 }}>{label}</Typography>
-        </Box>
-        <Box sx={{ width: COL_W, display: 'flex', justifyContent: 'flex-end' }}>
+        </Row>
+        <Row justify="end" sx={{ width: COL_W }}>
           <EditableMoney value={budget} onChange={onBudget} weight={500} />
-        </Box>
-        <Box sx={{ width: COL_W, display: 'flex', justifyContent: 'flex-end' }}>
+        </Row>
+        <Row justify="end" sx={{ width: COL_W }}>
           <EditableMoney value={spent} onChange={onSpent} muted weight={500} />
-        </Box>
-        <Box sx={{ width: COL_W, display: 'flex', justifyContent: 'flex-end', pr: 1 }}>
-          <Typography sx={{
-            fontVariantNumeric: 'tabular-nums', fontSize: 14, fontWeight: 600,
+        </Row>
+        <Row justify="end" sx={{ width: COL_W, pr: 1 }}>
+          <Typography variant="bodyStrong" sx={{
+            ...tabularNums,
             color: over ? brand.red[600] : remaining < budget * 0.12 ? brand.amber[700] : 'text.secondary',
           }}>
             {fmtSigned(remaining)}
           </Typography>
-        </Box>
+        </Row>
         <Box sx={{ width: 28 }} />
-      </Box>
+      </Row>
       {irsBar}
-    </Box>
+    </ListRow>
   )
 }

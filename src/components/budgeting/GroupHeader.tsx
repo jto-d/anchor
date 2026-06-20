@@ -4,8 +4,8 @@ import Typography from '@mui/material/Typography'
 import AddIcon from '@mui/icons-material/Add'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { brand } from '@/lib/theme'
-import { CatGlyph } from '@/components/ui/CatGlyph'
-import { ProgressBar } from '@/components/ui/ProgressBar'
+import { CatGlyph, ProgressBar, Row } from '@/components/ui'
+import { tabularNums } from '@/lib/sx'
 import { fmtMoney } from '@/utils/format'
 import type { GroupData } from '@/utils/budget'
 
@@ -24,10 +24,11 @@ export function GroupHeader({
   const over = spent - budget > 0.001
 
   return (
-    <Box
+    <Row
       onClick={onToggle}
+      gap={1}
       sx={{
-        display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer',
+        cursor: 'pointer',
         px: 2.5, py: 1.5,
         bgcolor: 'grey.50',
         borderBottom: '1px solid', borderTop: '1px solid', borderColor: 'divider',
@@ -49,8 +50,8 @@ export function GroupHeader({
           {group.categories.length}
         </Box>
       </Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        <Typography sx={{ fontSize: 12.5, color: over ? brand.red[600] : 'text.secondary', fontVariantNumeric: 'tabular-nums', fontWeight: 500 }}>
+      <Row gap={1.5}>
+        <Typography variant="label" sx={{ color: over ? brand.red[600] : 'text.secondary', ...tabularNums }}>
           {fmtMoney(spent)}{' '}
           <Box component="span" sx={{ color: 'text.disabled' }}>/ {fmtMoney(budget)}</Box>
         </Typography>
@@ -65,7 +66,7 @@ export function GroupHeader({
         >
           <AddIcon sx={{ fontSize: 16 }} />
         </IconButton>
-      </Box>
-    </Box>
+      </Row>
+    </Row>
   )
 }

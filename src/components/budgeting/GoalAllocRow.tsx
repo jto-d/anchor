@@ -1,10 +1,8 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { brand } from '@/lib/theme'
-import { CatGlyph } from '@/components/ui/CatGlyph'
-import { Eyebrow } from '@/components/ui/Eyebrow'
-import { EditableMoney } from '@/components/ui/EditableMoney'
-import { ProgressBar } from '@/components/ui/ProgressBar'
+import { CatGlyph, EditableMoney, Eyebrow, ListRow, ProgressBar, Row } from '@/components/ui'
+import { tabularNums } from '@/lib/sx'
 import { fmtMoney, monthShort, clamp01 } from '@/utils/format'
 import type { GoalData, MonthSel } from '@/utils/budget'
 
@@ -30,19 +28,19 @@ export function GoalAllocRow({ goal, amount, sel, onSet, last }: GoalAllocRowPro
   }
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 2.5, py: 1.75, borderBottom: last ? 'none' : '1px solid', borderColor: 'divider' }}>
+    <ListRow last={last} gap={1.5} sx={{ py: 1.75 }}>
       <CatGlyph icon={goal.icon} size={38} tone={done ? 'accent' : 'neutral'} />
       <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Typography sx={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.005em' }}>{goal.name}</Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, my: '7px' }}>
+        <Typography variant="bodyStrong">{goal.name}</Typography>
+        <Row gap={1} sx={{ my: '7px' }}>
           <Box sx={{ flex: 1, maxWidth: 230 }}>
             <ProgressBar value={ratio} color={brand.anchor[600]} thin />
           </Box>
-          <Typography sx={{ fontSize: 11.5, color: 'text.secondary', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
+          <Typography variant="note" sx={{ color: 'text.secondary', whiteSpace: 'nowrap', ...tabularNums }}>
             {fmtMoney(current)}{goal.target && <Box component="span" sx={{ color: 'text.disabled' }}> / {fmtMoney(goal.target)}</Box>}
           </Typography>
-        </Box>
-        <Typography sx={{ fontSize: 11.5, color: 'text.disabled' }}>
+        </Row>
+        <Typography variant="note" color="text.disabled">
           {rec != null
             ? <>Recommended <Box component="span" sx={{ color: 'text.secondary', fontWeight: 600 }}>{fmtMoney(rec)}/mo</Box> to reach {monthShort(goal.targetYear!, goal.targetMonth!)}</>
             : 'No target date set'}
@@ -56,6 +54,6 @@ export function GoalAllocRow({ goal, amount, sel, onSet, last }: GoalAllocRowPro
           onChange={onSet} size={15} weight={600}
         />
       </Box>
-    </Box>
+    </ListRow>
   )
 }

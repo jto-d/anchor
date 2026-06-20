@@ -11,8 +11,7 @@ import { truncate, tabularNums } from '@/lib/sx'
 import { resolveCardDesign } from '@/utils/cardDesigns'
 import { cardAvailable, cardCapturedYTD, cardAnnualFee, cardNet, cardVerdict } from '@/utils/card'
 import { fmtDollars, fmtSigned } from '@/utils/format'
-import { StatusChip } from '@/components/ui/StatusChip'
-import { Eyebrow } from '@/components/ui/Eyebrow'
+import { Dot, Eyebrow, Row, StatusChip } from '@/components/ui'
 import type { Card, VerdictKey } from '@/utils/types'
 
 function walletTotals(cards: Card[]) {
@@ -50,7 +49,7 @@ export function SummaryFigures({ cards, tone = 'panel' }: { cards: Card[]; tone?
   ]
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Row align="stretch">
       {items.map((it, i) => (
         <Box
           key={it.label}
@@ -69,7 +68,7 @@ export function SummaryFigures({ cards, tone = 'panel' }: { cards: Card[]; tone?
           </Typography>
         </Box>
       ))}
-    </Box>
+    </Row>
   )
 }
 
@@ -88,10 +87,10 @@ function ValueListRow({ card, onOpenCard, last }: { card: Card; onOpenCard?: (c:
   )
 
   return (
-    <Box
+    <Row
       onClick={() => onOpenCard?.(card)}
+      gap="14px"
       sx={{
-        display: 'flex', alignItems: 'center', gap: '14px',
         py: '15px', px: '6px',
         borderBottom: last ? 'none' : `1px solid ${brand.zinc[100]}`,
         cursor: onOpenCard ? 'pointer' : 'default',
@@ -102,15 +101,15 @@ function ValueListRow({ card, onOpenCard, last }: { card: Card; onOpenCard?: (c:
       }}
     >
       {/* Dot + name */}
-      <Box sx={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <Box sx={{ width: 8, height: 8, borderRadius: '999px', bgcolor: dotColor(card), flexShrink: 0 }} />
+      <Row min0 gap="10px" sx={{ flex: 1 }}>
+        <Dot size={8} color={dotColor(card)} />
         <Box sx={{ minWidth: 0 }}>
           <Typography sx={{ ...truncate, fontSize: 14, fontWeight: 600, letterSpacing: '-0.01em', color: brand.zinc[900] }}>
             {card.name}
           </Typography>
           <Typography sx={{ fontSize: 12, color: brand.zinc[500] }}>{card.issuer}</Typography>
         </Box>
-      </Box>
+      </Row>
 
       <Fig label="Fee">
         <Typography sx={{ fontSize: 14, fontWeight: 500, color: brand.zinc[500] }}>{fmtDollars(cardAnnualFee(card))}</Typography>
@@ -123,10 +122,10 @@ function ValueListRow({ card, onOpenCard, last }: { card: Card; onOpenCard?: (c:
           {fmtSigned(net)}
         </Typography>
       </Fig>
-      <Box sx={{ width: 96, flexShrink: 0, display: 'flex', justifyContent: 'flex-end' }}>
+      <Row justify="end" sx={{ width: 96, flexShrink: 0 }}>
         <StatusChip status={verdict.key} label={verdict.label} icon={verdictIcon(verdict.key)} />
-      </Box>
-    </Box>
+      </Row>
+    </Row>
   )
 }
 
@@ -136,7 +135,7 @@ export function CardValueSection({ cards, onOpenCard }: { cards: Card[]; onOpenC
   return (
     <Box sx={{ mb: '34px' }}>
       <Eyebrow sx={{ mb: '6px' }}>Card value</Eyebrow>
-      <Typography sx={{ mb: '14px', fontSize: 13, color: brand.zinc[500] }}>
+      <Typography variant="body" sx={{ mb: '14px', color: brand.zinc[500] }}>
         What each card costs in fees versus the perk value it puts on the table.
       </Typography>
       <Paper variant="outlined" sx={{ borderColor: brand.zinc[200], borderRadius: '14px', px: 2, py: '4px' }}>

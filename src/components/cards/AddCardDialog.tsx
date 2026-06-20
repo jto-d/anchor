@@ -12,7 +12,7 @@ import CheckIcon from '@mui/icons-material/Check'
 import SearchIcon from '@mui/icons-material/Search'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import { AppDialog } from '@/components/ui/AppDialog'
+import { AppDialog, Dot, Row, Stack } from '@/components/ui'
 import { brand } from '@/lib/theme'
 import { truncate, tabularNums } from '@/lib/sx'
 import { fmtDollars } from '@/utils/format'
@@ -53,12 +53,12 @@ function Swatch({ gradient }: { gradient: string }) {
 
 function CardRow({ card, selected, onSelect }: { card: CatalogCard; selected: boolean; onSelect: (key: string) => void }) {
   return (
-    <Box
+    <Row
       component="button"
-      type="button"
       onClick={() => onSelect(card.key)}
+      gap="13px"
       sx={{
-        display: 'flex', alignItems: 'center', gap: '13px', width: '100%', textAlign: 'left',
+        width: '100%', textAlign: 'left',
         padding: '9px 11px', borderRadius: '11px', cursor: 'pointer', fontFamily: 'inherit',
         border: `1.5px solid ${selected ? brand.anchor[600] : 'transparent'}`,
         background: selected ? brand.accentSoft : 'transparent',
@@ -84,48 +84,48 @@ function CardRow({ card, selected, onSelect }: { card: CatalogCard; selected: bo
       }}>
         {selected && <CheckIcon sx={{ fontSize: 13 }} />}
       </Box>
-    </Box>
+    </Row>
   )
 }
 
 function PerkPreview({ card }: { card: CatalogCard | null }) {
   if (!card) {
     return (
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: '9px', p: '14px', borderRadius: '12px', border: `1px dashed ${brand.zinc[300]}`, bgcolor: 'grey.50', color: 'text.disabled', fontSize: '13px' }}>
+      <Row gap="9px" sx={{ p: '14px', borderRadius: '12px', border: `1px dashed ${brand.zinc[300]}`, bgcolor: 'grey.50', color: 'text.disabled', fontSize: '13px' }}>
         <AutoAwesomeIcon sx={{ fontSize: 15, color: 'text.disabled' }} />
         Select a card to preview the perks it adds.
-      </Box>
+      </Row>
     )
   }
   if (card.perks.length === 0) {
     return (
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: '9px', p: '13px 14px', borderRadius: '12px', bgcolor: 'grey.50', border: '1px solid', borderColor: 'divider', color: 'text.secondary', fontSize: '13px', lineHeight: 1.45 }}>
+      <Row align="start" gap="9px" sx={{ p: '13px 14px', borderRadius: '12px', bgcolor: 'grey.50', border: '1px solid', borderColor: 'divider', color: 'text.secondary', fontSize: '13px', lineHeight: 1.45 }}>
         <InfoOutlinedIcon sx={{ fontSize: 15, color: 'text.disabled', mt: '1px' }} />
         <Box component="strong" sx={{ fontWeight: 600, color: 'text.primary' }}>This card has no pre-set perks.</Box>
-      </Box>
+      </Row>
     )
   }
   return (
     <Box sx={{ borderRadius: '12px', border: '1px solid', borderColor: 'divider', bgcolor: '#fff', overflow: 'hidden' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: '7px', p: '9px 13px', borderBottom: '1px solid', borderColor: 'divider', bgcolor: brand.accentSoft }}>
+      <Row gap="7px" sx={{ p: '9px 13px', borderBottom: '1px solid', borderColor: 'divider', bgcolor: brand.accentSoft }}>
         <AutoAwesomeIcon sx={{ fontSize: 14, color: brand.anchor[700] }} />
         <Typography sx={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', color: brand.anchor[700], whiteSpace: 'nowrap' }}>
           {card.perks.length} {card.perks.length === 1 ? 'perk' : 'perks'} added automatically
         </Typography>
-      </Box>
+      </Row>
       <Box sx={{ maxHeight: '148px', overflowY: 'auto', py: '4px' }}>
         {card.perks.map((p, i) => {
           const val = perkValue(p)
           return (
-            <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: '10px', p: '7px 14px' }}>
-              <Box sx={{ width: 5, height: 5, borderRadius: '999px', bgcolor: brand.anchor[400], flex: 'none' }} />
+            <Row key={i} gap="10px" sx={{ p: '7px 14px' }}>
+              <Dot size={5} color={brand.anchor[400]} />
               <Typography sx={{ ...truncate, flex: 1, minWidth: 0, fontSize: '13.5px', fontWeight: 500, color: 'text.primary', letterSpacing: '-0.005em' }}>
                 {p.name}
               </Typography>
               <Typography sx={{ ...tabularNums, flex: 'none', fontSize: '13px', fontWeight: 600, color: val === 'Included' ? 'grey.500' : 'text.secondary', whiteSpace: 'nowrap' }}>
                 {val}
               </Typography>
-            </Box>
+            </Row>
           )
         })}
       </Box>
@@ -215,7 +215,7 @@ export function AddCardDialog({ open, existingDesigns, onClose, onAdd }: AddCard
 
       {/* Picker list */}
       <Box sx={{ flex: '1 1 auto', minHeight: '120px', overflowY: 'auto', px: '14px', borderTop: '1px solid', borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'grey.50' }}>
-        <Box sx={{ py: '6px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+        <Stack gap="2px" sx={{ py: '6px' }}>
           {filtered.length === 0 ? (
             <Box sx={{ p: '34px 14px', textAlign: 'center', color: 'text.disabled', fontSize: '13px' }}>
               No cards match “{query}”.
@@ -225,12 +225,12 @@ export function AddCardDialog({ open, existingDesigns, onClose, onAdd }: AddCard
               <CardRow key={card.key} card={card} selected={card.key === selectedKey} onSelect={setSelectedKey} />
             ))
           )}
-        </Box>
+        </Stack>
       </Box>
 
       {/* Last 4 + opened date + perk preview */}
-      <Box sx={{ p: '16px 22px 4px', display: 'flex', flexDirection: 'column', gap: '14px', flex: 'none' }}>
-        <Box sx={{ display: 'flex', gap: '14px' }}>
+      <Stack gap="14px" sx={{ p: '16px 22px 4px', flex: 'none' }}>
+        <Row gap="14px" align="stretch">
           <TextField
             label="Last 4"
             value={lastFour}
@@ -252,7 +252,7 @@ export function AddCardDialog({ open, existingDesigns, onClose, onAdd }: AddCard
             sx={{ width: 170 }}
             slotProps={{ inputLabel: { shrink: true } }}
           />
-        </Box>
+        </Row>
 
         <Box
           key={selectedKey ?? 'none'}
@@ -263,10 +263,10 @@ export function AddCardDialog({ open, existingDesigns, onClose, onAdd }: AddCard
         >
           <PerkPreview card={selected} />
         </Box>
-      </Box>
+      </Stack>
 
       {/* Actions */}
-      <Box sx={{ p: '16px 22px 20px', display: 'flex', gap: '10px', justifyContent: 'flex-end', flex: 'none' }}>
+      <Row justify="end" gap="10px" sx={{ p: '16px 22px 20px', flex: 'none' }}>
         <Button variant="subtle" onClick={onClose} disabled={submitting}>
           Cancel
         </Button>
@@ -278,7 +278,7 @@ export function AddCardDialog({ open, existingDesigns, onClose, onAdd }: AddCard
         >
           Add card
         </Button>
-      </Box>
+      </Row>
     </AppDialog>
   )
 }

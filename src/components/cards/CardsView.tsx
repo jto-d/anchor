@@ -3,11 +3,10 @@
 import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import { Segmented } from '@/components/ui/Segmented'
+import { Eyebrow, Row, Segmented } from '@/components/ui'
 import { CardListRow } from './RewardCard'
 import { SuggestPicker } from './SuggestPicker'
 import { SuggestMatrix } from './SuggestMatrix'
-import { Eyebrow } from '@/components/ui/Eyebrow'
 import { dbCardToRewardCard } from '@/utils/cardRewards'
 import { brand } from '@/lib/theme'
 import { tabularNums } from '@/lib/sx'
@@ -23,16 +22,7 @@ interface SectionHeadProps {
 
 function SectionHead({ eyebrow, title, sub, right }: SectionHeadProps) {
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'flex-end',
-        justifyContent: 'space-between',
-        gap: '16px',
-        flexWrap: 'wrap',
-        mb: '18px',
-      }}
-    >
+    <Row align="end" justify="between" gap="16px" wrap sx={{ mb: '18px' }}>
       <Box>
         <Eyebrow sx={{ mb: '8px' }}>{eyebrow}</Eyebrow>
         <Typography
@@ -41,13 +31,13 @@ function SectionHead({ eyebrow, title, sub, right }: SectionHeadProps) {
           {title}
         </Typography>
         {sub && (
-          <Typography sx={{ fontSize: '13.5px', color: 'text.disabled', maxWidth: '46ch', mt: '6px' }}>
+          <Typography variant="body" sx={{ color: 'text.disabled', maxWidth: '46ch', mt: '6px' }}>
             {sub}
           </Typography>
         )}
       </Box>
       {right}
-    </Box>
+    </Row>
   )
 }
 
@@ -99,7 +89,7 @@ export function CardsView({ cards: dbCards, onAddCard, onManageCard }: CardsView
           eyebrow="Your cards"
           title="Wallet"
           right={
-            <Typography sx={{ ...tabularNums, fontSize: '12.5px', color: 'text.disabled' }}>
+            <Typography variant="label" sx={{ ...tabularNums, color: 'text.disabled' }}>
               {cards.length} cards · {pointsCount} points · {cashbackCount} cash back
             </Typography>
           }

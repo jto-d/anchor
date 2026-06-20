@@ -1,7 +1,7 @@
 'use client'
 
-import Box from '@mui/material/Box'
 import { fmtRate } from '@/utils/cardRewards'
+import { Row } from '@/components/ui'
 import { brand } from '@/lib/theme'
 import { tabularNums } from '@/lib/sx'
 import type { Reward } from '@/utils/cardRewards'
@@ -29,11 +29,10 @@ export function RateBadge({ reward, winner, muted, size = 'md' }: RateBadgeProps
                : '1px solid transparent'
 
   return (
-    <Box
+    <Row
+      inline
+      justify="center"
       sx={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         height: s.height,
         minWidth: s.height,
         px: s.px,
@@ -49,6 +48,6 @@ export function RateBadge({ reward, winner, muted, size = 'md' }: RateBadgeProps
       }}
     >
       {fmtRate(reward)}
-    </Box>
+    </Row>
   )
 }

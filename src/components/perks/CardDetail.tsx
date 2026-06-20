@@ -5,7 +5,7 @@ import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import { Eyebrow } from '../ui/Eyebrow'
+import { Eyebrow, Row } from '@/components/ui'
 import { CardTile } from './CardTile'
 import { PerkRow } from './PerkRow'
 import { cardCaptured, cardAvailable } from '@/utils/card'
@@ -40,21 +40,21 @@ export function CardDetail({ card, onBack, onLog }: CardDetailProps) {
         Back to perks dashboard
       </Button>
 
-      <Box sx={{ display: 'flex', gap: '26px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+      <Row align="start" gap="26px" wrap>
         <CardTile card={card} />
         <Box sx={{ flex: 1, minWidth: 240 }}>
           <Eyebrow>{card.issuer}</Eyebrow>
           <Typography variant="h4" sx={{ fontSize: 28, mt: 1 }}>
             {card.name}
           </Typography>
-          <Typography sx={{ fontSize: 14, color: 'grey.500', mt: '6px' }}>
+          <Typography variant="bodyStrong" sx={{ fontWeight: 500, color: 'grey.500', mt: '6px' }}>
             <Box component="span" sx={{ fontWeight: 600, color: 'primary.main' }}>
               {fmtDollars(captured)}
             </Box>{' '}
             recovered of {fmtDollars(available)} available · {card.perks.length} perks
           </Typography>
         </Box>
-      </Box>
+      </Row>
 
       <Eyebrow sx={{ mt: '30px', mb: '6px' }}>Perks</Eyebrow>
       <Paper variant="outlined" sx={{ borderColor: 'divider', borderRadius: '14px', px: 2, py: '4px' }}>
