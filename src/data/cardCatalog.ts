@@ -12,6 +12,7 @@ export interface CardCatalogEntry {
 }
 
 const WHITE = '#fff'
+const BLACK = '#000'
 const BILT_GREY = '#CBC8C2'
 
 export const FALLBACK_CARD: CardCatalogEntry = {
@@ -31,6 +32,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   // AMERICAN EXPRESS
   // ═══════════════════════════════════════════════════════════════════════════
 
+  // Charge Cards
   'amex-gold': {
     name: 'Gold Card',
     issuer: 'American Express',
@@ -42,9 +44,8 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     rewards: [
       { cat: 'dining', rate: 4 },
       { cat: 'groceries', rate: 4 },
-      { cat: 'travel', rate: 3 },
+      { cat: 'travel', rate: 3, note: "Flights only" },
       { cat: 'portal', rate: 5 },
-      
       { cat: 'base', rate: 1 },
     ],
   },
@@ -57,9 +58,145 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     network: 'Amex',
     annualFee: 695,
     rewards: [
-      { cat: 'travel', rate: 5 },
-      { cat: 'hotels', rate: 5 },
+      { cat: 'travel', rate: 5, note: "Flights only" },
+      { cat: 'portal', rate: 5 },
       { cat: 'base', rate: 1 },
+    ],
+  },
+  'amex-blue-cash-preferred': {
+    name: 'Blue Cash Preferred',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #2E4367, #0C1326)',
+    text: WHITE,
+    type: 'cashback',
+    network: 'Amex',
+    annualFee: 95,
+    rewards: [
+      { cat: 'groceries', rate: 6 },
+      { cat: 'streaming', rate: 6 },
+      { cat: 'transit', rate: 3 },
+      { cat: 'gas', rate: 3 },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+  'amex-blue-cash-everyday': {
+    name: 'Blue Cash Everyday',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #6BA8DF, #073883)',
+    text: WHITE,
+    type: 'cashback',
+    network: 'Amex',
+    annualFee: 0,
+    rewards: [
+      { cat: 'groceries', rate: 3 },
+      { cat: 'retail', rate: 3 },
+      { cat: 'gas', rate: 3 },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+  'amex-green': {
+    name: 'Green Card',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #DFECDB, #A7CFAC)',
+    text: BLACK,
+    type: 'points',
+    network: 'Amex',
+    annualFee: 150,
+    rewards: [
+      { cat: 'travel', rate: 3 },
+      { cat: 'hotels', rate: 3 },
+      { cat: 'transit', rate: 3 },
+      { cat: 'dining', rate: 3 },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+
+  // Delta
+  'delta-sky-miles-gold': {
+    name: 'Delta Sky Miles Gold',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #CAB179, #957740)',
+    text: BLACK,
+    type: 'points',
+    network: 'American Express',
+    annualFee: 150,
+    rewards: [
+      { cat: 'dining', rate: 2 },
+      { cat: 'groceries', rate: 2 },
+      { cat: 'portal', rate: 2, note: "Delta purchases" },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+  'delta-sky-miles-platinum': {
+    name: 'Delta Sky Miles Platinum',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #E0E1E0, #99A1A3)',
+    text: BLACK,
+    type: 'points',
+    network: 'American Express',
+    annualFee: 350,
+    rewards: [
+      { cat: 'portal', rate: 3, note: "Delta purchases" },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+  'delta-sky-miles-reserve': {
+    name: 'Delta Sky Miles Reserve',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #6B7D89, #2A3740)',
+    text: WHITE,
+    type: 'points',
+    network: 'American Express',
+    annualFee: 550,
+    rewards: [
+      { cat: 'portal', rate: 3, note: "Delta purchases" },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+  'delta-sky-miles-blue': {
+    name: 'Delta Sky Miles Blue',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #5EA0D5, #105793)',
+    text: WHITE,
+    type: 'points',
+    network: 'American Express',
+    annualFee: 0,
+    rewards: [
+      { cat: 'portal', rate: 2, note: "Delta purchases" },
+      { cat: 'dining', rate: 2 },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+
+  // Marriott
+  'marriott-bonvoy-bevy': {
+    name: 'Marriott Bonvoy Bevy',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #6F6F6D, #494947)',
+    text: WHITE,
+    type: 'points',
+    network: 'American Express',
+    annualFee: 250,
+    rewards: [
+      { cat: 'dining', rate: 2 },
+      { cat: 'groceries', rate: 2 },
+      { cat: 'portal', rate: 3, note: "Marriott purchases" },
+      { cat: 'base', rate: 1, note: "2x the above" },
+    ],
+  },
+  'marriott-bonvoy-brilliant': {
+    name: 'Marriott Bonvoy Brilliant',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #313131, #000000)',
+    text: WHITE,
+    type: 'points',
+    network: 'American Express',
+    annualFee: 650,
+    rewards: [
+      { cat: 'dining', rate: 1.5 },
+      { cat: 'travel', rate: 1.5, note: "Flights only" },
+      { cat: 'portal', rate: 3, note: "Marriott purchases" },
+      { cat: 'base', rate: 1, note: "2x the above" },
     ],
   },
 
