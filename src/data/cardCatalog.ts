@@ -202,6 +202,156 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
 
 
   // ═══════════════════════════════════════════════════════════════════════════
+  // AMERICAN EXPRESS BUSINESS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  'amex-business-gold': {
+    name: 'Business Gold Card',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #D4C27A, #A69A45)',
+    text: '#3D3413',
+    type: 'points',
+    network: 'American Express',
+    annualFee: 375,
+    rewards: [
+      { cat: 'dining', rate: 4, note: '4x on the top 2 of these 6 eligible categories each billing cycle (up to $150k/yr combined): dining, transit, gas, advertising, wireless, software/cloud' },
+      { cat: 'transit', rate: 4 },
+      { cat: 'gas', rate: 4 },
+      { cat: 'retail', rate: 4, note: 'Advertising in select U.S. media, monthly wireless phone service, and software/cloud purchases' },
+      { cat: 'portal', rate: 3, note: 'Flights and prepaid hotels via AmexTravel.com' },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+  'amex-business-platinum': {
+    name: 'Business Platinum Card',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #F1F1F3, #BEBEC0)',
+    text: '#27272A',
+    type: 'points',
+    network: 'American Express',
+    annualFee: 895,
+    rewards: [
+      { cat: 'portal', rate: 5, note: 'Flights and prepaid hotels via AmexTravel.com' },
+      { cat: 'retail', rate: 2, note: 'U.S. hardware/construction, electronics retailers, shipping providers, software/cloud, and individual purchases of $5,000+ (up to $2M/yr)' },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+  'amex-business-green': {
+    name: 'Business Green Rewards Card',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #D5E9D1, #9DC5A2)',
+    text: BLACK,
+    type: 'points',
+    network: 'American Express',
+    annualFee: 95,
+    rewards: [
+      { cat: 'portal', rate: 2, note: 'Purchases at amextravel.com' },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+  'amex-graphite-business-cash': {
+    name: 'Graphite Business Cash Unlimited',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #4A4A4A, #1C1C1C)',
+    text: WHITE,
+    type: 'cashback',
+    network: 'American Express',
+    annualFee: 295,
+    rewards: [
+      { cat: 'portal', rate: 5, note: 'Flights and prepaid hotels via AmexTravel.com' },
+      { cat: 'base', rate: 2, note: 'Unlimited 2% cash back on all other eligible purchases — no spending cap' },
+    ],
+  },
+  'amex-blue-business-cash': {
+    name: 'Blue Business Cash',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #3B6EC7, #1B3A7E)',
+    text: WHITE,
+    type: 'cashback',
+    network: 'American Express',
+    annualFee: 0,
+    rewards: [
+      { cat: 'base', rate: 2, note: '2% cash back on all purchases up to $50,000/yr, then 1%' },
+    ],
+  },
+  'amex-blue-business-plus': {
+    name: 'Blue Business Plus',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #2D5BA3, #142C5E)',
+    text: WHITE,
+    type: 'points',
+    network: 'American Express',
+    annualFee: 0,
+    rewards: [
+      { cat: 'base', rate: 2, note: '2x Membership Rewards on all purchases up to $50,000/yr, then 1x' },
+    ],
+  },
+
+  // Marriott Business
+  'amex-marriott-bonvoy-business': {
+    name: 'Marriott Bonvoy Business',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #C4A44A, #8C7030)',
+    text: '#2D1A00',
+    type: 'points',
+    network: 'American Express',
+    annualFee: 125,
+    rewards: [
+      { cat: 'hotels', rate: 6, note: 'Hotels participating in Marriott Bonvoy' },
+      { cat: 'dining', rate: 4 },
+      { cat: 'gas', rate: 4 },
+      { cat: 'retail', rate: 4, note: 'Wireless telephone services and U.S. shipping purchases' },
+      { cat: 'base', rate: 2 },
+    ],
+  },
+
+  // Delta Business
+  'delta-sky-miles-gold-business': {
+    name: 'Delta SkyMiles Gold Business',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #C8AF75, #9A7B3A)',
+    text: BLACK,
+    type: 'points',
+    network: 'American Express',
+    annualFee: 150,
+    rewards: [
+      { cat: 'portal', rate: 2, note: 'Delta purchases' },
+      { cat: 'retail', rate: 2, note: 'U.S. shipping and select U.S. advertising' },
+      { cat: 'dining', rate: 2 },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+  'delta-sky-miles-platinum-business': {
+    name: 'Delta SkyMiles Platinum Business',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #D6D8D9, #8B9598)',
+    text: BLACK,
+    type: 'points',
+    network: 'American Express',
+    annualFee: 350,
+    rewards: [
+      { cat: 'portal', rate: 3, note: 'Delta purchases and Delta Stays hotel bookings' },
+      { cat: 'transit', rate: 1.5, note: 'Transit, U.S. shipping, and eligible $5,000+ individual purchases' },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+  'delta-sky-miles-reserve-business': {
+    name: 'Delta SkyMiles Reserve Business',
+    issuer: 'American Express',
+    gradient: 'linear-gradient(150deg, #5C6E7A, #20303A)',
+    text: WHITE,
+    type: 'points',
+    network: 'American Express',
+    annualFee: 650,
+    rewards: [
+      { cat: 'portal', rate: 3, note: 'Delta purchases' },
+      { cat: 'transit', rate: 1.5, note: 'Transit, U.S. shipping, and U.S. office supply stores' },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+
+
+  // ═══════════════════════════════════════════════════════════════════════════
   // BANK OF AMERICA
   // ═══════════════════════════════════════════════════════════════════════════
 
@@ -234,12 +384,12 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     network: 'Visa Signature',
     annualFee: 395,
     rewards: [
-      { cat: 'portal', rate: 10, note: "10x on hotels and rental cars, 3x on flights and vacation rentals" },
+      { cat: 'portal', rate: 10, note: "10x on hotels and rental cars, 5x on flights and vacation rentals" },
       { cat: 'base', rate: 2 },
     ],
   },
-  'capital-one-venture-rewards': {
-    name: 'Venture Rewards',
+  'capital-one-venture': {
+    name: 'Venture',
     issuer: 'Capital One',
     gradient: 'linear-gradient(150deg, #052850, #041435)',
     text: WHITE,
@@ -251,8 +401,8 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'base', rate: 2 },
     ],
   },
-  'capital-one-venture-one-rewards': {
-    name: 'Venture One Rewards',
+  'capital-one-venture-one': {
+    name: 'Venture One',
     issuer: 'Capital One',
     gradient: 'linear-gradient(150deg, #053A74, #003772)',
     text: WHITE,
@@ -290,6 +440,50 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'streaming', rate: 8, note: "8x on Capital One Entertainment purchases" },
       { cat: 'portal', rate: 5, note: "5x on hotels, rental cars, and vacation rentals" },
       { cat: 'base', rate: 1 },
+    ],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CAPITAL ONE BUSINESS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  'capital-one-venture-x-business': {
+    name: 'Venture X Business',
+    issuer: 'Capital One',
+    gradient: 'linear-gradient(150deg, #0A4E71, #08233D)',
+    text: WHITE,
+    type: 'points',
+    network: 'Visa Signature',
+    annualFee: 395,
+    rewards: [
+      { cat: 'portal', rate: 10, note: "10x on hotels and rental cars, 5x on flights and vacation rentals" },
+      { cat: 'base', rate: 2 },
+    ],
+  },
+  'capital-one-venture-business': {
+    name: 'Venture Business',
+    issuer: 'Capital One',
+    gradient: 'linear-gradient(150deg, #052850, #041435)',
+    text: WHITE,
+    type: 'points',
+    network: 'Visa Signature',
+    annualFee: 95,
+    rewards: [
+      { cat: 'portal', rate: 5, note: "5x on hotels, rental cars, and vacation rentals" },
+      { cat: 'base', rate: 2 },
+    ],
+  },
+  'capital-one-venture-one-business': {
+    name: 'Venture One',
+    issuer: 'Capital One',
+    gradient: 'linear-gradient(150deg, #053A74, #003772)',
+    text: WHITE,
+    type: 'points',
+    network: 'Visa Signature',
+    annualFee: 0,
+    rewards: [
+      { cat: 'portal', rate: 5, note: "5x on hotels, rental cars, and vacation rentals" },
+      { cat: 'base', rate: 1.5 },
     ],
   },
 
@@ -588,23 +782,8 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     ],
   },
 
-  // · Marriott Business
-  'marriott-bonvoy-business': {
-    name: 'Marriott Bonvoy Business',
-    issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #C4A44A, #8C7030)',
-    text: '#2D1A00',
-    type: 'points',
-    network: 'Visa Signature',
-    annualFee: 125,
-    rewards: [
-      { cat: 'hotels', rate: 6 },
-      { cat: 'dining', rate: 4 },
-      { cat: 'gas', rate: 4 },
-      { cat: 'streaming', rate: 4 },
-      { cat: 'base', rate: 2 },
-    ],
-  },
+  // · Marriott Business — the Marriott Bonvoy Business card is issued by Amex, not Chase.
+  // See 'amex-marriott-bonvoy-business' in the AMERICAN EXPRESS BUSINESS section.
 
   // · Southwest
   'southwest-priority': {

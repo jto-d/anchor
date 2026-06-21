@@ -78,7 +78,7 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
     { name: 'Centurion Lounge', totalAmount: 0, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Unlimited access to Amex Centurion Lounges. Log each visit with its estimated value.' },
     { name: 'Delta Sky Club Lounge', totalAmount: 0, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Unlimited access to Delta Sky Club Lounges. Log each visit with its estimated value.' },
     { name: 'Rideshare Credit', totalAmount: 10, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $120/yr. Enrollment required.' },
-    { name: 'Resy Credit', totalAmount: 20, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $120/yr. Enrollment required.' },
+    { name: 'Resy Credit', totalAmount: 20, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $240/yr. Enrollment required.' },
     { name: 'Delta Stays Credit', totalAmount: 200, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $200/yr. Delta Stays credit for prepaid hotel stays via Amex Travel.' },
   ],
 
@@ -88,9 +88,61 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
     { name: 'Free Night Award', totalAmount: 500, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to 85000 Marriott Bonvoy points. Free night award for Marriott bookings.' },
   ],
 
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // AMEX BUSINESS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  'amex-business-gold': [
+    { name: 'Grubhub / Office Supply Credit', totalAmount: 20, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $240/yr. Eligible purchases at Grubhub and U.S. office supply stores. (FedEx was also eligible through 10/01/2026.)' },
+    { name: 'Walmart+ Credit', totalAmount: 12.95, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Reimburses one monthly Walmart+ membership (plus tax). Pay with the card.' },
+    { name: 'ChatGPT Business Credit', totalAmount: 300, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $300/yr on ChatGPT Business subscriptions.' },
+    { name: 'Squarespace Credit', totalAmount: 150, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $150/yr on Squarespace purchases.' },
+  ],
+  'amex-business-platinum': [
+    { name: 'Centurion Lounge', totalAmount: 0, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Unlimited access to Amex Centurion Lounges. Log each visit with its estimated value.' },
+    priorityPass,
+    { name: 'Delta Sky Club Lounge', totalAmount: 0, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: '10 complimentary Delta Sky Club visits per Medallion year when flying on an eligible Delta flight. Log each visit with its estimated value.' },
+    { name: 'Hotel Credit', totalAmount: 300, period: 'SEMI_ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $600/yr. Prepaid Fine Hotels + Resorts or The Hotel Collection (2-night min) via Amex Travel.' },
+    { name: 'Airline Fee Credit', totalAmount: 200, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Select one airline per year; incidental fees only. Enrollment required.' },
+    { name: 'Hilton Credit', totalAmount: 200, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $200/yr on Hilton bookings.' },
+    { name: 'Indeed Credit', totalAmount: 90, period: 'QUARTERLY', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $360/yr ($90/quarter) on Indeed recruiting purchases.' },
+    { name: 'Wireless Credit', totalAmount: 10, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $120/yr on wireless service charges from U.S. providers.' },
+    { name: 'Dell Technologies Credit', totalAmount: 150, period: 'SEMI_ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $150/yr base ($75 per semi-annual period). Spend $5,000+ on Dell in the calendar year to unlock an additional $1,000 statement credit.' },
+    { name: 'Adobe Credit', totalAmount: 250, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $250/yr. Requires at least $600 in Adobe purchases in the calendar year.' },
+    { name: 'ChatGPT Business Credit', totalAmount: 300, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $300/yr on ChatGPT Business subscriptions.' },
+    { name: 'CLEAR Plus', totalAmount: 209, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Reimburses CLEAR Plus membership.' },
+    { name: 'Global Entry / TSA PreCheck Credit', totalAmount: 120, period: 'QUADRENNIAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $120 every 4-5 years for Global Entry application fee (includes TSA PreCheck).' },
+  ],
+
+  // Marriott Business
+  'amex-marriott-bonvoy-business': [
+    { name: 'Free Night Award', totalAmount: 300, period: 'ANNUAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'One free night award after card renewal month (up to 35,000 Bonvoy points, ~$300 value). Earn a second award after $60,000 in purchases in a calendar year.' },
+  ],
+
+  // Delta Business
+  'delta-sky-miles-gold-business': [
+    { name: 'Rideshare Credit', totalAmount: 10, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $120/yr after first card renewal. Enrollment required.' },
+    { name: 'Delta Stays Credit', totalAmount: 150, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $150/yr. Prepaid hotel stays or vacation rentals via Delta Stays.' },
+  ],
+  'delta-sky-miles-platinum-business': [
+    { name: 'Resy Credit', totalAmount: 10, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $120/yr. Eligible U.S. Resy restaurant purchases. Enrollment required.' },
+    { name: 'Rideshare Credit', totalAmount: 10, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $120/yr. Enrollment required.' },
+    { name: 'Delta Stays Credit', totalAmount: 200, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $200/yr. Prepaid hotel stays or vacation rentals via Delta Stays.' },
+    { name: 'Global Entry / TSA PreCheck Credit', totalAmount: 120, period: 'QUADRENNIAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $120 every 4-5 years for Global Entry application fee (includes TSA PreCheck).' },
+  ],
+  'delta-sky-miles-reserve-business': [
+    { name: 'Delta Sky Club Lounge', totalAmount: 0, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: '15 Delta Sky Club visits per Medallion year (unlimited after $75,000 annual spend). Log each visit with its estimated value.' },
+    { name: 'Centurion Lounge', totalAmount: 0, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Complimentary access to Amex Centurion Lounges when flying Delta. Log each visit with its estimated value.' },
+    { name: 'Resy Credit', totalAmount: 20, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $240/yr. Eligible U.S. Resy restaurant purchases. Enrollment required.' },
+    { name: 'Rideshare Credit', totalAmount: 10, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $120/yr. Enrollment required.' },
+    { name: 'Delta Stays Credit', totalAmount: 250, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $250/yr. Prepaid hotel stays or vacation rentals via Delta Stays.' },
+    { name: 'Global Entry / TSA PreCheck Credit', totalAmount: 120, period: 'QUADRENNIAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $120 every 4-5 years for Global Entry application fee (includes TSA PreCheck).' },
+  ],
+
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // CAPITAL ONE  
+  // CAPITAL ONE
   // ═══════════════════════════════════════════════════════════════════════════
 
   'capital-one-venture-x': [
@@ -98,7 +150,19 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
     { name: 'Capital One Travel Credit', totalAmount: 300, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $300/yr. Travel purchases via Capital One Travel.' },
   ],
 
-  
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CAPITAL ONE BUSINESS  
+  // ═══════════════════════════════════════════════════════════════════════════
+  'capital-one-venture-x-business': [
+    priorityPass,
+    { name: 'Capital One Business Travel Credit', totalAmount: 300, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $300/yr. Travel purchases via Capital One Business Travel.' },
+  ],
+  'capital-one-venture-business': [
+    { name: 'Capital One Business Travel Credit', totalAmount: 50, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $300/yr. Travel purchases via Capital One Business Travel.' },
+    { name: 'Advertising/Software Credit', totalAmount: 50, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $50/yr. Advertising/Software purchases at qualifying advertising or software merchants.' },
+  ],
+
   // ═══════════════════════════════════════════════════════════════════════════
   // CHASE
   // ═══════════════════════════════════════════════════════════════════════════
