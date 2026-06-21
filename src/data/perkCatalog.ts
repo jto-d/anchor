@@ -154,6 +154,7 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
   // ═══════════════════════════════════════════════════════════════════════════
   // CAPITAL ONE BUSINESS  
   // ═══════════════════════════════════════════════════════════════════════════
+  
   'capital-one-venture-x-business': [
     priorityPass,
     { name: 'Capital One Business Travel Credit', totalAmount: 300, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $300/yr. Travel purchases via Capital One Business Travel.' },
@@ -166,30 +167,32 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
   // ═══════════════════════════════════════════════════════════════════════════
   // CHASE
   // ═══════════════════════════════════════════════════════════════════════════
-
-  // · Sapphire
+  
+  // Sapphire
   'chase-sapphire-preferred': [
     { name: 'Chase Travel Hotel Credit', totalAmount: 50, period: 'ANNUAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $50 each ANNIVERSARY year (not calendar). Hotel stays via Chase Travel.' },
     { name: 'DoorDash Non-Restaurant Credit', totalAmount: 10, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'One $10 promo/mo on non-restaurant orders. Requires active complimentary DashPass (activate by 12/31/27).' },
   ],
   'chase-sapphire-reserve': [
     priorityPass,
+    { name: 'Chase Sapphire Lounges', totalAmount: 0, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Unlimited access to Chase Sapphire Lounges. Log each visit with its estimated value.' },
     { name: 'Travel Credit', totalAmount: 300, period: 'ANNUAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'ANNIVERSARY-year reset (not calendar). Auto-applies to first $300 of travel purchases.' },
     { name: 'The Edit Hotel Credit', totalAmount: 250, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $500/yr, max $250 per transaction. Prepaid 2-night+ stays via The Edit. As of 2026, flexible calendar-year timing (no longer split semi-annually).' },
     { name: 'Dining Credit (Exclusive Tables)', totalAmount: 150, period: 'SEMI_ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $300/yr. Sapphire Reserve Exclusive Tables via OpenTable. Jan–Jun and Jul–Dec.' },
     { name: 'StubHub / viagogo Credit', totalAmount: 150, period: 'SEMI_ANNUAL', resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $300/yr. Jan–Jun and Jul–Dec. Activation required.' },
+    { name: 'Apple TV and Music Subscription Credit', totalAmount: 288, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Free Apple TV + Apple Music subscription for one year.'},
     { name: 'DoorDash Restaurant Credit', totalAmount: 5, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'On restaurant orders. Requires DashPass (activate by 12/31/27).' },
     { name: 'DoorDash Non-Restaurant Credit', totalAmount: 20, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Two $10 promos/mo on grocery/retail. Second unlocks only after first is used.' },
     { name: 'Lyft Credit', totalAmount: 10, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'In-app credit through 9/30/27. (Also 5x points on Lyft.)' },
     { name: 'Peloton Membership Credit', totalAmount: 10, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $120/yr toward Peloton memberships.' },
   ],
 
-  // · Freedom
+  // Freedom
   'chase-freedom-unlimited': [
     { name: 'DoorDash Non-Restaurant Credit', totalAmount: 10, period: 'QUARTERLY', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $10/quarter on non-restaurant orders through 12/31/27. Requires active DashPass.' },
   ],
 
-  // · United
+  // United
   'united-quest': [
     { name: 'United TravelBank Credit', totalAmount: 200, period: 'ANNUAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'ANNIVERSARY year. $200 TravelBank cash at opening + each anniversary; United-operated flights only.' },
     { name: 'Renowned Hotels Credit', totalAmount: 150, period: 'ANNUAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'ANNIVERSARY year. Prepaid stays via Renowned Hotels and Resorts for United Cardmembers.' },
@@ -209,31 +212,58 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
     { name: 'Global Entry / TSA PreCheck Credit', totalAmount: 100, period: 'QUADRENNIAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $100 every 4 years for Global Entry application fee (includes TSA PreCheck). Statement credit posted within 2–3 billing cycles.' },
   ],
 
-  // · United Business
-  'united-business': [
-    { name: 'United Travel Credit', totalAmount: 100, period: 'ANNUAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Earned only AFTER 7 United flight purchases of $100+ each cardmember year (spend-gated). Awarded as United TravelBank credit.' },
-    { name: 'Rideshare Credit', totalAmount: 5, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $60/yr. Calendar year. Annual opt-in required.' },
-  ],
-  'united-club-business': [
-    { name: 'United Club Lounge', totalAmount: 0, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'United Club membership included. Unlimited access to United Club and partner lounges. Log each visit with its estimated value.' },
-    { name: 'Global Entry / TSA PreCheck Credit', totalAmount: 100, period: 'QUADRENNIAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $100 every 4 years for Global Entry application fee (includes TSA PreCheck). Statement credit posted within 2–3 billing cycles.' },
-  ],
-
-  // · Southwest Business
-  'southwest-performance-business': [
-    { name: 'Southwest Travel Credit', totalAmount: 250, period: 'SEMI_ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $500/yr. $250 each in Jan–Jun and Jul–Dec toward Southwest Airlines purchases.' },
-    { name: 'In-flight Wi-Fi Credit', totalAmount: 75, period: 'ANNUAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $75/yr as statement credits for in-flight Wi-Fi purchases on Southwest flights.' },
-    { name: 'Global Entry / TSA PreCheck Credit', totalAmount: 100, period: 'QUADRENNIAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $100 every 4 years for Global Entry application fee (includes TSA PreCheck).' },
-  ],
-
-  // · Southwest
+  // Southwest
   'southwest-priority': [
     { name: 'Southwest Travel Credit', totalAmount: 75, period: 'ANNUAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $75/yr toward Southwest Airlines purchases. Applied as a statement credit.' },
   ],
 
-  // · IHG
+  // IHG
   'ihg-one-rewards-premier': [
     { name: 'Global Entry / TSA PreCheck Credit', totalAmount: 100, period: 'QUADRENNIAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $100 every 4 years for Global Entry application fee (includes TSA PreCheck).' },
+  ],
+
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CHASE BUSINESS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // Sapphire Business
+  'chase-sapphire-reserve-business': [
+    priorityPass,
+    { name: 'Chase Sapphire Lounge', totalAmount: 0, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Unlimited access to Chase Sapphire Lounges by The Club and Air Canada Maple Leaf Lounges (2 complimentary guests). Log each visit with its estimated value.' },
+    { name: 'Travel Credit', totalAmount: 300, period: 'ANNUAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'ANNIVERSARY-year reset. Auto-applies to first $300 of eligible travel purchases (airfare, hotels, transit, campgrounds, travel agencies, etc.).' },
+    { name: 'The Edit Hotel Credit', totalAmount: 250, period: 'SEMI_ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $500/yr ($250 per semi-annual period). Prepaid stays via The Edit by Chase Travel.' },
+    { name: 'Google Workspace Credit', totalAmount: 200, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $200/yr on Google Workspace purchases.' },
+    { name: 'ZipRecruiter Credit', totalAmount: 100, period: 'QUARTERLY', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $400/yr ($100/quarter) on ZipRecruiter purchases.' },
+    { name: 'Lyft Credit', totalAmount: 10, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $120/yr in-app Lyft credit through 9/30/27.' },
+    { name: 'DoorDash Credit', totalAmount: 25, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $300/yr in DoorDash promos. Includes complimentary DashPass (activate by 12/31/27).' },
+    { name: 'Global Entry / TSA PreCheck / NEXUS Credit', totalAmount: 120, period: 'QUADRENNIAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $120 every 4 years for Global Entry (includes TSA PreCheck) or NEXUS application fee.' },
+  ],
+
+  // United Business
+  'united-business': [
+    { name: 'United Travel Credit', totalAmount: 125, period: 'ANNUAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Earned AFTER 5 United flight purchases of $100+ each cardmember year (spend-gated). Awarded as United TravelBank credit.' },
+    { name: 'United Hotels Credit', totalAmount: 100, period: 'ANNUAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $100/yr on prepaid United Hotels bookings per anniversary year.' },
+    { name: 'Rideshare Credit', totalAmount: 100, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $100/yr. Annual opt-in required.' },
+    { name: 'Avis / Budget Credit', totalAmount: 50, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $50/yr on Avis/Budget car rentals via cars.united.com.' },
+    { name: 'JSX Credit', totalAmount: 100, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $100/yr on JSX semi-private flight purchases.' },
+    { name: 'Instacart Credit', totalAmount: 10, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $120/yr. Plus complimentary Instacart+ membership.' },
+  ],
+  'united-club-business': [
+    { name: 'United Club Lounge', totalAmount: 0, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'United Club membership included. Unlimited access to United Club and partner lounges. Log each visit with its estimated value.' },
+    { name: 'Global Entry / TSA PreCheck Credit', totalAmount: 120, period: 'QUADRENNIAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $120 every 4 years for Global Entry application fee (includes TSA PreCheck).' },
+    { name: 'Renowned Hotels Credit', totalAmount: 200, period: 'ANNUAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $200/yr on prepaid stays via Renowned Hotels and Resorts for United.' },
+    { name: 'Rideshare Credit', totalAmount: 150, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $150/yr. Enrollment required.' },
+    { name: 'Avis / Budget Credit', totalAmount: 100, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $100/yr on Avis/Budget car rentals via cars.united.com.' },
+    { name: 'Instacart Credit', totalAmount: 20, period: 'MONTHLY', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $240/yr. Complimentary Instacart+ membership through 12/31/27.' },
+    { name: 'JSX Credit', totalAmount: 200, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $200/yr on JSX semi-private flight purchases.' },
+  ],
+
+  // Southwest Business
+  'southwest-performance-business': [
+    { name: 'Southwest Travel Credit', totalAmount: 250, period: 'SEMI_ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $500/yr. $250 each in Jan–Jun and Jul–Dec toward Southwest Airlines purchases.' },
+    { name: 'In-flight Wi-Fi Credit', totalAmount: 0, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to 365 credits of $8 each for inflight Wi-Fi on Southwest flights through 12/31/26. Effectively unlimited Wi-Fi for most flyers. Log each use.' },
+    { name: 'Global Entry / TSA PreCheck / NEXUS Credit', totalAmount: 120, period: 'QUADRENNIAL', resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $120 every 4 years for Global Entry (includes TSA PreCheck) or NEXUS application fee.' },
   ],
 
 

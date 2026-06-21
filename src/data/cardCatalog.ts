@@ -487,11 +487,12 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     ],
   },
 
+
   // ═══════════════════════════════════════════════════════════════════════════
   // CHASE
   // ═══════════════════════════════════════════════════════════════════════════
 
-  // · Sapphire
+  // Sapphire
   'chase-sapphire-preferred': {
     name: 'Sapphire Preferred',
     issuer: 'Chase',
@@ -529,7 +530,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     ],
   },
 
-  // · Freedom
+  // Freedom
   'chase-freedom-unlimited': {
     name: 'Freedom Unlimited',
     issuer: 'Chase',
@@ -573,7 +574,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     ],
   },
 
-  // · United
+  // United
   'united-quest': {
     name: 'United Quest',
     issuer: 'Chase',
@@ -638,7 +639,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     ],
   },
 
-  // · Aeroplan
+  // Aeroplan
   'chase-aeroplan': {
     name: 'Aeroplan',
     issuer: 'Chase',
@@ -655,137 +656,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     ],
   },
 
-  // · Ink Business
-  'chase-ink-preferred': {
-    name: 'Ink Business Preferred',
-    issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #0D3B6E, #06203F)',
-    text: WHITE,
-    type: 'points',
-    network: 'Visa Signature',
-    annualFee: 95,
-    rewards: [
-      { cat: 'travel', rate: 3 },
-      { cat: 'streaming', rate: 3 },
-      { cat: 'retail', rate: 3 },
-      { cat: 'base', rate: 1 },
-    ],
-  },
-  'chase-ink-cash': {
-    name: 'Ink Business Cash',
-    issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #1B4B8C, #0D2952)',
-    text: WHITE,
-    type: 'cashback',
-    network: 'Visa Signature',
-    annualFee: 0,
-    rewards: [
-      { cat: 'retail', rate: 5 },
-      { cat: 'streaming', rate: 5 },
-      { cat: 'dining', rate: 2 },
-      { cat: 'gas', rate: 2 },
-      { cat: 'base', rate: 1 },
-    ],
-  },
-  'chase-ink-unlimited': {
-    name: 'Ink Business Unlimited',
-    issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #5B7A9E, #384F6A)',
-    text: WHITE,
-    type: 'cashback',
-    network: 'Visa Signature',
-    annualFee: 0,
-    rewards: [
-      { cat: 'base', rate: 1.5 },
-    ],
-  },
-  'chase-ink-premier': {
-    name: 'Ink Business Premier',
-    issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #242424, #0A0A0A)',
-    text: WHITE,
-    type: 'points',
-    network: 'Visa Infinite',
-    annualFee: 195,
-    rewards: [
-      { cat: 'portal', rate: 5 },
-      { cat: 'base', rate: 2 },
-    ],
-  },
-
-  // · United Business
-  'united-business': {
-    name: 'United Business Card',
-    issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #1C3B6A, #0C1F3E)',
-    text: WHITE,
-    type: 'points',
-    network: 'Visa Signature',
-    annualFee: 99,
-    rewards: [
-      { cat: 'travel', rate: 2 },
-      { cat: 'dining', rate: 2 },
-      { cat: 'hotels', rate: 2 },
-      { cat: 'gas', rate: 2 },
-      { cat: 'transit', rate: 2 },
-      { cat: 'retail', rate: 2 },
-      { cat: 'base', rate: 1 },
-    ],
-  },
-  'united-club-business': {
-    name: 'United Club Business Card',
-    issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #0A1A3C, #050D1F)',
-    text: WHITE,
-    type: 'points',
-    network: 'Visa Infinite',
-    annualFee: 450,
-    rewards: [
-      { cat: 'travel', rate: 4 },
-      { cat: 'dining', rate: 2 },
-      { cat: 'hotels', rate: 2 },
-      { cat: 'base', rate: 1.5 },
-    ],
-  },
-
-  // · Southwest Business
-  'southwest-performance-business': {
-    name: 'Southwest Rapid Rewards Performance Business',
-    issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #304CB2, #1D3080)',
-    text: WHITE,
-    type: 'points',
-    network: 'Visa Signature',
-    annualFee: 199,
-    rewards: [
-      { cat: 'travel', rate: 4 },
-      { cat: 'hotels', rate: 3 },
-      { cat: 'transit', rate: 2 },
-      { cat: 'streaming', rate: 2 },
-      { cat: 'base', rate: 1 },
-    ],
-  },
-  'southwest-premier-business': {
-    name: 'Southwest Rapid Rewards Premier Business',
-    issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #4267C3, #2E4EA0)',
-    text: WHITE,
-    type: 'points',
-    network: 'Visa Signature',
-    annualFee: 99,
-    rewards: [
-      { cat: 'travel', rate: 3 },
-      { cat: 'hotels', rate: 2 },
-      { cat: 'transit', rate: 2 },
-      { cat: 'streaming', rate: 2 },
-      { cat: 'base', rate: 1 },
-    ],
-  },
-
-  // · Marriott Business — the Marriott Bonvoy Business card is issued by Amex, not Chase.
-  // See 'amex-marriott-bonvoy-business' in the AMERICAN EXPRESS BUSINESS section.
-
-  // · Southwest
+  // Southwest
   'southwest-priority': {
     name: 'Southwest Rapid Rewards Priority',
     issuer: 'Chase',
@@ -835,7 +706,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     ],
   },
 
-  // · Hyatt
+  // Hyatt
   'world-of-hyatt': {
     name: 'World of Hyatt',
     issuer: 'Chase',
@@ -853,7 +724,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     ],
   },
 
-  // · Marriott Bonvoy
+  // Marriott Bonvoy
   'marriott-bonvoy-boundless': {
     name: 'Marriott Bonvoy Boundless',
     issuer: 'Chase',
@@ -885,7 +756,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     ],
   },
 
-  // · IHG
+  // IHG
   'ihg-one-rewards-premier': {
     name: 'IHG One Rewards Premier',
     issuer: 'Chase',
@@ -903,7 +774,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     ],
   },
 
-  // · Amazon
+  // Amazon
   'amazon-prime-rewards': {
     name: 'Amazon Prime Rewards Visa',
     issuer: 'Chase',
@@ -922,6 +793,151 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     ],
   },
 
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CHASE BUSINESS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  'chase-sapphire-reserve-business': {
+    name: 'Sapphire Reserve for Business',
+    issuer: 'Chase',
+    gradient: 'linear-gradient(150deg, #1A1A2E, #0A0A14)',
+    text: WHITE,
+    type: 'points',
+    network: 'Visa Infinite',
+    annualFee: 795,
+    rewards: [
+      { cat: 'portal', rate: 8, note: 'Chase Travel including The Edit' },
+      { cat: 'travel', rate: 4, note: 'Flights booked directly. 5x on Lyft through 9/30/27.' },
+      { cat: 'hotels', rate: 4, note: 'Hotels booked directly' },
+      { cat: 'retail', rate: 3, note: 'Social media and search engine advertising' },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+  // Ink Business
+  'chase-ink-preferred': {
+    name: 'Ink Business Preferred',
+    issuer: 'Chase',
+    gradient: 'linear-gradient(150deg, #0D3B6E, #06203F)',
+    text: WHITE,
+    type: 'points',
+    network: 'Visa Signature',
+    annualFee: 95,
+    rewards: [
+      { cat: 'travel', rate: 3, note: '3x on travel, shipping, internet/cable/phone, and social media advertising. $150k combined cap per anniversary year. 5x on Lyft through 9/30/27.' },
+      { cat: 'streaming', rate: 3, note: 'Internet, cable, and phone services' },
+      { cat: 'retail', rate: 3, note: 'Shipping and social media/search engine advertising' },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+  'chase-ink-cash': {
+    name: 'Ink Business Cash',
+    issuer: 'Chase',
+    gradient: 'linear-gradient(150deg, #1B4B8C, #0D2952)',
+    text: WHITE,
+    type: 'cashback',
+    network: 'Visa Signature',
+    annualFee: 0,
+    rewards: [
+      { cat: 'retail', rate: 5 },
+      { cat: 'streaming', rate: 5 },
+      { cat: 'dining', rate: 2 },
+      { cat: 'gas', rate: 2 },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+  'chase-ink-unlimited': {
+    name: 'Ink Business Unlimited',
+    issuer: 'Chase',
+    gradient: 'linear-gradient(150deg, #5B7A9E, #384F6A)',
+    text: WHITE,
+    type: 'cashback',
+    network: 'Visa Signature',
+    annualFee: 0,
+    rewards: [
+      { cat: 'base', rate: 1.5 },
+    ],
+  },
+  'chase-ink-premier': {
+    name: 'Ink Business Premier',
+    issuer: 'Chase',
+    gradient: 'linear-gradient(150deg, #242424, #0A0A0A)',
+    text: WHITE,
+    type: 'points',
+    network: 'Visa Infinite',
+    annualFee: 195,
+    rewards: [
+      { cat: 'portal', rate: 5 },
+      { cat: 'base', rate: 2 },
+    ],
+  },
+
+  // United Business
+  'united-business': {
+    name: 'United Business Card',
+    issuer: 'Chase',
+    gradient: 'linear-gradient(150deg, #1C3B6A, #0C1F3E)',
+    text: WHITE,
+    type: 'points',
+    network: 'Visa Signature',
+    annualFee: 150,
+    rewards: [
+      { cat: 'portal', rate: 2, note: 'United purchases including flights' },
+      { cat: 'dining', rate: 2 },
+      { cat: 'gas', rate: 2 },
+      { cat: 'transit', rate: 2 },
+      { cat: 'retail', rate: 2, note: 'Office supply stores' },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+  'united-club-business': {
+    name: 'United Club Business Card',
+    issuer: 'Chase',
+    gradient: 'linear-gradient(150deg, #0A1A3C, #050D1F)',
+    text: WHITE,
+    type: 'points',
+    network: 'Visa Infinite',
+    annualFee: 695,
+    rewards: [
+      { cat: 'portal', rate: 2, note: 'United purchases including flights' },
+      { cat: 'hotels', rate: 5, note: 'Prepaid stays via Renowned Hotels and Resorts for United' },
+      { cat: 'base', rate: 1.5 },
+    ],
+  },
+
+  // Southwest Business
+  'southwest-performance-business': {
+    name: 'Southwest Rapid Rewards Performance Business',
+    issuer: 'Chase',
+    gradient: 'linear-gradient(150deg, #304CB2, #1D3080)',
+    text: WHITE,
+    type: 'points',
+    network: 'Visa Signature',
+    annualFee: 299,
+    rewards: [
+      { cat: 'portal', rate: 4, note: 'Southwest Airlines purchases' },
+      { cat: 'hotels', rate: 2, note: 'Hotels booked directly with the hotel' },
+      { cat: 'gas', rate: 2 },
+      { cat: 'dining', rate: 2 },
+      { cat: 'transit', rate: 2 },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+  'southwest-premier-business': {
+    name: 'Southwest Rapid Rewards Premier Business',
+    issuer: 'Chase',
+    gradient: 'linear-gradient(150deg, #4267C3, #2E4EA0)',
+    text: WHITE,
+    type: 'points',
+    network: 'Visa Signature',
+    annualFee: 149,
+    rewards: [
+      { cat: 'portal', rate: 3, note: 'Southwest Airlines purchases' },
+      { cat: 'gas', rate: 2, note: 'Gas stations and restaurants; $8k combined cap per anniversary year' },
+      { cat: 'dining', rate: 2 },
+      { cat: 'base', rate: 1 },
+    ],
+  },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // BILT
