@@ -1,6 +1,6 @@
 // Per-product perk templates, keyed by the same design slug as CARD_CATALOG.
 // When a user adds a card from the catalog, these perks are created on it.
-// Cards with an empty array (cash-back style) carry no pre-set perks.
+// Cards omitted here carry no pre-set perks.
 
 export interface PerkTemplate {
   name: string
@@ -13,7 +13,11 @@ export interface PerkTemplate {
 }
 
 export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
-  // ── AMERICAN EXPRESS ─────────────────────────────────────────────────────────
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // AMERICAN EXPRESS
+  // ═══════════════════════════════════════════════════════════════════════════
+
   'amex-gold': [
     { name: 'Uber Cash', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $120/yr. Adds to Uber account; use on U.S. rides or Uber Eats. Enrollment required.' },
     { name: 'Dining Credit', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $120/yr. Participating partners (Buffalo Wild Wings, Wonder, Goldbelly & Wine.com through 6/30). Enrollment required.' },
@@ -31,9 +35,13 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
     { name: 'Equinox Credit', totalAmount: 300, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $300/yr (often disbursed monthly in practice) toward Equinox memberships. Enrollment required.' },
     { name: 'Oura Ring Credit', totalAmount: 200, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Toward an Oura Ring / Oura membership. Enrollment required.' },
   ],
-  // ── BANK OF AMERICA ──────────────────────────────────────────────────────────
-  'bofa-customized-cash': [],
-  // ── CHASE — SAPPHIRE ─────────────────────────────────────────────────────────
+
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CHASE
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // · Sapphire
   'chase-sapphire-preferred': [
     { name: 'Chase Travel Hotel Credit', totalAmount: 50, period: 'ANNUAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $50 each ANNIVERSARY year (not calendar). Hotel stays via Chase Travel.' },
     { name: 'DoorDash Non-Restaurant Credit', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'One $10 promo/mo on non-restaurant orders. Requires active complimentary DashPass (activate by 12/31/27).' },
@@ -48,12 +56,13 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
     { name: 'Lyft Credit', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'In-app credit through 9/30/27. (Also 5x points on Lyft.)' },
     { name: 'Peloton Membership Credit', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $120/yr toward Peloton memberships.' },
   ],
+
+  // · Freedom
   'chase-freedom-unlimited': [
     { name: 'DoorDash Non-Restaurant Credit', totalAmount: 10, period: 'QUARTERLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $10/quarter on non-restaurant orders through 12/31/27. Requires active DashPass.' },
   ],
-  'chase-freedom-flex': [],
-  'chase-freedom-rise': [],
-  // ── CHASE — UNITED ───────────────────────────────────────────────────────────
+
+  // · United
   'united-quest': [
     { name: 'United TravelBank Credit', totalAmount: 200, period: 'ANNUAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'ANNIVERSARY year. $200 TravelBank cash at opening + each anniversary; United-operated flights only.' },
     { name: 'Renowned Hotels Credit', totalAmount: 150, period: 'ANNUAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'ANNIVERSARY year. Prepaid stays via Renowned Hotels and Resorts for United Cardmembers.' },
@@ -68,17 +77,11 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
     { name: 'Avis / Budget Credit', totalAmount: 50, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: '$25 TravelBank cash on each of 1st & 2nd Avis/Budget rental via cars.united.com.' },
     { name: 'Instacart Credit', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $120/yr. Plus 3-month complimentary Instacart+ membership.' },
   ],
-  'united-gateway': [],
   'united-club': [
     { name: 'Global Entry / TSA PreCheck Credit', totalAmount: 100, period: 'QUADRENNIAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $100 every 4 years for Global Entry application fee (includes TSA PreCheck). Statement credit posted within 2–3 billing cycles.' },
   ],
-  'chase-aeroplan': [],
-  // ── CHASE — INK BUSINESS ─────────────────────────────────────────────────────
-  'chase-ink-preferred': [],
-  'chase-ink-cash': [],
-  'chase-ink-unlimited': [],
-  'chase-ink-premier': [],
-  // ── CHASE — UNITED BUSINESS ──────────────────────────────────────────────────
+
+  // · United Business
   'united-business': [
     { name: 'United Travel Credit', totalAmount: 100, period: 'ANNUAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Earned only AFTER 7 United flight purchases of $100+ each cardmember year (spend-gated). Awarded as United TravelBank credit.' },
     { name: 'Rideshare Credit', totalAmount: 5, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $60/yr. Calendar year. Annual opt-in required.' },
@@ -86,34 +89,29 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
   'united-club-business': [
     { name: 'Global Entry / TSA PreCheck Credit', totalAmount: 100, period: 'QUADRENNIAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $100 every 4 years for Global Entry application fee (includes TSA PreCheck). Statement credit posted within 2–3 billing cycles.' },
   ],
-  // ── CHASE — SOUTHWEST BUSINESS ───────────────────────────────────────────────
+
+  // · Southwest Business
   'southwest-performance-business': [
     { name: 'Southwest Travel Credit', totalAmount: 250, period: 'SEMI_ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $500/yr. $250 each in Jan–Jun and Jul–Dec toward Southwest Airlines purchases.' },
     { name: 'In-flight Wi-Fi Credit', totalAmount: 75, period: 'ANNUAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $75/yr as statement credits for in-flight Wi-Fi purchases on Southwest flights.' },
     { name: 'Global Entry / TSA PreCheck Credit', totalAmount: 100, period: 'QUADRENNIAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $100 every 4 years for Global Entry application fee (includes TSA PreCheck).' },
   ],
-  'southwest-premier-business': [],
-  // ── CHASE — MARRIOTT BUSINESS ────────────────────────────────────────────────
-  'marriott-bonvoy-business': [],
-  // ── CHASE — SOUTHWEST PERSONAL ───────────────────────────────────────────────
+
+  // · Southwest
   'southwest-priority': [
     { name: 'Southwest Travel Credit', totalAmount: 75, period: 'ANNUAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $75/yr toward Southwest Airlines purchases. Applied as a statement credit.' },
   ],
-  'southwest-premier': [],
-  'southwest-plus': [],
-  // ── HYATT ─────────────────────────────────────────────────────────────────────
-  'world-of-hyatt': [],
-  // ── MARRIOTT BONVOY (PERSONAL) ────────────────────────────────────────────────
-  'marriott-bonvoy-boundless': [],
-  'marriott-bonvoy-bold': [],
-  // ── IHG ───────────────────────────────────────────────────────────────────────
+
+  // · IHG
   'ihg-one-rewards-premier': [
     { name: 'Global Entry / TSA PreCheck Credit', totalAmount: 100, period: 'QUADRENNIAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $100 every 4 years for Global Entry application fee (includes TSA PreCheck).' },
   ],
-  // ── AMAZON ────────────────────────────────────────────────────────────────────
-  'amazon-prime-rewards': [],
-  // ── BILT ─────────────────────────────────────────────────────────────────────
-  'bilt-blue': [],
+
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // BILT
+  // ═══════════════════════════════════════════════════════════════════════════
+
   'bilt-obsidian': [
     { name: 'Bilt Travel Hotel Credit', totalAmount: 50, period: 'SEMI_ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $100/yr. $50 each in Jan–Jun and Jul–Dec. Bilt Travel Portal, 2-night min.' },
   ],

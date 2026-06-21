@@ -26,6 +26,11 @@ export const FALLBACK_CARD: CardCatalogEntry = {
 }
 
 export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // AMERICAN EXPRESS
+  // ═══════════════════════════════════════════════════════════════════════════
+
   'amex-gold': {
     name: 'Gold Card',
     issuer: 'American Express',
@@ -38,6 +43,8 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'dining', rate: 4 },
       { cat: 'groceries', rate: 4 },
       { cat: 'travel', rate: 3 },
+      { cat: 'portal', rate: 5 },
+      
       { cat: 'base', rate: 1 },
     ],
   },
@@ -55,6 +62,12 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'base', rate: 1 },
     ],
   },
+
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // BANK OF AMERICA
+  // ═══════════════════════════════════════════════════════════════════════════
+
   'bofa-customized-cash': {
     name: 'Customized Cash Rewards',
     issuer: 'Bank of America',
@@ -69,6 +82,13 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'base', rate: 1 },
     ],
   },
+
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CHASE
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // · Sapphire
   'chase-sapphire-preferred': {
     name: 'Sapphire Preferred',
     issuer: 'Chase',
@@ -105,6 +125,8 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'base', rate: 1 },
     ],
   },
+
+  // · Freedom
   'chase-freedom-unlimited': {
     name: 'Freedom Unlimited',
     issuer: 'Chase',
@@ -147,6 +169,8 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'base', rate: 1.5 },
     ],
   },
+
+  // · United
   'united-quest': {
     name: 'United Quest',
     issuer: 'Chase',
@@ -210,6 +234,8 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'base', rate: 1.5 },
     ],
   },
+
+  // · Aeroplan
   'chase-aeroplan': {
     name: 'Aeroplan',
     issuer: 'Chase',
@@ -225,7 +251,8 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'base', rate: 1 },
     ],
   },
-  // ── CHASE — INK BUSINESS ──────────────────────────────────────────────────
+
+  // · Ink Business
   'chase-ink-preferred': {
     name: 'Ink Business Preferred',
     issuer: 'Chase',
@@ -282,7 +309,8 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'base', rate: 2 },
     ],
   },
-  // ── CHASE — UNITED BUSINESS ───────────────────────────────────────────────
+
+  // · United Business
   'united-business': {
     name: 'United Business Card',
     issuer: 'Chase',
@@ -316,7 +344,8 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'base', rate: 1.5 },
     ],
   },
-  // ── CHASE — SOUTHWEST BUSINESS ────────────────────────────────────────────
+
+  // · Southwest Business
   'southwest-performance-business': {
     name: 'Southwest Rapid Rewards Performance Business',
     issuer: 'Chase',
@@ -349,7 +378,8 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'base', rate: 1 },
     ],
   },
-  // ── CHASE — MARRIOTT BUSINESS ─────────────────────────────────────────────
+
+  // · Marriott Business
   'marriott-bonvoy-business': {
     name: 'Marriott Bonvoy Business',
     issuer: 'Chase',
@@ -366,7 +396,8 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'base', rate: 2 },
     ],
   },
-  // ── CHASE — SOUTHWEST PERSONAL ───────────────────────────────────────────
+
+  // · Southwest
   'southwest-priority': {
     name: 'Southwest Rapid Rewards Priority',
     issuer: 'Chase',
@@ -415,7 +446,8 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'base', rate: 1 },
     ],
   },
-  // ── HYATT ─────────────────────────────────────────────────────────────────
+
+  // · Hyatt
   'world-of-hyatt': {
     name: 'World of Hyatt',
     issuer: 'Chase',
@@ -432,7 +464,8 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'base', rate: 1 },
     ],
   },
-  // ── MARRIOTT BONVOY (PERSONAL) ────────────────────────────────────────────
+
+  // · Marriott Bonvoy
   'marriott-bonvoy-boundless': {
     name: 'Marriott Bonvoy Boundless',
     issuer: 'Chase',
@@ -463,7 +496,8 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'base', rate: 1 },
     ],
   },
-  // ── IHG ───────────────────────────────────────────────────────────────────
+
+  // · IHG
   'ihg-one-rewards-premier': {
     name: 'IHG One Rewards Premier',
     issuer: 'Chase',
@@ -480,7 +514,8 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'base', rate: 3 },
     ],
   },
-  // ── AMAZON ────────────────────────────────────────────────────────────────
+
+  // · Amazon
   'amazon-prime-rewards': {
     name: 'Amazon Prime Rewards Visa',
     issuer: 'Chase',
@@ -498,6 +533,12 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
       { cat: 'base', rate: 1 },
     ],
   },
+
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // BILT
+  // ═══════════════════════════════════════════════════════════════════════════
+
   'bilt-blue': {
     name: 'Bilt Blue',
     issuer: 'Bilt',
