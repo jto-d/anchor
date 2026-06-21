@@ -17,7 +17,6 @@ export const MeDocument = graphql(`
           name
           totalAmount
           period
-          periodStartMonth
           resetType
           enrollmentRequired
           notes
@@ -64,7 +63,6 @@ export const AddCardDocument = graphql(`
         name
         totalAmount
         period
-        periodStartMonth
         notes
         perkCredits {
           id

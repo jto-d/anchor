@@ -17,7 +17,6 @@ builder.prismaObject("Perk", {
             resolve: (perk) => perk.totalAmount.toString(),
         }),
         period: t.expose("period", { type: PerkPeriod }),
-        periodStartMonth: t.exposeInt("periodStartMonth"),
         resetType: t.expose("resetType", { type: ResetType }),
         enrollmentRequired: t.exposeBoolean("enrollmentRequired"),
         notes: t.exposeString("notes", { nullable: true }),
