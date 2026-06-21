@@ -1,7 +1,10 @@
+'use client'
+
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import Drawer from '@mui/material/Drawer'
+import IconButton from '@mui/material/IconButton'
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
@@ -11,10 +14,12 @@ import AnchorIcon from '@mui/icons-material/Anchor'
 import CardGiftcardOutlinedIcon from '@mui/icons-material/CardGiftcardOutlined'
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutlined'
 import CreditCardIcon from '@mui/icons-material/CreditCard'
+import LogoutIcon from '@mui/icons-material/Logout'
 import PieChartOutlineIcon from '@mui/icons-material/PieChartOutlined'
 import RepeatIcon from '@mui/icons-material/Repeat'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import type { SvgIconComponent } from '@mui/icons-material'
+import { signOut } from 'next-auth/react'
 import { brand } from '@/lib/theme'
 import { ComingSoon } from '@/components/ui/ComingSoon'
 
@@ -139,7 +144,7 @@ export function Sidebar({ route, userEmail, onNavigate }: SidebarProps) {
           >
             {initials}
           </Avatar>
-          <Box sx={{ minWidth: 0 }}>
+          <Box sx={{ minWidth: 0, flex: 1 }}>
             <Typography noWrap sx={{ fontSize: 12, fontWeight: 600 }}>
               {userEmail.split('@')[0]}
             </Typography>
@@ -147,6 +152,14 @@ export function Sidebar({ route, userEmail, onNavigate }: SidebarProps) {
               {userEmail}
             </Typography>
           </Box>
+          <IconButton
+            size="small"
+            onClick={() => signOut({ callbackUrl: '/login' })}
+            sx={{ color: 'text.disabled', flex: 'none', '&:hover': { color: 'text.secondary' } }}
+            title="Sign out"
+          >
+            <LogoutIcon sx={{ fontSize: 16 }} />
+          </IconButton>
         </Box>
       </Box>
     </Drawer>
