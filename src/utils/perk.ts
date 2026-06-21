@@ -182,6 +182,7 @@ export function perkStatus(
   cardOpenedDate?: string | null,
   now = new Date()
 ): { key: StatusKey; label: string } {
+  if (toAmount(perk.totalAmount) === 0) return { key: 'ongoing', label: 'Ongoing' }
   const pct = perkPct(perk, cardOpenedDate, now)
   if (pct >= 1) return { key: 'captured', label: 'Captured' }
   if (isInResetWindow(perk, cardOpenedDate, now)) return { key: 'expiring', label: 'Resets soon' }

@@ -15,10 +15,10 @@ export function cardAvailable(card: Card): number {
   return card.perks.reduce((s, p) => s + annualValue(p), 0)
 }
 
-// Sum of unused budget remaining in each perk's active cycle.
+// Sum of unused budget remaining in each perk's active cycle. Open-ended perks (totalAmount === 0) have no cap to miss.
 export function cardOnTheTable(card: Card): number {
   return card.perks.reduce(
-    (s, p) => s + Math.max(0, toAmount(p.totalAmount) - capturedInCycle(p, card.openedDate)),
+    (s, p) => toAmount(p.totalAmount) === 0 ? s : s + Math.max(0, toAmount(p.totalAmount) - capturedInCycle(p, card.openedDate)),
     0
   )
 }

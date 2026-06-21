@@ -21,6 +21,10 @@ Card page should have link to card listing?
 Notes/tooltips for cards (Lyft 5x for CSP, online groceries only)
 manually go through perks and multipliers
 
+Adding a perk to perk catalog shouldn't require deleting and adding the card back
+
+Remove card from card page
+
 ### need to add a ton more cards
 
 ### Features?

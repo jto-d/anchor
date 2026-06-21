@@ -29,14 +29,18 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
   useEffect(() => {
     if (!perk) return
     setShown(perk)
-    const defaultAmt = Math.min(toAmount(perk.totalAmount), Math.max(0, annualValue(perk) - capturedYTD(perk)))
-    setAmount(String(defaultAmt))
+    const isOpenEnded = toAmount(perk.totalAmount) === 0
+    const defaultAmt = isOpenEnded
+      ? 0
+      : Math.min(toAmount(perk.totalAmount), Math.max(0, annualValue(perk) - capturedYTD(perk)))
+    setAmount(isOpenEnded ? '' : String(defaultAmt))
     setDate(new Date().toISOString().slice(0, 10))
     setDesc('')
     setTouched(false)
   }, [perk?.id])
 
-  const remaining = shown ? Math.max(0, annualValue(shown) - capturedYTD(shown)) : 0
+  const isOpenEnded = shown ? toAmount(shown.totalAmount) === 0 : false
+  const remaining = shown && !isOpenEnded ? Math.max(0, annualValue(shown) - capturedYTD(shown)) : 0
 
   const amtNum = parseFloat(amount)
   const amtInvalid = touched && (isNaN(amtNum) || amtNum <= 0)
@@ -47,7 +51,7 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
       open={!!perk}
       onClose={onClose}
       title={shown?.name ?? ''}
-      subtitle={shown ? `${fmtCents(remaining)} still available this period` : undefined}
+      subtitle={shown ? (isOpenEnded ? 'Log a visit' : `${fmtCents(remaining)} still available this period`) : undefined}
       width={420}
     >
       {shown && (

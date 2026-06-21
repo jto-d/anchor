@@ -33,6 +33,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
 
   const captured   = capturedInCycle(perk, cardOpenedDate)
   const perPeriod  = toAmount(perk.totalAmount)
+  const isOpenEnded = perPeriod === 0
   const annual     = annualValue(perk)
   const ytd        = capturedYTD(perk)
   const pct        = perkPct(perk, cardOpenedDate)
@@ -77,13 +78,19 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
             )}
           </Box>
           <Typography sx={{ fontSize: 12, color: 'grey.500', mt: '3px' }}>
-            {periodLabel(perk.period)} · {fmtCents(perPeriod)}
-            {isMonthly ? ' / mo' : perk.period === 'ANNUAL' ? ' / yr' : ''} · resets {resetLabel}
+            {isOpenEnded
+              ? `${perk.perkCredits.length} visit${perk.perkCredits.length !== 1 ? 's' : ''} logged`
+              : `${periodLabel(perk.period)} · ${fmtCents(perPeriod)}${isMonthly ? ' / mo' : perk.period === 'ANNUAL' ? ' / yr' : ''} · resets ${resetLabel}`}
           </Typography>
         </Box>
 
         <Box sx={{ width: 150, flex: 'none' }}>
-          {isMonthly ? (
+          {isOpenEnded ? (
+            <Typography sx={{ ...tabularNums, fontSize: 13, fontWeight: 600, color: 'primary.main', textAlign: 'right' }}>
+              {fmtDollars(ytd)}
+              <Box component="span" sx={{ fontSize: 11, fontWeight: 400, color: 'grey.500' }}> this year</Box>
+            </Typography>
+          ) : isMonthly ? (
             <>
               <LinearProgress
                 variant="determinate"
@@ -153,7 +160,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
                 borderColor: 'divider',
               }}
             >
-              No credits logged this period.{' '}
+              {isOpenEnded ? 'No visits logged yet.' : 'No credits logged this period.'}{' '}
               <Box
                 component="span"
                 onClick={() => onLog(perk)}

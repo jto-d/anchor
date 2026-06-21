@@ -10,6 +10,7 @@ const CHIP_SX: Record<StatusKey | VerdictKey, { bgcolor: string; color: string }
   expiring: { bgcolor: brand.amber[50], color: brand.amber[700] },
   open: { bgcolor: brand.zinc[100], color: brand.zinc[600] },
   forfeited: { bgcolor: brand.red[50], color: brand.red[600] },
+  ongoing: { bgcolor: brand.accentSoft, color: brand.anchor[700] },
   worthIt: { bgcolor: brand.accentSoft, color: brand.anchor[700] },
   marginal: { bgcolor: brand.amber[50], color: brand.amber[700] },
   reviewIt: { bgcolor: brand.red[50], color: brand.red[600] },

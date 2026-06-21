@@ -28,10 +28,12 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
 
   const atRisk: { card: Card; perk: Perk }[] = []
   const used: { card: Card; perk: Perk }[] = []
+  const ongoing: { card: Card; perk: Perk }[] = []
   cards.forEach((c) =>
     c.perks.forEach((p) => {
       const st = perkStatus(p, c.openedDate)
-      if (st.key === 'open' || st.key === 'expiring' || st.key === 'partial') atRisk.push({ card: c, perk: p })
+      if (st.key === 'ongoing') ongoing.push({ card: c, perk: p })
+      else if (st.key === 'open' || st.key === 'expiring' || st.key === 'partial') atRisk.push({ card: c, perk: p })
       else if (st.key === 'captured') used.push({ card: c, perk: p })
     })
   )
@@ -101,6 +103,19 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
           </Typography>
           <Paper variant="outlined" sx={{ borderColor: 'divider', borderRadius: '14px', px: 2, py: '4px' }}>
             {used.map(({ card, perk }) => <PerkRow key={perk.id} perk={perk} card={card} cardOpenedDate={card.openedDate} onLog={onLog} />)}
+          </Paper>
+        </>
+      )}
+
+      {/* Lounge & travel */}
+      {ongoing.length > 0 && (
+        <>
+          <Eyebrow sx={{ mt: '28px', mb: '4px' }}>Lounge &amp; travel</Eyebrow>
+          <Typography sx={{ mb: 1, fontSize: 13, color: 'grey.500' }}>
+            Open-ended benefits. Log visits to track value.
+          </Typography>
+          <Paper variant="outlined" sx={{ borderColor: 'divider', borderRadius: '14px', px: 2, py: '4px' }}>
+            {ongoing.map(({ card, perk }) => <PerkRow key={perk.id} perk={perk} card={card} cardOpenedDate={card.openedDate} onLog={onLog} />)}
           </Paper>
         </>
       )}

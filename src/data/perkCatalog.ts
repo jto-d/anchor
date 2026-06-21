@@ -12,19 +12,34 @@ export interface PerkTemplate {
   notes?: string
 }
 
+// Shared template for open-ended lounge perks (totalAmount: 0 = no cap sentinel)
+const priorityPass: PerkTemplate = {
+  name: 'Priority Pass Lounge',
+  totalAmount: 0,
+  period: 'ANNUAL',
+  periodStartMonth: 1,
+  resetType: 'CALENDAR',
+  enrollmentRequired: false,
+  notes: 'Priority Pass Select membership. Unlimited visits at 1,400+ lounges worldwide. Log each visit with its estimated value.',
+}
+
 export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
 
   // ═══════════════════════════════════════════════════════════════════════════
   // AMERICAN EXPRESS
   // ═══════════════════════════════════════════════════════════════════════════
 
+  // Charge Cards
   'amex-gold': [
     { name: 'Uber Cash', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $120/yr. Adds to Uber account; use on U.S. rides or Uber Eats. Enrollment required.' },
     { name: 'Dining Credit', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $120/yr. Participating partners (Buffalo Wild Wings, Wonder, Goldbelly & Wine.com through 6/30). Enrollment required.' },
     { name: "Dunkin' Credit", totalAmount: 7, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $84/yr at U.S. Dunkin locations. Enrollment required.' },
     { name: 'Resy Credit', totalAmount: 50, period: 'SEMI_ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $100/yr. Jan–Jun and Jul–Dec at U.S. Resy restaurants. Enrollment required.' },
+    { name: 'Hotel Credit', totalAmount: 100, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $100/yr. Prepaid Fine Hotels + Resorts or The Hotel Collection (2-night min) via Amex Travel.' },
   ],
   'amex-platinum': [
+    { name: 'Centurion Lounge', totalAmount: 0, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Unlimited access to Amex Centurion Lounges. Log each visit with its estimated value.' },
+    priorityPass,
     { name: 'Hotel Credit', totalAmount: 300, period: 'SEMI_ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $600/yr. Prepaid Fine Hotels + Resorts or The Hotel Collection (2-night min) via Amex Travel.' },
     { name: 'Resy Credit', totalAmount: 100, period: 'QUARTERLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $400/yr. Eligible Resy restaurant purchases. Enrollment required.' },
     { name: 'Digital Entertainment Credit', totalAmount: 25, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $300/yr. Disney+, Hulu, ESPN, Peacock, Paramount+, NYT, WSJ, YouTube TV/Premium. Enrollment required.' },
@@ -47,6 +62,7 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
     { name: 'DoorDash Non-Restaurant Credit', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'One $10 promo/mo on non-restaurant orders. Requires active complimentary DashPass (activate by 12/31/27).' },
   ],
   'chase-sapphire-reserve': [
+    priorityPass,
     { name: 'Travel Credit', totalAmount: 300, period: 'ANNUAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'ANNIVERSARY-year reset (not calendar). Auto-applies to first $300 of travel purchases.' },
     { name: 'The Edit Hotel Credit', totalAmount: 250, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $500/yr, max $250 per transaction. Prepaid 2-night+ stays via The Edit. As of 2026, flexible calendar-year timing (no longer split semi-annually).' },
     { name: 'Dining Credit (Exclusive Tables)', totalAmount: 150, period: 'SEMI_ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $300/yr. Sapphire Reserve Exclusive Tables via OpenTable. Jan–Jun and Jul–Dec.' },
@@ -78,6 +94,7 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
     { name: 'Instacart Credit', totalAmount: 10, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $120/yr. Plus 3-month complimentary Instacart+ membership.' },
   ],
   'united-club': [
+    { name: 'United Club Lounge', totalAmount: 0, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'United Club membership included. Unlimited access to United Club and partner lounges. Log each visit with its estimated value.' },
     { name: 'Global Entry / TSA PreCheck Credit', totalAmount: 100, period: 'QUADRENNIAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $100 every 4 years for Global Entry application fee (includes TSA PreCheck). Statement credit posted within 2–3 billing cycles.' },
   ],
 
@@ -87,6 +104,7 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
     { name: 'Rideshare Credit', totalAmount: 5, period: 'MONTHLY', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: true, notes: 'Up to $60/yr. Calendar year. Annual opt-in required.' },
   ],
   'united-club-business': [
+    { name: 'United Club Lounge', totalAmount: 0, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'United Club membership included. Unlimited access to United Club and partner lounges. Log each visit with its estimated value.' },
     { name: 'Global Entry / TSA PreCheck Credit', totalAmount: 100, period: 'QUADRENNIAL', periodStartMonth: 1, resetType: 'ANNIVERSARY', enrollmentRequired: false, notes: 'Up to $100 every 4 years for Global Entry application fee (includes TSA PreCheck). Statement credit posted within 2–3 billing cycles.' },
   ],
 
@@ -113,9 +131,11 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
   // ═══════════════════════════════════════════════════════════════════════════
 
   'bilt-obsidian': [
+    priorityPass,
     { name: 'Bilt Travel Hotel Credit', totalAmount: 50, period: 'SEMI_ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $100/yr. $50 each in Jan–Jun and Jul–Dec. Bilt Travel Portal, 2-night min.' },
   ],
   'bilt-palladium': [
+    priorityPass,
     { name: 'Bilt Travel Hotel Credit', totalAmount: 200, period: 'SEMI_ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $400/yr. $200 each in Jan–Jun and Jul–Dec. Bilt Travel Portal, 2-night min.' },
     { name: 'Bilt Cash (annual)', totalAmount: 200, period: 'ANNUAL', periodStartMonth: 1, resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Bilt Cash credited Jan 1 (or at approval). NOT a statement credit — only $100 rolls over, rest expires 12/31.' },
   ],
