@@ -90,6 +90,16 @@ export const PERK_CATALOG: Record<string, PerkTemplate[]> = {
 
 
   // ═══════════════════════════════════════════════════════════════════════════
+  // CAPITAL ONE  
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  'capital-one-venture-x': [
+    priorityPass,
+    { name: 'Capital One Travel Credit', totalAmount: 300, period: 'ANNUAL', resetType: 'CALENDAR', enrollmentRequired: false, notes: 'Up to $300/yr. Travel purchases via Capital One Travel.' },
+  ],
+
+  
+  // ═══════════════════════════════════════════════════════════════════════════
   // CHASE
   // ═══════════════════════════════════════════════════════════════════════════
 

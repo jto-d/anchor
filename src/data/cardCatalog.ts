@@ -222,6 +222,78 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
 
 
   // ═══════════════════════════════════════════════════════════════════════════
+  // CAPITAL ONE  
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  'capital-one-venture-x': {
+    name: 'Venture X',
+    issuer: 'Capital One',
+    gradient: 'linear-gradient(150deg, #0A4E71, #08233D)',
+    text: WHITE,
+    type: 'points',
+    network: 'Visa Signature',
+    annualFee: 395,
+    rewards: [
+      { cat: 'portal', rate: 10, note: "10x on hotels and rental cars, 3x on flights and vacation rentals" },
+      { cat: 'base', rate: 2 },
+    ],
+  },
+  'capital-one-venture-rewards': {
+    name: 'Venture Rewards',
+    issuer: 'Capital One',
+    gradient: 'linear-gradient(150deg, #052850, #041435)',
+    text: WHITE,
+    type: 'points',
+    network: 'Visa Signature',
+    annualFee: 95,
+    rewards: [
+      { cat: 'portal', rate: 5, note: "5x on hotels, rental cars, and vacation rentals" },
+      { cat: 'base', rate: 2 },
+    ],
+  },
+  'capital-one-venture-one-rewards': {
+    name: 'Venture One Rewards',
+    issuer: 'Capital One',
+    gradient: 'linear-gradient(150deg, #053A74, #003772)',
+    text: WHITE,
+    type: 'points',
+    network: 'Visa Signature',
+    annualFee: 0,
+    rewards: [
+      { cat: 'portal', rate: 5, note: "5x on hotels, rental cars, and vacation rentals" },
+      { cat: 'base', rate: 1.25 },
+    ],
+  },
+  'capital-one-quicksilver': {
+    name: 'Quicksilver',
+    issuer: 'Capital One',
+    gradient: 'linear-gradient(150deg, #97A4AC, #525D69)',
+    text: WHITE,
+    type: 'cashback',
+    network: 'Mastercard',
+    annualFee: 0,
+    rewards: [
+      { cat: 'portal', rate: 5, note: "5x on hotels, rental cars, and vacation rentals" },
+      { cat: 'base', rate: 1.5 },
+    ],
+  },
+  'capital-one-savor': {
+    name: 'Savor',
+    issuer: 'Capital One',
+    gradient: 'linear-gradient(150deg, #B55834, #963625)',
+    text: WHITE,
+    type: 'cashback',
+    network: 'Mastercard',
+    annualFee: 0,
+    rewards: [
+      { cat: 'groceries', rate: 3, note: "Excludes Walmart and Target" },
+      { cat: 'streaming', rate: 8, note: "8x on Capital One Entertainment purchases" },
+      { cat: 'portal', rate: 5, note: "5x on hotels, rental cars, and vacation rentals" },
+      { cat: 'base', rate: 1 },
+    ],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
   // CHASE
   // ═══════════════════════════════════════════════════════════════════════════
 
