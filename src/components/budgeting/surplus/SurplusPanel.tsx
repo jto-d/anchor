@@ -18,9 +18,10 @@ interface SurplusPanelProps {
   onAddGoal: () => void
   onRenameGoal: (id: string, name: string) => void
   onRemoveGoal: (id: string) => void
+  onSetGoalTarget: (id: string, target: number) => void
 }
 
-export function SurplusPanel({ goals, totals, sel, onSet, onAddGoal, onRenameGoal, onRemoveGoal }: SurplusPanelProps) {
+export function SurplusPanel({ goals, totals, sel, onSet, onAddGoal, onRenameGoal, onRemoveGoal, onSetGoalTarget }: SurplusPanelProps) {
   const { baseSurplus, allocated } = totals
   const unallocated = baseSurplus - allocated
   const active = baseSurplus > 0
@@ -87,6 +88,7 @@ export function SurplusPanel({ goals, totals, sel, onSet, onAddGoal, onRenameGoa
                 onSet={(v) => onSet(g.id, v)}
                 onRename={(name) => onRenameGoal(g.id, name)}
                 onRemove={() => onRemoveGoal(g.id)}
+                onSetTarget={(t) => onSetGoalTarget(g.id, t)}
                 last={i === goals.length - 1} />
             ))}
           </Box>

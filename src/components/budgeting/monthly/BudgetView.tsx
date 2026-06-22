@@ -122,6 +122,7 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
             onAddGoal={budget.addGoal}
             onRenameGoal={budget.renameGoal}
             onRemoveGoal={budget.removeGoal}
+            onSetGoalTarget={budget.setGoalTarget}
           />
         </Stack>
         <Stack gap={3}>

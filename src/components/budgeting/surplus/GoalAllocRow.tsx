@@ -5,7 +5,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import { brand } from '@/lib/theme'
 import { CatGlyph, EditableLabel, EditableMoney, Eyebrow, ListRow, ProgressBar, Row } from '@/components/ui'
 import { tabularNums } from '@/lib/sx'
-import { fmtMoney, monthShort, clamp01 } from '@/utils/format'
+import { fmtMoney, clamp01 } from '@/utils/format'
 import type { GoalData, MonthSel } from '@/utils/budget'
 
 interface GoalAllocRowProps {
@@ -15,20 +15,14 @@ interface GoalAllocRowProps {
   onSet: (v: number) => void
   onRename: (name: string) => void
   onRemove: () => void
+  onSetTarget: (target: number) => void
   last: boolean
 }
 
-export function GoalAllocRow({ goal, amount, sel, onSet, onRename, onRemove, last }: GoalAllocRowProps) {
+export function GoalAllocRow({ goal, amount, sel: _sel, onSet, onRename, onRemove, onSetTarget, last }: GoalAllocRowProps) {
   const current = goal.running + amount
   const ratio = clamp01(goal.target ? current / goal.target : 0)
   const done = !!goal.target && current >= goal.target
-
-  let rec: number | null = null
-  if (goal.target && goal.targetYear != null && goal.targetMonth != null) {
-    const monthsLeft = goal.targetYear * 12 + goal.targetMonth - (sel.y * 12 + sel.m)
-    const remaining = Math.max(0, goal.target - goal.running)
-    if (monthsLeft > 0 && remaining > 0) rec = remaining / monthsLeft
-  }
 
   return (
     <ListRow last={last} gap={1.5} sx={{ py: 1.75 }}>
@@ -43,11 +37,13 @@ export function GoalAllocRow({ goal, amount, sel, onSet, onRename, onRemove, las
             {fmtMoney(current)}{goal.target && <Box component="span" sx={{ color: 'text.disabled' }}> / {fmtMoney(goal.target)}</Box>}
           </Typography>
         </Row>
-        <Typography variant="note" color="text.disabled">
-          {rec != null
-            ? <>Recommended <Box component="span" sx={{ color: 'text.secondary', fontWeight: 600 }}>{fmtMoney(rec)}/mo</Box> to reach {monthShort(goal.targetYear!, goal.targetMonth!)}</>
-            : 'No target date set'}
-        </Typography>
+        <Row align="center" gap="6px">
+          <Typography variant="note" color="text.disabled">Target</Typography>
+          <EditableMoney
+            value={goal.target ?? 0} muted={!goal.target}
+            onChange={onSetTarget} size={12} weight={500}
+          />
+        </Row>
       </Box>
       <Box sx={{ textAlign: 'right' }}>
         <Eyebrow sx={{ fontSize: '10px', mb: '4px' }}>This month</Eyebrow>

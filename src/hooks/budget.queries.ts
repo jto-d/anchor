@@ -98,5 +98,6 @@ export const RemoveBudgetGroupDocument = graphql(`mutation RemoveBudgetGroup($id
 export const AddSavingsGoalDocument = graphql(`mutation AddSavingsGoal($name: String!, $icon: String!) { addSavingsGoal(name: $name, icon: $icon) }`)
 export const RenameSavingsGoalDocument = graphql(`mutation RenameSavingsGoal($id: String!, $name: String!) { renameSavingsGoal(id: $id, name: $name) }`)
 export const RemoveSavingsGoalDocument = graphql(`mutation RemoveSavingsGoal($id: String!) { removeSavingsGoal(id: $id) }`)
+export const SetSavingsGoalTargetDocument = graphql(`mutation SetSavingsGoalTarget($id: String!, $target: Float) { setSavingsGoalTarget(id: $id, target: $target) }`)
 export const SetBudgetStartDocument = graphql(`mutation SetBudgetStart($year: Int!, $month: Int!) { setBudgetStart(year: $year, month: $month) }`)
 export const CopyMonthBudgetDocument = graphql(`mutation CopyMonthBudget($fromYear: Int!, $fromMonth: Int!, $toYear: Int!, $toMonth: Int!) { copyMonthBudget(fromYear: $fromYear, fromMonth: $fromMonth, toYear: $toYear, toMonth: $toMonth) }`)

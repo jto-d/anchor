@@ -1,5 +1,18 @@
 {
   "worktree": {
     "bgIsolation": "none"
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo '$CLAUDE_TOOL_INPUT' | grep -q 'src/graphql/'; then pnpm codegen; fi"
+          }
+        ]
+      }
+    ]
   }
 }

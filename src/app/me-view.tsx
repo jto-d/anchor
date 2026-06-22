@@ -14,9 +14,7 @@ import { LogCreditDialog } from '@/components/perks/LogCreditDialog'
 import { CardsView } from '@/components/cards/CardsView'
 import { AddCardDialog } from '@/components/cards/AddCardDialog'
 import { RemoveCardDialog } from '@/components/cards/RemoveCardDialog'
-import { BudgetView, YearView, BudgetMonthStepper } from '@/components/budgeting'
-import { stepMonth } from '@/utils/format'
-import { brand } from '@/lib/theme'
+import { BudgetView, YearView } from '@/components/budgeting'
 import { CARD_CATALOG } from '@/data/cardCatalog'
 import type { Card, Perk } from '@/utils/types'
 import {
@@ -31,10 +29,6 @@ type Route = 'perks' | 'card' | 'cards' | 'budgeting'
 export function MeView() {
   const [route, setRoute] = useState<Route>('perks')
   const [budgetView, setBudgetView] = useState<'monthly' | 'yearly'>('monthly')
-  const [budgetSel, setBudgetSel] = useState(() => {
-    const now = new Date()
-    return { y: now.getFullYear(), m: now.getMonth() }
-  })
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
   const [dialogPerk, setDialogPerk] = useState<Perk | null>(null)
   const [addCardOpen, setAddCardOpen] = useState(false)
@@ -157,61 +151,18 @@ export function MeView() {
               title="Budgeting"
               subtitle="Plan the month, log what you spend, send the surplus to a goal."
               rightSlot={
-                <Row gap={1.5}>
-                  {/* Monthly / Yearly toggle */}
-                  <Segmented
-                    size="sm"
-                    value={budgetView}
-                    onChange={(v) => setBudgetView(v as 'monthly' | 'yearly')}
-                    options={[{ value: 'monthly', label: 'Monthly' }, { value: 'yearly', label: 'Yearly' }]}
-                  />
-
-                  {budgetView === 'monthly' ? (
-                    <BudgetMonthStepper
-                      sel={budgetSel}
-                      onStep={(dir) => {
-                        const now = new Date()
-                        setBudgetSel((prev) => {
-                          const next = stepMonth(prev.y, prev.m, dir)
-                          if (next.y > now.getFullYear() || (next.y === now.getFullYear() && next.m > now.getMonth())) return prev
-                          return next
-                        })
-                      }}
-                    />
-                  ) : (
-                    /* Year stepper */
-                    <Row inline gap="2px" sx={{ p: '3px', bgcolor: 'grey.100', border: '1px solid', borderColor: 'divider', borderRadius: '9px' }}>
-                      <Box
-                        component="button"
-                        onClick={() => setBudgetSel((prev) => ({ ...prev, y: prev.y - 1 }))}
-                        sx={{ width: 32, height: 32, display: 'grid', placeItems: 'center', border: 'none', borderRadius: '7px', cursor: 'pointer', color: 'text.secondary', bgcolor: 'transparent', '&:hover': { bgcolor: '#fff', boxShadow: brand.shadow.sm } }}
-                      >
-                        ‹
-                      </Box>
-                      <Box sx={{ minWidth: 52, textAlign: 'center', fontSize: 13.5, fontWeight: 600, letterSpacing: '-0.01em', fontVariantNumeric: 'tabular-nums' }}>
-                        {budgetSel.y}
-                      </Box>
-                      <Box
-                        component="button"
-                        onClick={() => setBudgetSel((prev) => {
-                          const now = new Date()
-                          if (prev.y >= now.getFullYear()) return prev
-                          return { ...prev, y: prev.y + 1 }
-                        })}
-                        disabled={budgetSel.y >= new Date().getFullYear()}
-                        sx={{ width: 32, height: 32, display: 'grid', placeItems: 'center', border: 'none', borderRadius: '7px', cursor: budgetSel.y >= new Date().getFullYear() ? 'default' : 'pointer', color: budgetSel.y >= new Date().getFullYear() ? 'text.disabled' : 'text.secondary', bgcolor: 'transparent', '&:hover': { bgcolor: budgetSel.y >= new Date().getFullYear() ? 'transparent' : '#fff' } }}
-                      >
-                        ›
-                      </Box>
-                    </Row>
-                  )}
-                </Row>
+                <Segmented
+                  size="sm"
+                  value={budgetView}
+                  onChange={(v) => setBudgetView(v as 'monthly' | 'yearly')}
+                  options={[{ value: 'monthly', label: 'Monthly' }, { value: 'yearly', label: 'Yearly' }]}
+                />
               }
             />
             {budgetView === 'monthly' ? (
               <BudgetView userEmail={userEmail} />
             ) : (
-              <YearView year={budgetSel.y} />
+              <YearView />
             )}
           </>
         ) : (
