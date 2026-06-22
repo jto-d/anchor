@@ -21,9 +21,9 @@ Remove card from card page
 ### need to add a ton more cards
 
 ### Budgeting
-One month in advance
-Copy last months
 Editable money target for surplus 
+Update yearly view
+Explore how propagation works?
 
 ### Features?
 Onboarding flow (?)

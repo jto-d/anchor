@@ -26,6 +26,7 @@ import {
   RenameSavingsGoalDocument,
   RemoveSavingsGoalDocument,
   SetBudgetStartDocument,
+  CopyMonthBudgetDocument,
 } from './budget.queries'
 import type { GoalData, GroupData, IncomeSource, MonthSel, SavingsData, Totals } from '@/utils/budget'
 
@@ -98,6 +99,7 @@ export function useBudgetMonth(sel: MonthSel) {
   const [, renameSavingsGoalMut] = useMutation(RenameSavingsGoalDocument)
   const [, removeSavingsGoalMut] = useMutation(RemoveSavingsGoalDocument)
   const [, setBudgetStartMut] = useMutation(SetBudgetStartDocument)
+  const [, copyMonthBudgetMut] = useMutation(CopyMonthBudgetDocument)
 
   const raw = data?.budgetMonth
 
@@ -260,6 +262,13 @@ export function useBudgetMonth(sel: MonthSel) {
     await setBudgetStartMut({ year, month }); refetch()
   }, [setBudgetStartMut, refetch])
 
+  const copyFromPrev = useCallback(async (year: number, month: number) => {
+    const d = new Date(year, month - 1, 1)
+    await copyMonthBudgetMut({ fromYear: d.getFullYear(), fromMonth: d.getMonth(), toYear: year, toMonth: month })
+    refetch()
+    flash('Budgets copied from previous month.')
+  }, [copyMonthBudgetMut, refetch, flash])
+
   return {
     fetching,
     hasData: raw != null,
@@ -294,5 +303,6 @@ export function useBudgetMonth(sel: MonthSel) {
     renameGoal,
     removeGoal,
     setBudgetStart,
+    copyFromPrev,
   }
 }
