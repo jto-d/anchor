@@ -5,10 +5,11 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 import Snackbar from '@mui/material/Snackbar'
+import Typography from '@mui/material/Typography'
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
 import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined'
 import { brand } from '@/lib/theme'
-import { Row, Stack } from '@/components/ui'
+import { AppDialog, Row, Stack } from '@/components/ui'
 import { Topbar } from '@/components/layout/Topbar'
 import { BudgetMonthStepper } from '../BudgetMonthStepper'
 import { SummaryStrip } from './SummaryStrip'
@@ -28,6 +29,7 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
   const now = new Date()
   const [sel, setSel] = useState<MonthSel>({ y: now.getFullYear(), m: now.getMonth() })
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
+  const [confirmStart, setConfirmStart] = useState(false)
 
   const budget = useBudgetMonth(sel)
 
@@ -51,7 +53,7 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
       <Button
         size="small"
         startIcon={<FlagOutlinedIcon sx={{ fontSize: 14 }} />}
-        onClick={() => budget.setBudgetStart(sel.y, sel.m)}
+        onClick={() => setConfirmStart(true)}
         disabled={isCurrentStart}
         title={isCurrentStart ? 'This is your budget start month' : 'Mark this month as the budget start'}
         sx={{
@@ -115,6 +117,30 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
           <GoalsRecap goals={budget.goals} />
         </Stack>
       </Box>
+
+      <AppDialog
+        open={confirmStart}
+        onClose={() => setConfirmStart(false)}
+        title="Set budget start"
+        subtitle={`${new Date(sel.y, sel.m).toLocaleString('default', { month: 'long', year: 'numeric' })}`}
+        width={400}
+      >
+        <Box sx={{ px: '22px', pb: '4px' }}>
+          <Typography variant="body" sx={{ color: 'grey.500', lineHeight: 1.5 }}>
+            This will mark this month as your budget start. Months before it will be hidden from the budget view.
+          </Typography>
+        </Box>
+        <Row justify="end" gap="10px" sx={{ p: '16px 22px 20px' }}>
+          <Button variant="subtle" onClick={() => setConfirmStart(false)}>Cancel</Button>
+          <Button
+            variant="contained"
+            startIcon={<FlagOutlinedIcon sx={{ fontSize: 15 }} />}
+            onClick={() => { budget.setBudgetStart(sel.y, sel.m); setConfirmStart(false) }}
+          >
+            Set start
+          </Button>
+        </Row>
+      </AppDialog>
 
       <Snackbar
         open={!!budget.toast}

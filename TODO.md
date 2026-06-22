@@ -21,15 +21,18 @@ Remove card from card page
 ### need to add a ton more cards
 
 ### Budgeting
-Editable money target for surplus 
 Update yearly view
-Explore how propagation works?
 
 ### Features?
 Onboarding flow (?)
 Preview how a card fits into your spending
  - recommendations based on weak spending categories?
  - catalog of cards (compare cards spending cats in grid view?)
+Accounts
+ - Separate tab
+ - view savings, how much of your money is allocated where, etc.
+Money splitting
+ - Mirror excel sheet
 
 Subscription tracker
 Monthly budgeting/savings

@@ -15,12 +15,12 @@ interface BudgetMonthStepperProps {
   startMonth?: number | null
 }
 
-/** Prev/next month control. Forward navigation stops at the current month; back stops at the budget start month (if set). */
+/** Prev/next month control. Forward navigation stops 12 months ahead; back stops at the budget start month (if set). */
 export function BudgetMonthStepper({ sel, onStep, startYear, startMonth }: BudgetMonthStepperProps) {
   const now = new Date()
   const selOrd = sel.y * 12 + sel.m
   const nowOrd = now.getFullYear() * 12 + now.getMonth()
-  const atCurrent = selOrd >= nowOrd + 1
+  const atCurrent = selOrd >= nowOrd + 12
 
   const atStart = startYear != null && startMonth != null
     && sel.y === startYear && sel.m === startMonth
