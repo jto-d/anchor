@@ -9,19 +9,12 @@
 ### 6. `MeView` owns too much state
 `src/app/me-view.tsx` has 9 `useState` calls managing route, selected card, all dialog visibility, toast, and remove confirmation. Adding features here will compound the problem. State should be colocated with the components that own it, or moved to a lightweight store (Zustand).
 
+### Dev
+Separate dev/prod databases
+CodeRabbit
+
 ### MISC
 Card page should have link to card listing?
-Notes/tooltips for cards (Lyft 5x for CSP, online groceries only)
-manually go through perks and multipliers
-
-Adding a perk to perk catalog shouldn't require deleting and adding the card back
-
-Remove card from card page
-
-### need to add a ton more cards
-
-### Budgeting
-Update yearly view
 
 ### Features?
 Onboarding flow (?)
@@ -33,12 +26,8 @@ Accounts
  - view savings, how much of your money is allocated where, etc.
 Money splitting
  - Mirror excel sheet
+Subscription
 
-Subscription tracker
-Monthly budgeting/savings
- - Expected, acutal
-  - could auto populate from bank (more likely manual for now)
- - savings for specific things (money to buy a phone, etc.)
 Plaid integration
 Reminder to cancel a card on a specific date
 Bilt Calculator (could just be a link)

@@ -11,6 +11,8 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Typography from '@mui/material/Typography'
 import AnchorIcon from '@mui/icons-material/Anchor'
+import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined'
+import CallSplitIcon from '@mui/icons-material/CallSplit'
 import CardGiftcardOutlinedIcon from '@mui/icons-material/CardGiftcardOutlined'
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutlined'
 import CreditCardIcon from '@mui/icons-material/CreditCard'
@@ -33,6 +35,8 @@ const NAV_ITEMS: { key: string; label: string; Icon: SvgIconComponent }[] = [
 
 const COMING_SOON_ITEMS: { key: string; label: string; Icon: SvgIconComponent }[] = [
   { key: 'subscriptions', label: 'Subscriptions', Icon: RepeatIcon },
+  { key: 'accounts', label: 'Accounts', Icon: AccountBalanceOutlinedIcon },
+  { key: 'split', label: 'Split', Icon: CallSplitIcon },
   { key: 'chatbot', label: 'Chatbot', Icon: ChatBubbleOutlineIcon },
 ]
 
