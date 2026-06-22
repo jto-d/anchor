@@ -20,7 +20,7 @@ export const DEFAULT_GROUPS: {
     position: 1,
     categories: [
       { label: 'Groceries', icon: 'local_grocery_store', budget: 0, position: 0 },
-      { label: 'Dining out', icon: 'restaurant', budget: 0, position: 1 },
+      { label: 'Restaurants', icon: 'restaurant', budget: 0, position: 1 },
     ],
   },
   {
@@ -36,7 +36,10 @@ export const DEFAULT_GROUPS: {
     label: 'Health',
     icon: 'favorite',
     position: 3,
-    categories: [{ label: 'Health / medical', icon: 'favorite', budget: 0, position: 0 }],
+    categories: [
+      { label: 'Medicine / supplements', icon: 'favorite', budget: 0, position: 0 },
+      { label: 'Gym', icon: 'fitness_center', budget: 0, position: 1 },
+    ],
   },
   {
     label: 'Personal',
@@ -61,9 +64,7 @@ export const DEFAULT_SAVINGS: {
   annualLimit: number | null
   position: number
 }[] = [
-  { label: 'Roth IRA', accountType: 'Roth IRA', icon: 'savings', monthly: 0, annualLimit: 7000, position: 0 },
-  { label: 'HSA', accountType: 'HSA', icon: 'favorite_border', monthly: 0, annualLimit: 4400, position: 1 },
-  { label: 'Emergency fund', accountType: 'Emergency Fund', icon: 'shield', monthly: 0, annualLimit: null, position: 2 },
+  { label: 'Roth IRA', accountType: 'Roth IRA', icon: 'savings', monthly: 0, annualLimit: 7500, position: 0 },
 ]
 
 export const DEFAULT_GOALS: {
@@ -73,8 +74,4 @@ export const DEFAULT_GOALS: {
   base: number
   targetYear: number | null
   targetMonth: number | null
-}[] = [
-  { name: 'Emergency fund', icon: 'shield', target: null, base: 0, targetYear: null, targetMonth: null },
-  { name: 'Vacation', icon: 'beach_access', target: null, base: 0, targetYear: null, targetMonth: null },
-  { name: 'New car fund', icon: 'directions_car', target: null, base: 0, targetYear: null, targetMonth: null },
-]
+}[] = []

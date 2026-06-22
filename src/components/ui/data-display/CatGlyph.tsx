@@ -24,6 +24,7 @@ import HeartPulseIcon from '@mui/icons-material/MonitorHeartOutlined'
 import TrendingUpIcon from '@mui/icons-material/TrendingUpOutlined'
 import BalanceIcon from '@mui/icons-material/BalanceOutlined'
 import CalendarIcon from '@mui/icons-material/CalendarMonthOutlined'
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenterOutlined'
 import type { SxProps } from '@mui/material/styles'
 
 const ICON_MAP: Record<string, React.ElementType> = {
@@ -37,6 +38,7 @@ const ICON_MAP: Record<string, React.ElementType> = {
   directions_transit: DirectionsTransitIcon,
   local_gas_station: LocalGasStationIcon,
   favorite: FavoriteIcon,
+  fitness_center: FitnessCenterIcon,
   favorite_border: HeartPulseIcon,
   shopping_bag: ShoppingBagIcon,
   smartphone: SmartphoneIcon,
