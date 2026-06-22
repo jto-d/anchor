@@ -275,41 +275,6 @@ builder.mutationFields((t) => ({
     },
   }),
 
-  copyMonthBudget: t.field({
-    type: 'Boolean',
-    args: {
-      fromYear: t.arg.int({ required: true }),
-      fromMonth: t.arg.int({ required: true }),
-      toYear: t.arg.int({ required: true }),
-      toMonth: t.arg.int({ required: true }),
-    },
-    resolve: async (_root, { fromYear, fromMonth, toYear, toMonth }, ctx) => {
-      const categories = await prisma.budgetCategory.findMany({
-        where: { group: { userId: ctx.userId } },
-        include: { monthlyBudgets: { where: { year: fromYear, month: fromMonth } } },
-      })
-      for (const cat of categories) {
-        const effectiveBudget = cat.monthlyBudgets[0]?.budget ?? cat.budget
-        await prisma.monthlyBudget.upsert({
-          where: { categoryId_year_month: { categoryId: cat.id, year: toYear, month: toMonth } },
-          create: { categoryId: cat.id, year: toYear, month: toMonth, budget: effectiveBudget },
-          update: { budget: effectiveBudget },
-        })
-      }
-      const allocations = await prisma.surplusAllocation.findMany({
-        where: { userId: ctx.userId, year: fromYear, month: fromMonth },
-      })
-      for (const alloc of allocations) {
-        await prisma.surplusAllocation.upsert({
-          where: { goalId_year_month: { goalId: alloc.goalId, year: toYear, month: toMonth } },
-          create: { goalId: alloc.goalId, userId: ctx.userId, year: toYear, month: toMonth, amount: alloc.amount },
-          update: { amount: alloc.amount },
-        })
-      }
-      return true
-    },
-  }),
-
   setBudgetStart: t.field({
     type: 'Boolean',
     args: {

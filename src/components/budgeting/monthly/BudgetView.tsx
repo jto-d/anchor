@@ -6,7 +6,6 @@ import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 import Snackbar from '@mui/material/Snackbar'
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
-import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined'
 import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined'
 import { brand } from '@/lib/theme'
 import { Row, Stack } from '@/components/ui'
@@ -18,7 +17,6 @@ import { SurplusPanel } from '../surplus/SurplusPanel'
 import { IncomePanel } from './IncomePanel'
 import { GoalsRecap } from './GoalsRecap'
 import { useBudgetMonth } from '@/hooks/useBudgetMonth'
-import { monthShort } from '@/utils/format'
 import type { MonthSel } from '@/utils/budget'
 
 function stepMonth(sel: MonthSel, dir: number): MonthSel {
@@ -42,8 +40,6 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
   }, [])
 
   const isCurrentStart = budget.budgetStartYear === sel.y && budget.budgetStartMonth === sel.m
-  const prevSel = stepMonth(sel, -1)
-  const atStart = isCurrentStart
 
   const stepper = (
     <Row gap={1.5}>
@@ -52,21 +48,6 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
         startYear={budget.budgetStartYear}
         startMonth={budget.budgetStartMonth}
       />
-      <Button
-        size="small"
-        startIcon={<ContentCopyOutlinedIcon sx={{ fontSize: 13 }} />}
-        onClick={() => budget.copyFromPrev(sel.y, sel.m)}
-        disabled={atStart}
-        title={atStart ? 'No previous month to copy from' : `Copy budgets from ${monthShort(prevSel.y, prevSel.m)}`}
-        sx={{
-          textTransform: 'none', fontSize: 12, fontWeight: 500, height: 38,
-          color: 'text.secondary', borderColor: 'divider',
-          '&:hover': { borderColor: brand.anchor[400] },
-          border: '1px solid', borderRadius: '9px', px: 1.25,
-        }}
-      >
-        Copy from {monthShort(prevSel.y, prevSel.m)}
-      </Button>
       <Button
         size="small"
         startIcon={<FlagOutlinedIcon sx={{ fontSize: 14 }} />}

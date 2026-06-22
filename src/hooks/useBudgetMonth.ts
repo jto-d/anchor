@@ -8,6 +8,7 @@ import {
   AddIncomeSourceDocument,
   RemoveIncomeSourceDocument,
   RenameIncomeSourceDocument,
+  SetCategoryBudgetDocument,
   SetCategoryMonthBudgetDocument,
   SetMonthlySpendDocument,
   SetSavingsMonthlyDocument,
@@ -27,7 +28,6 @@ import {
   RemoveSavingsGoalDocument,
   SetSavingsGoalTargetDocument,
   SetBudgetStartDocument,
-  CopyMonthBudgetDocument,
 } from './budget.queries'
 import type { GoalData, GroupData, IncomeSource, MonthSel, SavingsData, Totals } from '@/utils/budget'
 
@@ -53,6 +53,7 @@ export function useBudgetMonth(sel: MonthSel) {
   const [{ data, fetching }, reexecute] = useQuery({
     query: BudgetMonthDocument,
     variables: { year: sel.y, month: sel.m },
+    requestPolicy: 'cache-and-network',
   })
 
   // Optimistic override maps — cleared when fresh server data arrives
@@ -78,6 +79,7 @@ export function useBudgetMonth(sel: MonthSel) {
 
   const refetch = useCallback(() => reexecute({ requestPolicy: 'network-only' }), [reexecute])
 
+  const [, setCategoryBudget] = useMutation(SetCategoryBudgetDocument)
   const [, setCategoryMonthBudget] = useMutation(SetCategoryMonthBudgetDocument)
   const [, setIncomeAmount] = useMutation(SetIncomeAmountDocument)
   const [, addIncomeSource] = useMutation(AddIncomeSourceDocument)
@@ -101,7 +103,6 @@ export function useBudgetMonth(sel: MonthSel) {
   const [, removeSavingsGoalMut] = useMutation(RemoveSavingsGoalDocument)
   const [, setGoalTargetMut] = useMutation(SetSavingsGoalTargetDocument)
   const [, setBudgetStartMut] = useMutation(SetBudgetStartDocument)
-  const [, copyMonthBudgetMut] = useMutation(CopyMonthBudgetDocument)
 
   const raw = data?.budgetMonth
 
@@ -156,9 +157,12 @@ export function useBudgetMonth(sel: MonthSel) {
 
   const setBudget = useCallback(async (catId: string, v: number) => {
     setLocalBudgets((p) => ({ ...p, [catId]: v }))
-    await setCategoryMonthBudget({ id: catId, year: sel.y, month: sel.m, budget: v })
+    await Promise.all([
+      setCategoryMonthBudget({ id: catId, year: sel.y, month: sel.m, budget: v }),
+      setCategoryBudget({ id: catId, budget: v }),
+    ])
     refetch()
-  }, [setCategoryMonthBudget, sel, refetch])
+  }, [setCategoryMonthBudget, setCategoryBudget, sel, refetch])
 
   const setSpent = useCallback(async (catId: string, v: number) => {
     setLocalSpends((p) => ({ ...p, [catId]: v }))
@@ -269,13 +273,6 @@ export function useBudgetMonth(sel: MonthSel) {
     await setBudgetStartMut({ year, month }); refetch()
   }, [setBudgetStartMut, refetch])
 
-  const copyFromPrev = useCallback(async (year: number, month: number) => {
-    const d = new Date(year, month - 1, 1)
-    await copyMonthBudgetMut({ fromYear: d.getFullYear(), fromMonth: d.getMonth(), toYear: year, toMonth: month })
-    refetch()
-    flash('Budgets copied from previous month.')
-  }, [copyMonthBudgetMut, refetch, flash])
-
   return {
     fetching,
     hasData: raw != null,
@@ -311,6 +308,5 @@ export function useBudgetMonth(sel: MonthSel) {
     removeGoal,
     setGoalTarget,
     setBudgetStart,
-    copyFromPrev,
   }
 }
