@@ -12,6 +12,7 @@
 ### Dev
 Separate dev/prod databases
 CodeRabbit
+Responsiveness handling (likely just: go to computer view)
 
 ### MISC
 Card page should have link to card listing?
