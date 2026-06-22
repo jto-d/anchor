@@ -1,7 +1,9 @@
 import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import { brand } from '@/lib/theme'
-import { CatGlyph, EditableMoney, Eyebrow, ListRow, ProgressBar, Row } from '@/components/ui'
+import { CatGlyph, EditableLabel, EditableMoney, Eyebrow, ListRow, ProgressBar, Row } from '@/components/ui'
 import { tabularNums } from '@/lib/sx'
 import { fmtMoney, monthShort, clamp01 } from '@/utils/format'
 import type { GoalData, MonthSel } from '@/utils/budget'
@@ -11,10 +13,12 @@ interface GoalAllocRowProps {
   amount: number
   sel: MonthSel
   onSet: (v: number) => void
+  onRename: (name: string) => void
+  onRemove: () => void
   last: boolean
 }
 
-export function GoalAllocRow({ goal, amount, sel, onSet, last }: GoalAllocRowProps) {
+export function GoalAllocRow({ goal, amount, sel, onSet, onRename, onRemove, last }: GoalAllocRowProps) {
   const current = goal.running + amount
   const ratio = clamp01(goal.target ? current / goal.target : 0)
   const done = !!goal.target && current >= goal.target
@@ -30,7 +34,7 @@ export function GoalAllocRow({ goal, amount, sel, onSet, last }: GoalAllocRowPro
     <ListRow last={last} gap={1.5} sx={{ py: 1.75 }}>
       <CatGlyph icon={goal.icon} size={38} tone={done ? 'accent' : 'neutral'} />
       <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Typography variant="bodyStrong">{goal.name}</Typography>
+        <EditableLabel value={goal.name} onChange={onRename} size={14} weight={600} />
         <Row gap={1} sx={{ my: '7px' }}>
           <Box sx={{ flex: 1, maxWidth: 230 }}>
             <ProgressBar value={ratio} color={brand.anchor[600]} thin />
@@ -53,6 +57,14 @@ export function GoalAllocRow({ goal, amount, sel, onSet, last }: GoalAllocRowPro
           onChange={onSet} size={15} weight={600}
         />
       </Box>
+      <IconButton
+        size="small"
+        onClick={onRemove}
+        title="Remove goal"
+        sx={{ width: 24, height: 24, borderRadius: '6px', color: 'text.disabled', '&:hover': { color: brand.red[500], bgcolor: brand.red[50] } }}
+      >
+        <DeleteOutlinedIcon sx={{ fontSize: 15 }} />
+      </IconButton>
     </ListRow>
   )
 }

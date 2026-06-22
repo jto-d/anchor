@@ -253,30 +253,39 @@ builder.mutationFields((t) => ({
     },
   }),
 
-  // ---- Surplus allocation --------------------------------------------------
-
-  setSurplusAllocation: t.field({
+  setCategoryMonthBudget: t.field({
     type: 'Boolean',
     args: {
-      goalId: t.arg.string({ required: true }),
+      id: t.arg.string({ required: true }),
       year: t.arg.int({ required: true }),
       month: t.arg.int({ required: true }),
-      amount: t.arg.float({ required: true }),
+      budget: t.arg.float({ required: true }),
     },
-    resolve: async (_root, { goalId, year, month, amount }, ctx) => {
-      const goal = await prisma.savingsGoal.findFirst({ where: { id: goalId, userId: ctx.userId } })
-      if (!goal) throw new Error('Goal not found')
-      if (amount <= 0) {
-        await prisma.surplusAllocation.deleteMany({
-          where: { goalId, year, month, userId: ctx.userId },
-        })
-      } else {
-        await prisma.surplusAllocation.upsert({
-          where: { goalId_year_month: { goalId, year, month } },
-          create: { goalId, userId: ctx.userId, year, month, amount },
-          update: { amount },
-        })
-      }
+    resolve: async (_root, { id, year, month, budget }, ctx) => {
+      const cat = await prisma.budgetCategory.findFirst({
+        where: { id, group: { userId: ctx.userId } },
+      })
+      if (!cat) throw new Error('Category not found')
+      await prisma.monthlyBudget.upsert({
+        where: { categoryId_year_month: { categoryId: id, year, month } },
+        create: { categoryId: id, year, month, budget },
+        update: { budget },
+      })
+      return true
+    },
+  }),
+
+  setBudgetStart: t.field({
+    type: 'Boolean',
+    args: {
+      year: t.arg.int({ required: true }),
+      month: t.arg.int({ required: true }),
+    },
+    resolve: async (_root, { year, month }, ctx) => {
+      await prisma.user.update({
+        where: { id: ctx.userId },
+        data: { budgetStartYear: year, budgetStartMonth: month },
+      })
       return true
     },
   }),

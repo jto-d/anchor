@@ -7,6 +7,8 @@ import { graphql } from '@/gql'
 export const BudgetMonthDocument = graphql(`
   query BudgetMonth($year: Int!, $month: Int!) {
     budgetMonth(year: $year, month: $month) {
+      budgetStartYear
+      budgetStartMonth
       incomeSources {
         id
         label
@@ -78,6 +80,7 @@ export const SetIncomeAmountDocument = graphql(`mutation SetIncomeAmount($id: St
 export const AddIncomeSourceDocument = graphql(`mutation AddIncomeSource($label: String!, $amount: Float!) { addIncomeSource(label: $label, amount: $amount) }`)
 export const RemoveIncomeSourceDocument = graphql(`mutation RemoveIncomeSource($id: String!) { removeIncomeSource(id: $id) }`)
 export const SetCategoryBudgetDocument = graphql(`mutation SetCategoryBudget($id: String!, $budget: Float!) { setCategoryBudget(id: $id, budget: $budget) }`)
+export const SetCategoryMonthBudgetDocument = graphql(`mutation SetCategoryMonthBudget($id: String!, $year: Int!, $month: Int!, $budget: Float!) { setCategoryMonthBudget(id: $id, year: $year, month: $month, budget: $budget) }`)
 export const SetMonthlySpendDocument = graphql(`mutation SetMonthlySpend($categoryId: String!, $year: Int!, $month: Int!, $amount: Float!) { setMonthlySpend(categoryId: $categoryId, year: $year, month: $month, amount: $amount) }`)
 export const SetSavingsMonthlyDocument = graphql(`mutation SetSavingsMonthly($id: String!, $monthly: Float!) { setSavingsMonthly(id: $id, monthly: $monthly) }`)
 export const SetMonthlyContributionDocument = graphql(`mutation SetMonthlyContribution($accountId: String!, $year: Int!, $month: Int!, $amount: Float!) { setMonthlyContribution(accountId: $accountId, year: $year, month: $month, amount: $amount) }`)
@@ -92,3 +95,7 @@ export const RenameIncomeSourceDocument = graphql(`mutation RenameIncomeSource($
 export const AddBudgetGroupDocument = graphql(`mutation AddBudgetGroup($label: String!, $icon: String!) { addBudgetGroup(label: $label, icon: $icon) }`)
 export const RenameBudgetGroupDocument = graphql(`mutation RenameBudgetGroup($id: String!, $label: String!) { renameBudgetGroup(id: $id, label: $label) }`)
 export const RemoveBudgetGroupDocument = graphql(`mutation RemoveBudgetGroup($id: String!) { removeBudgetGroup(id: $id) }`)
+export const AddSavingsGoalDocument = graphql(`mutation AddSavingsGoal($name: String!, $icon: String!) { addSavingsGoal(name: $name, icon: $icon) }`)
+export const RenameSavingsGoalDocument = graphql(`mutation RenameSavingsGoal($id: String!, $name: String!) { renameSavingsGoal(id: $id, name: $name) }`)
+export const RemoveSavingsGoalDocument = graphql(`mutation RemoveSavingsGoal($id: String!) { removeSavingsGoal(id: $id) }`)
+export const SetBudgetStartDocument = graphql(`mutation SetBudgetStart($year: Int!, $month: Int!) { setBudgetStart(year: $year, month: $month) }`)

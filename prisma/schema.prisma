@@ -29,6 +29,9 @@ model User {
   email     String   @unique
   createdAt DateTime @default(now())
 
+  budgetStartYear  Int?
+  budgetStartMonth Int?
+
   creditCards        CreditCard[]
   incomeSources      IncomeSource[]
   budgetGroups       BudgetGroup[]
@@ -67,6 +70,18 @@ model BudgetCategory {
   position Int            @default(0)
   group    BudgetGroup    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   spends   MonthlySpend[]
+  monthlyBudgets MonthlyBudget[]
+}
+
+model MonthlyBudget {
+  id         String         @id @default(cuid())
+  categoryId String
+  year       Int
+  month      Int
+  budget     Decimal        @db.Decimal(10, 2)
+  category   BudgetCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, year, month])
 }
 
 model MonthlySpend {

@@ -21,11 +21,9 @@ Remove card from card page
 ### need to add a ton more cards
 
 ### Budgeting
-Remove the lag from updating EditableMoney
-Make it possible to have different budgets for categories across months
-CRUD for surplus allocation
- - make this a separate folder
-Budget should start from a specific month
+One month in advance
+Copy last months
+Editable money target for surplus 
 
 ### Features?
 Onboarding flow (?)

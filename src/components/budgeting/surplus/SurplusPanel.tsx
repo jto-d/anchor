@@ -1,6 +1,8 @@
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import AddIcon from '@mui/icons-material/Add'
 import { brand } from '@/lib/theme'
 import { CatGlyph, Eyebrow, ProgressBar, Row, SurfaceCard } from '@/components/ui'
 import { GoalAllocRow } from './GoalAllocRow'
@@ -13,9 +15,12 @@ interface SurplusPanelProps {
   totals: Totals
   sel: MonthSel
   onSet: (goalId: string, v: number) => void
+  onAddGoal: () => void
+  onRenameGoal: (id: string, name: string) => void
+  onRemoveGoal: (id: string) => void
 }
 
-export function SurplusPanel({ goals, totals, sel, onSet }: SurplusPanelProps) {
+export function SurplusPanel({ goals, totals, sel, onSet, onAddGoal, onRenameGoal, onRemoveGoal }: SurplusPanelProps) {
   const { baseSurplus, allocated } = totals
   const unallocated = baseSurplus - allocated
   const active = baseSurplus > 0
@@ -79,7 +84,10 @@ export function SurplusPanel({ goals, totals, sel, onSet }: SurplusPanelProps) {
           <Box sx={{ mt: 1.5 }}>
             {goals.map((g, i) => (
               <GoalAllocRow key={g.id} goal={g} amount={g.monthAllocated} sel={sel}
-                onSet={(v) => onSet(g.id, v)} last={i === goals.length - 1} />
+                onSet={(v) => onSet(g.id, v)}
+                onRename={(name) => onRenameGoal(g.id, name)}
+                onRemove={() => onRemoveGoal(g.id)}
+                last={i === goals.length - 1} />
             ))}
           </Box>
         </>
@@ -92,6 +100,17 @@ export function SurplusPanel({ goals, totals, sel, onSet }: SurplusPanelProps) {
           </Typography>
         </Box>
       )}
+
+      <Row sx={{ px: 2.5, py: 1.25, borderTop: '1px solid', borderColor: 'divider' }}>
+        <Button
+          size="small"
+          startIcon={<AddIcon sx={{ fontSize: 14 }} />}
+          onClick={onAddGoal}
+          sx={{ textTransform: 'none', fontSize: 12, fontWeight: 500, color: 'text.disabled', px: 1, py: 0.5, borderRadius: '7px', '&:hover': { color: 'text.secondary', bgcolor: 'grey.100' } }}
+        >
+          Add goal
+        </Button>
+      </Row>
     </SurfaceCard>
   )
 }

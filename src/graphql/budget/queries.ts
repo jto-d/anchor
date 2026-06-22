@@ -42,7 +42,8 @@ builder.queryField('budgetMonth', (t) =>
       }
 
       // Fetch all data in parallel
-      const [incomeSources, groups, savings, goals] = await Promise.all([
+      const [user, incomeSources, groups, savings, goals] = await Promise.all([
+        prisma.user.findUnique({ where: { id: userId }, select: { budgetStartYear: true, budgetStartMonth: true } }),
         prisma.incomeSource.findMany({ where: { userId }, orderBy: { position: 'asc' } }),
         prisma.budgetGroup.findMany({
           where: { userId },
@@ -52,6 +53,7 @@ builder.queryField('budgetMonth', (t) =>
               orderBy: { position: 'asc' },
               include: {
                 spends: { where: { year, month } },
+                monthlyBudgets: { where: { year, month } },
               },
             },
           },
@@ -88,7 +90,7 @@ builder.queryField('budgetMonth', (t) =>
           id: c.id,
           label: c.label,
           icon: c.icon,
-          budget: c.budget.toString(),
+          budget: (c.monthlyBudgets[0]?.budget ?? c.budget).toString(),
           position: c.position,
           monthSpent: (c.spends[0]?.amount ?? 0).toString(),
         })),
@@ -134,7 +136,14 @@ builder.queryField('budgetMonth', (t) =>
         }
       })
 
-      return { incomeSources: incomeSourcesOut, groups: groupsOut, savings: savingsOut, goals: goalsOut }
+      return {
+        incomeSources: incomeSourcesOut,
+        groups: groupsOut,
+        savings: savingsOut,
+        goals: goalsOut,
+        budgetStartYear: user?.budgetStartYear ?? null,
+        budgetStartMonth: user?.budgetStartMonth ?? null,
+      }
     },
   })
 )

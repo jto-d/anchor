@@ -2,21 +2,31 @@
 
 import { useCallback, useState } from 'react'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 import Snackbar from '@mui/material/Snackbar'
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
+import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined'
 import { brand } from '@/lib/theme'
 import { Row, Stack } from '@/components/ui'
+import { Topbar } from '@/components/layout/Topbar'
+import { BudgetMonthStepper } from '../BudgetMonthStepper'
 import { SummaryStrip } from './SummaryStrip'
 import { BudgetLedger } from './BudgetLedger'
 import { SurplusPanel } from '../surplus/SurplusPanel'
 import { IncomePanel } from './IncomePanel'
 import { GoalsRecap } from './GoalsRecap'
 import { useBudgetMonth } from '@/hooks/useBudgetMonth'
+import type { MonthSel } from '@/utils/budget'
+
+function stepMonth(sel: MonthSel, dir: number): MonthSel {
+  const date = new Date(sel.y, sel.m + dir, 1)
+  return { y: date.getFullYear(), m: date.getMonth() }
+}
 
 export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
   const now = new Date()
-  const [sel] = useState({ y: now.getFullYear(), m: now.getMonth() })
+  const [sel, setSel] = useState<MonthSel>({ y: now.getFullYear(), m: now.getMonth() })
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
 
   const budget = useBudgetMonth(sel)
@@ -24,6 +34,39 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
   const handleToggle = useCallback((key: string) => {
     setCollapsed((prev) => ({ ...prev, [key]: !prev[key] }))
   }, [])
+
+  const handleStep = useCallback((dir: number) => {
+    setSel((s) => stepMonth(s, dir))
+  }, [])
+
+  const isCurrentStart = budget.budgetStartYear === sel.y && budget.budgetStartMonth === sel.m
+
+  const stepper = (
+    <Row gap={1.5}>
+      <BudgetMonthStepper
+        sel={sel} onStep={handleStep}
+        startYear={budget.budgetStartYear}
+        startMonth={budget.budgetStartMonth}
+      />
+      <Button
+        size="small"
+        startIcon={<FlagOutlinedIcon sx={{ fontSize: 14 }} />}
+        onClick={() => budget.setBudgetStart(sel.y, sel.m)}
+        disabled={isCurrentStart}
+        title={isCurrentStart ? 'This is your budget start month' : 'Mark this month as the budget start'}
+        sx={{
+          textTransform: 'none', fontSize: 12, fontWeight: 500, height: 38,
+          color: isCurrentStart ? brand.anchor[600] : 'text.secondary',
+          borderColor: isCurrentStart ? brand.anchor[300] : 'divider',
+          '&:hover': { borderColor: brand.anchor[400] },
+          border: '1px solid',
+          borderRadius: '9px', px: 1.25,
+        }}
+      >
+        {isCurrentStart ? 'Budget start' : 'Set as start'}
+      </Button>
+    </Row>
+  )
 
   if (budget.fetching && !budget.hasData) {
     return (
@@ -34,7 +77,9 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
   }
 
   return (
-    <Box sx={{ flex: 1, overflow: 'auto' }}>
+    <Box sx={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
+      <Topbar title="Budget" rightSlot={stepper} />
+
       <Box sx={{ position: 'sticky', top: 0, zIndex: 20, px: 4, pt: 2.75, pb: 1.75, bgcolor: 'background.default' }}>
         <SummaryStrip totals={budget.totals} />
       </Box>
@@ -52,7 +97,13 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
             onAddGroup={budget.addGroup} onRenameGroup={budget.renameGroup} onRemoveGroup={budget.removeGroup}
             totals={budget.totals}
           />
-          <SurplusPanel goals={budget.goals} totals={budget.totals} sel={sel} onSet={budget.setAllocation} />
+          <SurplusPanel
+            goals={budget.goals} totals={budget.totals} sel={sel}
+            onSet={budget.setAllocation}
+            onAddGoal={budget.addGoal}
+            onRenameGoal={budget.renameGoal}
+            onRemoveGoal={budget.removeGoal}
+          />
         </Stack>
         <Stack gap={3}>
           <IncomePanel

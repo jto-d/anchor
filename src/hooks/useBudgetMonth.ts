@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery, useMutation } from '@urql/next'
 import {
   BudgetMonthDocument,
@@ -8,7 +8,7 @@ import {
   AddIncomeSourceDocument,
   RemoveIncomeSourceDocument,
   RenameIncomeSourceDocument,
-  SetCategoryBudgetDocument,
+  SetCategoryMonthBudgetDocument,
   SetMonthlySpendDocument,
   SetSavingsMonthlyDocument,
   SetMonthlyContributionDocument,
@@ -22,6 +22,10 @@ import {
   AddBudgetGroupDocument,
   RenameBudgetGroupDocument,
   RemoveBudgetGroupDocument,
+  AddSavingsGoalDocument,
+  RenameSavingsGoalDocument,
+  RemoveSavingsGoalDocument,
+  SetBudgetStartDocument,
 } from './budget.queries'
 import type { GoalData, GroupData, IncomeSource, MonthSel, SavingsData, Totals } from '@/utils/budget'
 
@@ -30,6 +34,9 @@ import type { GoalData, GroupData, IncomeSource, MonthSel, SavingsData, Totals }
  * every mutation, the string→number parsing of the response, derived totals,
  * and a transient toast. Components stay presentational; `BudgetView` wires
  * the returned handlers to them.
+ *
+ * Optimistic updates: local override maps are applied on top of server data
+ * so the UI reflects edits instantly. Overrides are cleared on each refetch.
  */
 export function useBudgetMonth(sel: MonthSel) {
   const [toast, setToast] = useState<string | null>(null)
@@ -46,12 +53,33 @@ export function useBudgetMonth(sel: MonthSel) {
     variables: { year: sel.y, month: sel.m },
   })
 
+  // Optimistic override maps — cleared when fresh server data arrives
+  const [localBudgets, setLocalBudgets] = useState<Record<string, number>>({})
+  const [localSpends, setLocalSpends] = useState<Record<string, number>>({})
+  const [localContribs, setLocalContribs] = useState<Record<string, number>>({})
+  const [localSavingsMonthly, setLocalSavingsMonthly] = useState<Record<string, number>>({})
+  const [localAllocations, setLocalAllocations] = useState<Record<string, number>>({})
+  const [localIncome, setLocalIncome] = useState<Record<string, number>>({})
+
+  const prevRaw = useRef(data?.budgetMonth)
+  useEffect(() => {
+    if (data?.budgetMonth !== prevRaw.current) {
+      prevRaw.current = data?.budgetMonth
+      setLocalBudgets({})
+      setLocalSpends({})
+      setLocalContribs({})
+      setLocalSavingsMonthly({})
+      setLocalAllocations({})
+      setLocalIncome({})
+    }
+  }, [data?.budgetMonth])
+
   const refetch = useCallback(() => reexecute({ requestPolicy: 'network-only' }), [reexecute])
 
+  const [, setCategoryMonthBudget] = useMutation(SetCategoryMonthBudgetDocument)
   const [, setIncomeAmount] = useMutation(SetIncomeAmountDocument)
   const [, addIncomeSource] = useMutation(AddIncomeSourceDocument)
   const [, removeIncomeSource] = useMutation(RemoveIncomeSourceDocument)
-  const [, setCategoryBudget] = useMutation(SetCategoryBudgetDocument)
   const [, setMonthlySpend] = useMutation(SetMonthlySpendDocument)
   const [, setSavingsMonthly] = useMutation(SetSavingsMonthlyDocument)
   const [, setMonthlyContribution] = useMutation(SetMonthlyContributionDocument)
@@ -66,31 +94,38 @@ export function useBudgetMonth(sel: MonthSel) {
   const [, addBudgetGroupMut] = useMutation(AddBudgetGroupDocument)
   const [, renameBudgetGroupMut] = useMutation(RenameBudgetGroupDocument)
   const [, removeBudgetGroupMut] = useMutation(RemoveBudgetGroupDocument)
+  const [, addSavingsGoalMut] = useMutation(AddSavingsGoalDocument)
+  const [, renameSavingsGoalMut] = useMutation(RenameSavingsGoalDocument)
+  const [, removeSavingsGoalMut] = useMutation(RemoveSavingsGoalDocument)
+  const [, setBudgetStartMut] = useMutation(SetBudgetStartDocument)
 
   const raw = data?.budgetMonth
 
   // GraphQL exposes Decimal as String (see CLAUDE.md) — parse to numbers up front.
   const incomeSources: IncomeSource[] = useMemo(() =>
-    (raw?.incomeSources ?? []).map((s) => ({ ...s, amount: Number(s.amount) })), [raw])
+    (raw?.incomeSources ?? []).map((s) => ({
+      ...s,
+      amount: localIncome[s.id] ?? Number(s.amount),
+    })), [raw, localIncome])
 
   const groups: GroupData[] = useMemo(() =>
     (raw?.groups ?? []).map((g) => ({
       ...g,
       categories: g.categories.map((c) => ({
         ...c,
-        budget: Number(c.budget),
-        monthSpent: Number(c.monthSpent),
+        budget: localBudgets[c.id] ?? Number(c.budget),
+        monthSpent: localSpends[c.id] ?? Number(c.monthSpent),
       })),
-    })), [raw])
+    })), [raw, localBudgets, localSpends])
 
   const savings: SavingsData[] = useMemo(() =>
     (raw?.savings ?? []).map((s) => ({
       ...s,
-      monthly: Number(s.monthly),
+      monthly: localSavingsMonthly[s.id] ?? Number(s.monthly),
       annualLimit: s.annualLimit != null ? Number(s.annualLimit) : null,
-      monthContrib: Number(s.monthContrib),
+      monthContrib: localContribs[s.id] ?? Number(s.monthContrib),
       ytd: Number(s.ytd),
-    })), [raw])
+    })), [raw, localSavingsMonthly, localContribs])
 
   const goals: GoalData[] = useMemo(() =>
     (raw?.goals ?? []).map((g) => ({
@@ -98,8 +133,8 @@ export function useBudgetMonth(sel: MonthSel) {
       target: g.target != null ? Number(g.target) : null,
       base: Number(g.base),
       running: Number(g.running),
-      monthAllocated: Number(g.monthAllocated),
-    })), [raw])
+      monthAllocated: localAllocations[g.id] ?? Number(g.monthAllocated),
+    })), [raw, localAllocations])
 
   const totals: Totals = useMemo(() => {
     const income = incomeSources.reduce((s, x) => s + x.amount, 0)
@@ -116,23 +151,33 @@ export function useBudgetMonth(sel: MonthSel) {
   }, [incomeSources, groups, savings, goals])
 
   const setBudget = useCallback(async (catId: string, v: number) => {
-    await setCategoryBudget({ id: catId, budget: v }); refetch()
-  }, [setCategoryBudget, refetch])
+    setLocalBudgets((p) => ({ ...p, [catId]: v }))
+    await setCategoryMonthBudget({ id: catId, year: sel.y, month: sel.m, budget: v })
+    refetch()
+  }, [setCategoryMonthBudget, sel, refetch])
 
   const setSpent = useCallback(async (catId: string, v: number) => {
-    await setMonthlySpend({ categoryId: catId, year: sel.y, month: sel.m, amount: v }); refetch()
+    setLocalSpends((p) => ({ ...p, [catId]: v }))
+    await setMonthlySpend({ categoryId: catId, year: sel.y, month: sel.m, amount: v })
+    refetch()
   }, [setMonthlySpend, sel, refetch])
 
   const setSavingsMonthlyAmount = useCallback(async (id: string, v: number) => {
-    await setSavingsMonthly({ id, monthly: v }); refetch()
+    setLocalSavingsMonthly((p) => ({ ...p, [id]: v }))
+    await setSavingsMonthly({ id, monthly: v })
+    refetch()
   }, [setSavingsMonthly, refetch])
 
   const contribute = useCallback(async (id: string, v: number) => {
-    await setMonthlyContribution({ accountId: id, year: sel.y, month: sel.m, amount: v }); refetch()
+    setLocalContribs((p) => ({ ...p, [id]: v }))
+    await setMonthlyContribution({ accountId: id, year: sel.y, month: sel.m, amount: v })
+    refetch()
   }, [setMonthlyContribution, sel, refetch])
 
   const setIncome = useCallback(async (id: string, v: number) => {
-    await setIncomeAmount({ id, amount: v }); refetch()
+    setLocalIncome((p) => ({ ...p, [id]: v }))
+    await setIncomeAmount({ id, amount: v })
+    refetch()
   }, [setIncomeAmount, refetch])
 
   const addIncome = useCallback(async () => {
@@ -192,8 +237,28 @@ export function useBudgetMonth(sel: MonthSel) {
   }, [removeBudgetGroupMut, refetch])
 
   const setAllocation = useCallback(async (goalId: string, v: number) => {
-    await setSurplusAllocation({ goalId, year: sel.y, month: sel.m, amount: v }); refetch()
+    setLocalAllocations((p) => ({ ...p, [goalId]: v }))
+    await setSurplusAllocation({ goalId, year: sel.y, month: sel.m, amount: v })
+    refetch()
   }, [setSurplusAllocation, sel, refetch])
+
+  const addGoal = useCallback(async () => {
+    await addSavingsGoalMut({ name: 'New goal', icon: 'star' })
+    refetch()
+    flash('Goal added — name it and set a target.')
+  }, [addSavingsGoalMut, refetch, flash])
+
+  const renameGoal = useCallback(async (id: string, name: string) => {
+    await renameSavingsGoalMut({ id, name }); refetch()
+  }, [renameSavingsGoalMut, refetch])
+
+  const removeGoal = useCallback(async (id: string) => {
+    await removeSavingsGoalMut({ id }); refetch()
+  }, [removeSavingsGoalMut, refetch])
+
+  const setBudgetStart = useCallback(async (year: number, month: number) => {
+    await setBudgetStartMut({ year, month }); refetch()
+  }, [setBudgetStartMut, refetch])
 
   return {
     fetching,
@@ -203,6 +268,8 @@ export function useBudgetMonth(sel: MonthSel) {
     savings,
     goals,
     totals,
+    budgetStartYear: raw?.budgetStartYear ?? null,
+    budgetStartMonth: raw?.budgetStartMonth ?? null,
     toast,
     dismissToast: useCallback(() => setToast(null), []),
     setBudget,
@@ -223,5 +290,9 @@ export function useBudgetMonth(sel: MonthSel) {
     addGroup,
     renameGroup,
     removeGroup,
+    addGoal,
+    renameGoal,
+    removeGoal,
+    setBudgetStart,
   }
 }

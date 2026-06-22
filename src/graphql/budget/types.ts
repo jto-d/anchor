@@ -236,6 +236,8 @@ export const BudgetMonthPayload = builder.objectRef<{
     running: string
     monthAllocated: string
   }[]
+  budgetStartYear: number | null
+  budgetStartMonth: number | null
 }>('BudgetMonthPayload')
 
 builder.objectType(BudgetMonthPayload, {
@@ -244,5 +246,7 @@ builder.objectType(BudgetMonthPayload, {
     groups: t.field({ type: [BudgetGroupPayload], resolve: (p) => p.groups }),
     savings: t.field({ type: [SavingsAccountPayload], resolve: (p) => p.savings }),
     goals: t.field({ type: [SavingsGoalPayload], resolve: (p) => p.goals }),
+    budgetStartYear: t.int({ nullable: true, resolve: (p) => p.budgetStartYear }),
+    budgetStartMonth: t.int({ nullable: true, resolve: (p) => p.budgetStartMonth }),
   }),
 })
