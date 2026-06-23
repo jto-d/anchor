@@ -49,7 +49,11 @@ export function MeView() {
     id: c.id,
     name: c.name,
     issuer: c.issuer,
-    short: c.issuer.toLowerCase().includes('american express') ? 'Amex' : c.issuer.split(' ')[0],
+    short: c.issuer.toLowerCase().includes('american express')
+      ? 'Amex'
+      : c.issuer.toLowerCase().includes('bank of america')
+      ? 'BofA'
+      : c.issuer.split(' ')[0],
     lastFour: c.lastFour ?? '',
   }))
 
