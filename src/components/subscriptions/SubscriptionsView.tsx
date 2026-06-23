@@ -4,11 +4,13 @@ import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import AddIcon from '@mui/icons-material/Add'
-import { ComingSoon, Row, Stack } from '@/components/ui'
+import { Row, Stack } from '@/components/ui'
 import { SubSummaryStrip } from './SubSummaryStrip'
 import { SubRenewalStrip } from './SubRenewalStrip'
 import { SubLedger } from './SubLedger'
 import { CardBreakdown } from './CardBreakdown'
+import { AddSubscriptionDialog } from './AddSubscriptionDialog'
+import { RemoveSubscriptionDialog } from './RemoveSubscriptionDialog'
 import { Topbar } from '@/components/layout/Topbar'
 import {
   SEED_SUBSCRIPTIONS,
@@ -21,11 +23,15 @@ import type { GroupingMode } from './SubLedger'
 
 export function SubscriptionsView() {
   const [subs, setSubs] = useState<Subscription[]>(SEED_SUBSCRIPTIONS)
+  const [addOpen, setAddOpen] = useState(false)
+  const [removeConfirmId, setRemoveConfirmId] = useState<string | null>(null)
   const grouping: GroupingMode = 'cadence'
 
   const summary = computeSummary(subs)
   const renewals = computeRenewals(subs)
   const byCard = computeByCard(subs)
+
+  const subToRemove = subs.find((s) => s.id === removeConfirmId) ?? null
 
   const handlers = {
     onSetCost: (id: string, cost: number) =>
@@ -34,8 +40,7 @@ export function SubscriptionsView() {
       setSubs((prev) => prev.map((s) => s.id === id ? { ...s, name } : s)),
     onTogglePause: (id: string) =>
       setSubs((prev) => prev.map((s) => s.id === id ? { ...s, paused: !s.paused } : s)),
-    onRemove: (id: string) =>
-      setSubs((prev) => prev.filter((s) => s.id !== id)),
+    onRemove: (id: string) => setRemoveConfirmId(id),
   }
 
   return (
@@ -44,11 +49,14 @@ export function SubscriptionsView() {
         title="Subscriptions"
         subtitle="Every recurring charge — and which card credit quietly covers it."
         rightSlot={
-          <ComingSoon>
-            <Button variant="contained" startIcon={<AddIcon />} sx={{ height: 38, flex: 'none' }}>
-              Add subscription
-            </Button>
-          </ComingSoon>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            sx={{ height: 38, flex: 'none' }}
+            onClick={() => setAddOpen(true)}
+          >
+            Add subscription
+          </Button>
         }
       />
 
@@ -73,6 +81,21 @@ export function SubscriptionsView() {
         <SubLedger subs={subs} grouping={grouping} handlers={handlers} />
         <CardBreakdown byCard={byCard} />
       </Box>
+
+      <AddSubscriptionDialog
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        onAdd={(sub) => setSubs((prev) => [...prev, sub])}
+      />
+
+      <RemoveSubscriptionDialog
+        subName={subToRemove?.name ?? null}
+        onClose={() => setRemoveConfirmId(null)}
+        onConfirm={() => {
+          if (removeConfirmId) setSubs((prev) => prev.filter((s) => s.id !== removeConfirmId))
+          setRemoveConfirmId(null)
+        }}
+      />
     </Box>
   )
 }
