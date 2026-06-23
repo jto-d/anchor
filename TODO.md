@@ -27,7 +27,8 @@ Accounts
  - view savings, how much of your money is allocated where, etc.
 Money splitting
  - Mirror excel sheet
-Subscription
+Subscriptions
+ - Ability to split
 
 Plaid integration
 Reminder to cancel a card on a specific date
