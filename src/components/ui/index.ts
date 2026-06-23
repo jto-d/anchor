@@ -21,6 +21,7 @@ export { EditableMoney } from './inputs/EditableMoney'
 export { EditableLabel } from './inputs/EditableLabel'
 export { Segmented } from './inputs/Segmented'
 export type { SegmentedOption } from './inputs/Segmented'
+export { DatePicker } from './inputs/DatePicker'
 
 // Feedback
 export { Tooltip, inlineTriggerSx } from './feedback/Tooltip'

@@ -24,9 +24,9 @@ import { EditableLabel } from '@/components/ui'
 import { fmtMoney } from '@/utils/format'
 import {
   coverStatus, grossNative, coveredNative, netNative, periodSuffix, fmtSubDate, nextCharge,
-  PERIOD_LABEL, SUB_CARDS, SUB_CATEGORIES,
+  SUB_CATEGORIES,
 } from '@/data/subscriptionData'
-import type { Subscription, CoverStatus } from '@/data/subscriptionData'
+import type { Subscription, CoverStatus, SubCard } from '@/data/subscriptionData'
 
 const COL_W = 100
 
@@ -65,8 +65,8 @@ function SubStatusChip({ status }: { status: CoverStatus }) {
 }
 
 // --- card pill ---
-function CardPill({ cardId }: { cardId: string }) {
-  const card = SUB_CARDS[cardId]
+function CardPill({ cardId, cardMap }: { cardId: string; cardMap: Map<string, SubCard> }) {
+  const card = cardMap.get(cardId)
   if (!card) return null
   return (
     <Box
@@ -146,7 +146,7 @@ function OverflowMenu({ sub, handlers }: { sub: Subscription; handlers: LedgerHa
 }
 
 // --- ledger row ---
-function LedgerRow({ sub, last, handlers }: { sub: Subscription; last: boolean; handlers: LedgerHandlers }) {
+function LedgerRow({ sub, last, handlers, cardMap }: { sub: Subscription; last: boolean; handlers: LedgerHandlers; cardMap: Map<string, SubCard> }) {
   const status = coverStatus(sub)
   const gross = grossNative(sub)
   const covered = coveredNative(sub)
@@ -175,7 +175,7 @@ function LedgerRow({ sub, last, handlers }: { sub: Subscription; last: boolean; 
             <SubStatusChip status={status} />
           </Row>
           <Row gap={1} sx={{ flexWrap: 'wrap' }}>
-            <CardPill cardId={sub.cardId} />
+            <CardPill cardId={sub.cardId} cardMap={cardMap} />
             <Typography sx={{ fontSize: 11.5, color: 'grey.400' }}>
               {paused ? sub.plan : `Renews ${fmtSubDate(next)}`}
             </Typography>
@@ -344,11 +344,14 @@ export function SubLedger({
   subs,
   grouping,
   handlers,
+  cards,
 }: {
   subs: Subscription[]
   grouping: GroupingMode
   handlers: LedgerHandlers
+  cards: SubCard[]
 }) {
+  const cardMap = new Map(cards.map((c) => [c.id, c]))
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
 
   const toggleGroup = (key: string) => setCollapsed((prev) => ({ ...prev, [key]: !prev[key] }))
@@ -384,7 +387,7 @@ export function SubLedger({
       <ColHeader />
       {grouping === 'none' ? (
         subs.map((s, i) => (
-          <LedgerRow key={s.id} sub={s} last={i === subs.length - 1} handlers={handlers} />
+          <LedgerRow key={s.id} sub={s} last={i === subs.length - 1} handlers={handlers} cardMap={cardMap} />
         ))
       ) : (
         buildGroups().map((g) => {
@@ -398,7 +401,7 @@ export function SubLedger({
                 collapsed={isCollapsed} onToggle={() => toggleGroup(g.key)}
               />
               {!isCollapsed && g.items.map((s, i) => (
-                <LedgerRow key={s.id} sub={s} last={i === g.items.length - 1} handlers={handlers} />
+                <LedgerRow key={s.id} sub={s} last={i === g.items.length - 1} handlers={handlers} cardMap={cardMap} />
               ))}
             </Box>
           )

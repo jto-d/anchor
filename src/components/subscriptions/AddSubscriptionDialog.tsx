@@ -7,13 +7,13 @@ import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
 import InputAdornment from '@mui/material/InputAdornment'
 import AddIcon from '@mui/icons-material/Add'
-import { AppDialog, Row, Stack } from '@/components/ui'
+import { AppDialog, DatePicker, Row, Stack } from '@/components/ui'
 import {
-  SUB_CARDS,
   SUB_CATEGORIES,
   PERIOD_LABEL,
   type Subscription,
   type SubscriptionPeriod,
+  type SubCard,
 } from '@/data/subscriptionData'
 
 const ICON_BY_CAT: Record<string, string> = {
@@ -25,44 +25,56 @@ const ICON_BY_CAT: Record<string, string> = {
 }
 
 const PERIODS: SubscriptionPeriod[] = ['monthly', 'quarterly', 'semiannual', 'annual']
-const CARD_OPTIONS = Object.values(SUB_CARDS)
 
-const BLANK = {
-  name: '',
-  cat: 'streaming',
-  cost: '',
-  period: 'monthly' as SubscriptionPeriod,
-  day: '1',
-  cardId: 'csr',
-  plan: '',
+function blankForm(defaultCardId: string) {
+  return {
+    name: '',
+    cat: 'streaming',
+    cost: '',
+    period: 'monthly' as SubscriptionPeriod,
+    day: '1',
+    renewDate: '',
+    cardId: defaultCardId,
+    plan: '',
+  }
 }
 
 interface AddSubscriptionDialogProps {
   open: boolean
   onClose: () => void
   onAdd: (sub: Subscription) => void
+  cards: SubCard[]
 }
 
-export function AddSubscriptionDialog({ open, onClose, onAdd }: AddSubscriptionDialogProps) {
-  const [form, setForm] = useState(BLANK)
+export function AddSubscriptionDialog({ open, onClose, onAdd, cards }: AddSubscriptionDialogProps) {
+  const [form, setForm] = useState(() => blankForm(cards[0]?.id ?? ''))
 
   useEffect(() => {
-    if (open) setForm(BLANK)
-  }, [open])
+    if (open) setForm(blankForm(cards[0]?.id ?? ''))
+  }, [open, cards])
 
   const setField =
-    (k: keyof typeof BLANK) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    (k: keyof ReturnType<typeof blankForm>) => (e: React.ChangeEvent<HTMLInputElement>) =>
       setForm((prev) => ({ ...prev, [k]: e.target.value }))
+
+  const isFixedPeriod = form.period === 'annual' || form.period === 'semiannual'
 
   const valid =
     form.name.trim().length > 0 &&
     Number(form.cost) > 0 &&
-    Number(form.day) >= 1 &&
-    Number(form.day) <= 28
+    (isFixedPeriod
+      ? form.renewDate.length > 0
+      : Number(form.day) >= 1 && Number(form.day) <= 28)
 
   function handleAdd() {
     if (!valid) return
-    const nowM = new Date().getMonth()
+    let day = Number(form.day)
+    let renewM: number | undefined
+    if (isFixedPeriod && form.renewDate) {
+      const d = new Date(form.renewDate + 'T00:00:00')
+      renewM = d.getMonth()
+      day = d.getDate()
+    }
     const sub: Subscription = {
       id: `sub_${Date.now()}`,
       name: form.name.trim(),
@@ -70,9 +82,8 @@ export function AddSubscriptionDialog({ open, onClose, onAdd }: AddSubscriptionD
       icon: ICON_BY_CAT[form.cat] ?? 'repeat',
       cost: Number(form.cost),
       period: form.period,
-      day: Number(form.day),
-      renewM:
-        form.period === 'annual' || form.period === 'semiannual' ? nowM : undefined,
+      day,
+      renewM,
       cardId: form.cardId,
       plan: form.plan.trim() || undefined,
     }
@@ -144,23 +155,32 @@ export function AddSubscriptionDialog({ open, onClose, onAdd }: AddSubscriptionD
               htmlInput: { inputMode: 'decimal' },
             }}
           />
-          <TextField
-            label="Billing day"
-            placeholder="1–28"
-            value={form.day}
-            onChange={(e) =>
-              setForm((prev) => ({
-                ...prev,
-                day: e.target.value.replace(/\D/g, '').slice(0, 2),
-              }))
-            }
-            size="small"
-            sx={{ width: 110 }}
-            slotProps={{
-              inputLabel: { shrink: true },
-              htmlInput: { inputMode: 'numeric' },
-            }}
-          />
+          {isFixedPeriod ? (
+            <DatePicker
+              label="Renewal date"
+              value={form.renewDate}
+              onChange={(v) => setForm((prev) => ({ ...prev, renewDate: v }))}
+              sx={{ flex: 1 }}
+            />
+          ) : (
+            <TextField
+              label="Billing day"
+              placeholder="1–28"
+              value={form.day}
+              onChange={(e) =>
+                setForm((prev) => ({
+                  ...prev,
+                  day: e.target.value.replace(/\D/g, '').slice(0, 2),
+                }))
+              }
+              size="small"
+              sx={{ width: 110 }}
+              slotProps={{
+                inputLabel: { shrink: true },
+                htmlInput: { inputMode: 'numeric' },
+              }}
+            />
+          )}
         </Row>
         <TextField
           select
@@ -171,7 +191,7 @@ export function AddSubscriptionDialog({ open, onClose, onAdd }: AddSubscriptionD
           fullWidth
           slotProps={{ inputLabel: { shrink: true } }}
         >
-          {CARD_OPTIONS.map((c) => (
+          {cards.map((c) => (
             <MenuItem key={c.id} value={c.id}>
               {c.name} — {c.issuer} ••{c.lastFour}
             </MenuItem>

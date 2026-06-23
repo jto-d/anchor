@@ -17,6 +17,7 @@ import { RemoveCardDialog } from '@/components/cards/RemoveCardDialog'
 import { BudgetView, YearView } from '@/components/budgeting'
 import { SubscriptionsView } from '@/components/subscriptions'
 import { CARD_CATALOG } from '@/data/cardCatalog'
+import type { SubCard } from '@/data/subscriptionData'
 import type { Card, Perk } from '@/utils/types'
 import {
   MeDocument,
@@ -43,6 +44,14 @@ export function MeView() {
 
   const cards: Card[] = (data?.me.creditCards ?? []) as Card[]
   const selectedCard = cards.find((c) => c.id === selectedCardId) ?? null
+
+  const subCards: SubCard[] = cards.map((c) => ({
+    id: c.id,
+    name: c.name,
+    issuer: c.issuer,
+    short: c.issuer.toLowerCase().includes('american express') ? 'Amex' : c.issuer.split(' ')[0],
+    lastFour: c.lastFour ?? '',
+  }))
 
   const livePerk: Perk | null = dialogPerk
     ? ((cards.flatMap((c) => c.perks).find((p) => p.id === dialogPerk.id) ?? dialogPerk) as Perk)
@@ -148,7 +157,7 @@ export function MeView() {
             />
           </>
         ) : route === 'subscriptions' ? (
-          <SubscriptionsView />
+          <SubscriptionsView cards={subCards} />
         ) : route === 'budgeting' ? (
           <>
             <Topbar

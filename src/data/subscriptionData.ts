@@ -1,4 +1,4 @@
-/** Subscriptions data model — static seed data + pure derivation functions. */
+/** Subscriptions data model — types + pure derivation functions. */
 
 export type SubscriptionPeriod = 'monthly' | 'quarterly' | 'semiannual' | 'annual'
 
@@ -54,48 +54,12 @@ export interface SubCategory {
   icon: string
 }
 
-export const SUB_CARDS: Record<string, SubCard> = {
-  amex_plat: { id: 'amex_plat', name: 'Platinum Card', issuer: 'American Express', short: 'Amex', lastFour: '1009' },
-  csr:       { id: 'csr', name: 'Sapphire Reserve', issuer: 'Chase', short: 'Chase', lastFour: '4477' },
-  bcp:       { id: 'bcp', name: 'Blue Cash Preferred', issuer: 'American Express', short: 'Amex', lastFour: '3382' },
-}
-
 export const SUB_CATEGORIES: SubCategory[] = [
   { key: 'streaming',   label: 'Streaming',         icon: 'film' },
   { key: 'software',    label: 'Software & cloud',   icon: 'code' },
   { key: 'news',        label: 'News & reading',     icon: 'newspaper' },
   { key: 'memberships', label: 'Memberships',        icon: 'package' },
   { key: 'fitness',     label: 'Fitness',            icon: 'dumbbell' },
-]
-
-export const SEED_SUBSCRIPTIONS: Subscription[] = [
-  // Streaming
-  { id: 'netflix',   name: 'Netflix',               cat: 'streaming',   icon: 'tv',       cost: 22.99, period: 'monthly', day: 22, cardId: 'csr',       plan: 'Premium 4K' },
-  { id: 'disney',    name: 'Disney Bundle',          cat: 'streaming',   icon: 'film',     cost: 19.99, period: 'monthly', day: 8,  cardId: 'amex_plat', plan: 'Disney+, Hulu, ESPN+',
-    credit: { cardId: 'amex_plat', name: 'Digital entertainment', covers: 19.99 } },
-  { id: 'max',       name: 'Max',                    cat: 'streaming',   icon: 'film',     cost: 16.99, period: 'monthly', day: 15, cardId: 'bcp',       plan: 'Ultimate Ad-Free', earns: '6% back' },
-  { id: 'spotify',   name: 'Spotify',                cat: 'streaming',   icon: 'music',    cost: 11.99, period: 'monthly', day: 5,  cardId: 'bcp',       plan: 'Premium Individual', earns: '6% back' },
-  { id: 'youtube',   name: 'YouTube Premium',        cat: 'streaming',   icon: 'play',     cost: 13.99, period: 'monthly', day: 28, cardId: 'csr',       plan: 'Individual' },
-  // Software & cloud
-  { id: 'adobe',     name: 'Adobe Creative Cloud',   cat: 'software',    icon: 'code',     cost: 59.99, period: 'monthly', day: 3,  cardId: 'csr',       plan: 'All Apps' },
-  { id: 'chatgpt',   name: 'ChatGPT Plus',            cat: 'software',    icon: 'sparkles', cost: 20.00, period: 'monthly', day: 20, cardId: 'csr',       plan: 'Plus' },
-  { id: 'icloud',    name: 'iCloud+',                 cat: 'software',    icon: 'cloud',    cost: 9.99,  period: 'monthly', day: 1,  cardId: 'amex_plat', plan: '2 TB' },
-  { id: 'notion',    name: 'Notion',                  cat: 'software',    icon: 'code',     cost: 10.00, period: 'monthly', day: 12, cardId: 'csr',       plan: 'Plus' },
-  { id: '1pass',     name: '1Password',               cat: 'software',    icon: 'code',     cost: 35.88, period: 'annual',  day: 9,  renewM: 7, cardId: 'csr', plan: 'Individual' },
-  // News & reading
-  { id: 'nyt',       name: 'The New York Times',      cat: 'news',        icon: 'newspaper',cost: 25.00, period: 'monthly', day: 24, cardId: 'amex_plat', plan: 'All Access',
-    credit: { cardId: 'amex_plat', name: 'Digital entertainment', covers: 20.00 } },
-  { id: 'wsj',       name: 'The Wall Street Journal', cat: 'news',        icon: 'newspaper',cost: 38.99, period: 'monthly', day: 9,  cardId: 'bcp',       plan: 'Digital' },
-  // Memberships
-  { id: 'prime',     name: 'Amazon Prime',            cat: 'memberships', icon: 'package',  cost: 139.00,period: 'annual',  day: 3,  renewM: 6, cardId: 'csr',       plan: 'Annual' },
-  { id: 'walmart',   name: 'Walmart+',                cat: 'memberships', icon: 'package',  cost: 12.95, period: 'monthly', day: 18, cardId: 'amex_plat', plan: 'Monthly',
-    credit: { cardId: 'amex_plat', name: 'Walmart+ credit', covers: 12.95 } },
-  { id: 'uberone',   name: 'Uber One',                cat: 'memberships', icon: 'repeat',   cost: 9.99,  period: 'monthly', day: 12, cardId: 'amex_plat', plan: 'Monthly',
-    credit: { cardId: 'amex_plat', name: 'Uber Cash', covers: 9.99 } },
-  { id: 'costco',    name: 'Costco Gold Star',         cat: 'memberships', icon: 'package',  cost: 65.00, period: 'annual',  day: 1,  renewM: 10, cardId: 'bcp', plan: 'Gold Star' },
-  // Fitness
-  { id: 'peloton',   name: 'Peloton App',              cat: 'fitness',     icon: 'dumbbell', cost: 12.99, period: 'monthly', day: 6,  cardId: 'csr',       plan: 'App One' },
-  { id: 'classpass', name: 'ClassPass',                cat: 'fitness',     icon: 'dumbbell', cost: 49.00, period: 'monthly', day: 15, cardId: 'csr',       plan: '5 credits', paused: true },
 ]
 
 // --- derivation functions ---
@@ -261,9 +225,9 @@ export interface ByCardRow {
   covered: number  // monthly
 }
 
-export function computeByCard(subs: Subscription[]): ByCardRow[] {
+export function computeByCard(subs: Subscription[], cards: SubCard[]): ByCardRow[] {
   const map = new Map<string, ByCardRow>(
-    Object.entries(SUB_CARDS).map(([id, card]) => [id, { card, count: 0, gross: 0, covered: 0 }])
+    cards.map((card) => [card.id, { card, count: 0, gross: 0, covered: 0 }])
   )
 
   for (const s of subs) {

@@ -13,23 +13,26 @@ import { AddSubscriptionDialog } from './AddSubscriptionDialog'
 import { RemoveSubscriptionDialog } from './RemoveSubscriptionDialog'
 import { Topbar } from '@/components/layout/Topbar'
 import {
-  SEED_SUBSCRIPTIONS,
   computeSummary,
   computeRenewals,
   computeByCard,
 } from '@/data/subscriptionData'
-import type { Subscription } from '@/data/subscriptionData'
+import type { Subscription, SubCard } from '@/data/subscriptionData'
 import type { GroupingMode } from './SubLedger'
 
-export function SubscriptionsView() {
-  const [subs, setSubs] = useState<Subscription[]>(SEED_SUBSCRIPTIONS)
+interface SubscriptionsViewProps {
+  cards: SubCard[]
+}
+
+export function SubscriptionsView({ cards }: SubscriptionsViewProps) {
+  const [subs, setSubs] = useState<Subscription[]>([])
   const [addOpen, setAddOpen] = useState(false)
   const [removeConfirmId, setRemoveConfirmId] = useState<string | null>(null)
   const grouping: GroupingMode = 'cadence'
 
   const summary = computeSummary(subs)
   const renewals = computeRenewals(subs)
-  const byCard = computeByCard(subs)
+  const byCard = computeByCard(subs, cards)
 
   const subToRemove = subs.find((s) => s.id === removeConfirmId) ?? null
 
@@ -78,7 +81,7 @@ export function SubscriptionsView() {
           pb: 5.5,
         }}
       >
-        <SubLedger subs={subs} grouping={grouping} handlers={handlers} />
+        <SubLedger subs={subs} grouping={grouping} handlers={handlers} cards={cards} />
         <CardBreakdown byCard={byCard} />
       </Box>
 
@@ -86,6 +89,7 @@ export function SubscriptionsView() {
         open={addOpen}
         onClose={() => setAddOpen(false)}
         onAdd={(sub) => setSubs((prev) => [...prev, sub])}
+        cards={cards}
       />
 
       <RemoveSubscriptionDialog
