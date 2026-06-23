@@ -15,6 +15,7 @@ import { CardsView } from '@/components/cards/CardsView'
 import { AddCardDialog } from '@/components/cards/AddCardDialog'
 import { RemoveCardDialog } from '@/components/cards/RemoveCardDialog'
 import { BudgetView, YearView } from '@/components/budgeting'
+import { SubscriptionsView } from '@/components/subscriptions'
 import { CARD_CATALOG } from '@/data/cardCatalog'
 import type { Card, Perk } from '@/utils/types'
 import {
@@ -24,7 +25,7 @@ import {
   AddCardDocument,
 } from './me-view.queries'
 
-type Route = 'perks' | 'card' | 'cards' | 'budgeting'
+type Route = 'perks' | 'card' | 'cards' | 'budgeting' | 'subscriptions'
 
 export function MeView() {
   const [route, setRoute] = useState<Route>('perks')
@@ -111,11 +112,12 @@ export function MeView() {
   return (
     <Row align="stretch" sx={{ height: '100vh', bgcolor: 'background.default', color: 'text.primary' }}>
       <Sidebar
-        route={route === 'card' ? 'cards' : route}
+        route={route === 'card' ? 'cards' : route === 'subscriptions' ? 'subscriptions' : route}
         userEmail={userEmail}
         onNavigate={(key) => {
           if (key === 'cards') setRoute('cards')
           else if (key === 'budgeting') setRoute('budgeting')
+          else if (key === 'subscriptions') setRoute('subscriptions')
           else setRoute('perks')
           setSelectedCardId(null)
         }}
@@ -145,6 +147,8 @@ export function MeView() {
               }}
             />
           </>
+        ) : route === 'subscriptions' ? (
+          <SubscriptionsView />
         ) : route === 'budgeting' ? (
           <>
             <Topbar

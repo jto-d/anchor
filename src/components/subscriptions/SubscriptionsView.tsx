@@ -1,0 +1,78 @@
+'use client'
+
+import { useState } from 'react'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import AddIcon from '@mui/icons-material/Add'
+import { ComingSoon, Row, Stack } from '@/components/ui'
+import { SubSummaryStrip } from './SubSummaryStrip'
+import { SubRenewalStrip } from './SubRenewalStrip'
+import { SubLedger } from './SubLedger'
+import { CardBreakdown } from './CardBreakdown'
+import { Topbar } from '@/components/layout/Topbar'
+import {
+  SEED_SUBSCRIPTIONS,
+  computeSummary,
+  computeRenewals,
+  computeByCard,
+} from '@/data/subscriptionData'
+import type { Subscription } from '@/data/subscriptionData'
+import type { GroupingMode } from './SubLedger'
+
+export function SubscriptionsView() {
+  const [subs, setSubs] = useState<Subscription[]>(SEED_SUBSCRIPTIONS)
+  const grouping: GroupingMode = 'cadence'
+
+  const summary = computeSummary(subs)
+  const renewals = computeRenewals(subs)
+  const byCard = computeByCard(subs)
+
+  const handlers = {
+    onSetCost: (id: string, cost: number) =>
+      setSubs((prev) => prev.map((s) => s.id === id ? { ...s, cost } : s)),
+    onRename: (id: string, name: string) =>
+      setSubs((prev) => prev.map((s) => s.id === id ? { ...s, name } : s)),
+    onTogglePause: (id: string) =>
+      setSubs((prev) => prev.map((s) => s.id === id ? { ...s, paused: !s.paused } : s)),
+    onRemove: (id: string) =>
+      setSubs((prev) => prev.filter((s) => s.id !== id)),
+  }
+
+  return (
+    <Box sx={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
+      <Topbar
+        title="Subscriptions"
+        subtitle="Every recurring charge — and which card credit quietly covers it."
+        rightSlot={
+          <ComingSoon>
+            <Button variant="contained" startIcon={<AddIcon />} sx={{ height: 38, flex: 'none' }}>
+              Add subscription
+            </Button>
+          </ComingSoon>
+        }
+      />
+
+      <Box sx={{ position: 'sticky', top: 0, zIndex: 20, px: 4, pt: 2.75, pb: 1.75, bgcolor: 'background.default' }}>
+        <SubSummaryStrip totals={summary} />
+      </Box>
+
+      <Stack gap={3} sx={{ px: 4, pb: 2 }}>
+        <SubRenewalStrip items={renewals} />
+      </Stack>
+
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1fr) 320px',
+          gap: 3,
+          alignItems: 'start',
+          px: 4,
+          pb: 5.5,
+        }}
+      >
+        <SubLedger subs={subs} grouping={grouping} handlers={handlers} />
+        <CardBreakdown byCard={byCard} />
+      </Box>
+    </Box>
+  )
+}

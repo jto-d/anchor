@@ -25,6 +25,26 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUpOutlined'
 import BalanceIcon from '@mui/icons-material/BalanceOutlined'
 import CalendarIcon from '@mui/icons-material/CalendarMonthOutlined'
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenterOutlined'
+// Subscription & assistant icons
+import TvIcon from '@mui/icons-material/TvOutlined'
+import MovieIcon from '@mui/icons-material/MovieOutlined'
+import MusicNoteIcon from '@mui/icons-material/MusicNoteOutlined'
+import PlayArrowIcon from '@mui/icons-material/PlayArrowOutlined'
+import CodeIcon from '@mui/icons-material/CodeOutlined'
+import CloudIcon from '@mui/icons-material/CloudOutlined'
+import ArticleIcon from '@mui/icons-material/ArticleOutlined'
+import InventoryIcon from '@mui/icons-material/Inventory2Outlined'
+import RepeatIcon from '@mui/icons-material/RepeatOutlined'
+import CreditCardIcon from '@mui/icons-material/CreditCardOutlined'
+import CheckIcon from '@mui/icons-material/CheckOutlined'
+import CheckCircleIcon from '@mui/icons-material/CheckCircleOutlined'
+import AccessTimeIcon from '@mui/icons-material/AccessTimeOutlined'
+import PauseIcon from '@mui/icons-material/PauseOutlined'
+import AnchorIcon from '@mui/icons-material/Anchor'
+import ArrowUpIcon from '@mui/icons-material/ArrowUpwardOutlined'
+import NorthEastIcon from '@mui/icons-material/NorthEastOutlined'
+import MoreHorizIcon from '@mui/icons-material/MoreHorizOutlined'
+import ClockAlertIcon from '@mui/icons-material/ScheduleOutlined'
 import type { SxProps } from '@mui/material/styles'
 
 const ICON_MAP: Record<string, React.ElementType> = {
@@ -57,6 +77,27 @@ const ICON_MAP: Record<string, React.ElementType> = {
   trendingUp: TrendingUpIcon,
   scale: BalanceIcon,
   calendar: CalendarIcon,
+  // Subscription & assistant
+  tv: TvIcon,
+  film: MovieIcon,
+  music: MusicNoteIcon,
+  play: PlayArrowIcon,
+  code: CodeIcon,
+  cloud: CloudIcon,
+  newspaper: ArticleIcon,
+  package: InventoryIcon,
+  dumbbell: FitnessCenterIcon,
+  repeat: RepeatIcon,
+  creditCard: CreditCardIcon,
+  check: CheckIcon,
+  checkCircle: CheckCircleIcon,
+  clock: AccessTimeIcon,
+  pause: PauseIcon,
+  anchor: AnchorIcon,
+  arrowUp: ArrowUpIcon,
+  arrowUpRight: NorthEastIcon,
+  more: MoreHorizIcon,
+  clockAlert: ClockAlertIcon,
 }
 
 const TONE_STYLES = {
