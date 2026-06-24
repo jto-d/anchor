@@ -13,5 +13,8 @@ import './budget/types'
 import './budget/queries'
 import './budget/mutations'
 import './surplus/mutations'
+import './subscription/type'
+import './subscription/queries'
+import './subscription/mutations'
 
 export const schema = builder.toSchema()

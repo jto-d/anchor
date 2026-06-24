@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import CircularProgress from '@mui/material/CircularProgress'
 import AddIcon from '@mui/icons-material/Add'
+import { useQuery, useMutation } from '@urql/next'
+import { useState } from 'react'
 import { Row, Stack } from '@/components/ui'
 import { SubSummaryStrip } from './SubSummaryStrip'
 import { SubRenewalStrip } from './SubRenewalStrip'
@@ -12,6 +14,12 @@ import { CardBreakdown } from './CardBreakdown'
 import { AddSubscriptionDialog } from './AddSubscriptionDialog'
 import { RemoveSubscriptionDialog } from './RemoveSubscriptionDialog'
 import { Topbar } from '@/components/layout/Topbar'
+import {
+  SubscriptionsDocument,
+  AddSubscriptionDocument,
+  RemoveSubscriptionDocument,
+  UpdateSubscriptionDocument,
+} from './subscriptions.queries'
 import {
   computeSummary,
   computeRenewals,
@@ -24,25 +32,62 @@ interface SubscriptionsViewProps {
   cards: SubCard[]
 }
 
+function toSub(row: {
+  id: string
+  name: string
+  cat: string
+  icon: string
+  cost: string
+  period: string
+  day: number
+  renewM?: number | null
+  cardId: string
+  plan?: string | null
+  paused: boolean
+}): Subscription {
+  return {
+    id: row.id,
+    name: row.name,
+    cat: row.cat,
+    icon: row.icon,
+    cost: Number(row.cost),
+    period: row.period as Subscription['period'],
+    day: row.day,
+    renewM: row.renewM ?? undefined,
+    cardId: row.cardId,
+    plan: row.plan ?? undefined,
+    paused: row.paused,
+  }
+}
+
 export function SubscriptionsView({ cards }: SubscriptionsViewProps) {
-  const [subs, setSubs] = useState<Subscription[]>([])
   const [addOpen, setAddOpen] = useState(false)
   const [removeConfirmId, setRemoveConfirmId] = useState<string | null>(null)
   const grouping: GroupingMode = 'cadence'
+
+  const [{ data, fetching }, reexecuteQuery] = useQuery({ query: SubscriptionsDocument })
+  const [, addSubscription] = useMutation(AddSubscriptionDocument)
+  const [, removeSubscription] = useMutation(RemoveSubscriptionDocument)
+  const [, updateSubscription] = useMutation(UpdateSubscriptionDocument)
+
+  const subs: Subscription[] = (data?.subscriptions ?? []).map(toSub)
+  const subToRemove = subs.find((s) => s.id === removeConfirmId) ?? null
 
   const summary = computeSummary(subs)
   const renewals = computeRenewals(subs)
   const byCard = computeByCard(subs, cards)
 
-  const subToRemove = subs.find((s) => s.id === removeConfirmId) ?? null
-
   const handlers = {
-    onSetCost: (id: string, cost: number) =>
-      setSubs((prev) => prev.map((s) => s.id === id ? { ...s, cost } : s)),
-    onRename: (id: string, name: string) =>
-      setSubs((prev) => prev.map((s) => s.id === id ? { ...s, name } : s)),
-    onTogglePause: (id: string) =>
-      setSubs((prev) => prev.map((s) => s.id === id ? { ...s, paused: !s.paused } : s)),
+    onSetCost: (id: string, cost: number) => {
+      updateSubscription({ id, cost: cost.toString() })
+    },
+    onRename: (id: string, name: string) => {
+      updateSubscription({ id, name })
+    },
+    onTogglePause: (id: string) => {
+      const sub = subs.find((s) => s.id === id)
+      if (sub) updateSubscription({ id, paused: !sub.paused })
+    },
     onRemove: (id: string) => setRemoveConfirmId(id),
   }
 
@@ -63,40 +108,63 @@ export function SubscriptionsView({ cards }: SubscriptionsViewProps) {
         }
       />
 
-      <Box sx={{ position: 'sticky', top: 0, zIndex: 20, px: 4, pt: 2.75, pb: 1.75, bgcolor: 'background.default' }}>
-        <SubSummaryStrip totals={summary} />
-      </Box>
+      {fetching && subs.length === 0 ? (
+        <Row justify="center" sx={{ pt: 6 }}>
+          <CircularProgress size={28} />
+        </Row>
+      ) : (
+        <>
+          <Box sx={{ position: 'sticky', top: 0, zIndex: 20, px: 4, pt: 2.75, pb: 1.75, bgcolor: 'background.default' }}>
+            <SubSummaryStrip totals={summary} />
+          </Box>
 
-      <Stack gap={3} sx={{ px: 4, pb: 2 }}>
-        <SubRenewalStrip items={renewals} />
-      </Stack>
+          <Stack gap={3} sx={{ px: 4, pb: 2 }}>
+            <SubRenewalStrip items={renewals} />
+          </Stack>
 
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1fr) 320px',
-          gap: 3,
-          alignItems: 'start',
-          px: 4,
-          pb: 5.5,
-        }}
-      >
-        <SubLedger subs={subs} grouping={grouping} handlers={handlers} cards={cards} />
-        <CardBreakdown byCard={byCard} />
-      </Box>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: 'minmax(0, 1fr) 320px',
+              gap: 3,
+              alignItems: 'start',
+              px: 4,
+              pb: 5.5,
+            }}
+          >
+            <SubLedger subs={subs} grouping={grouping} handlers={handlers} cards={cards} />
+            <CardBreakdown byCard={byCard} />
+          </Box>
+        </>
+      )}
 
       <AddSubscriptionDialog
         open={addOpen}
         onClose={() => setAddOpen(false)}
-        onAdd={(sub) => setSubs((prev) => [...prev, sub])}
+        onAdd={(sub) => {
+          addSubscription({
+            name: sub.name,
+            cat: sub.cat,
+            icon: sub.icon,
+            cost: sub.cost.toString(),
+            period: sub.period,
+            day: sub.day,
+            renewM: sub.renewM ?? null,
+            cardId: sub.cardId,
+            plan: sub.plan ?? null,
+          })
+        }}
         cards={cards}
       />
 
       <RemoveSubscriptionDialog
         subName={subToRemove?.name ?? null}
         onClose={() => setRemoveConfirmId(null)}
-        onConfirm={() => {
-          if (removeConfirmId) setSubs((prev) => prev.filter((s) => s.id !== removeConfirmId))
+        onConfirm={async () => {
+          if (removeConfirmId) {
+            await removeSubscription({ id: removeConfirmId })
+            reexecuteQuery({ requestPolicy: 'network-only' })
+          }
           setRemoveConfirmId(null)
         }}
       />

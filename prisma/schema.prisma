@@ -38,6 +38,7 @@ model User {
   savingsAccounts    SavingsAccount[]
   savingsGoals       SavingsGoal[]
   surplusAllocations SurplusAllocation[]
+  subscriptions      Subscription[]
 }
 
 model IncomeSource {
@@ -185,4 +186,22 @@ model PerkCredit {
   createdAt    DateTime @default(now())
 
   perk Perk @relation(fields: [perkId], references: [id])
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  cat       String
+  icon      String
+  cost      Decimal  @db.Decimal(10, 2)
+  period    String
+  day       Int
+  renewM    Int?
+  cardId    String
+  plan      String?
+  paused    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }
