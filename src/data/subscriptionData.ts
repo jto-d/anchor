@@ -46,6 +46,7 @@ export interface Subscription {
   credit?: SubCredit
   earns?: string
   paused?: boolean
+  cancelPending?: boolean
 }
 
 export interface SubCategory {

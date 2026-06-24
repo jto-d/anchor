@@ -17,6 +17,8 @@ import PauseOutlinedIcon from '@mui/icons-material/PauseOutlined'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined'
+import NotificationsOffOutlinedIcon from '@mui/icons-material/NotificationsOffOutlined'
+import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined'
 import { brand } from '@/lib/theme'
 import { Row, SurfaceCard, Eyebrow, CatGlyph, ProgressBar } from '@/components/ui'
 import { EditableMoney } from '@/components/ui'
@@ -36,6 +38,7 @@ interface LedgerHandlers {
   onSetCost: (id: string, cost: number) => void
   onRename: (id: string, name: string) => void
   onTogglePause: (id: string) => void
+  onToggleCancelPending: (id: string) => void
   onRemove: (id: string) => void
 }
 
@@ -62,6 +65,23 @@ function SubStatusChip({ status }: { status: CoverStatus }) {
     )
   }
   return null
+}
+
+// --- cancel-pending chip ---
+function CancelPendingChip() {
+  return (
+    <Chip
+      size="small"
+      icon={<NotificationsOffOutlinedIcon />}
+      label="Cancel pending"
+      sx={{
+        height: 22, fontSize: 11.5,
+        bgcolor: brand.red[50], color: brand.red[600],
+        '& .MuiChip-icon': { fontSize: 12, ml: '6px', mr: '-2px', color: brand.red[500] },
+        '& .MuiChip-label': { px: '8px' },
+      }}
+    />
+  )
 }
 
 // --- card pill ---
@@ -105,6 +125,7 @@ function CreditChip({ name, full }: { name: string; full: boolean }) {
 function OverflowMenu({ sub, handlers }: { sub: Subscription; handlers: LedgerHandlers }) {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null)
   const paused = !!sub.paused
+  const cancelPending = !!sub.cancelPending
 
   return (
     <>
@@ -119,7 +140,7 @@ function OverflowMenu({ sub, handlers }: { sub: Subscription; handlers: LedgerHa
         anchorEl={anchor}
         open={Boolean(anchor)}
         onClose={() => setAnchor(null)}
-        slotProps={{ paper: { sx: { minWidth: 168, borderRadius: '12px', boxShadow: brand.shadow.lg, border: '1px solid', borderColor: 'divider', py: 0.75 } } }}
+        slotProps={{ paper: { sx: { minWidth: 188, borderRadius: '12px', boxShadow: brand.shadow.lg, border: '1px solid', borderColor: 'divider', py: 0.75 } } }}
       >
         <MenuItem
           onClick={() => { setAnchor(null); handlers.onTogglePause(sub.id) }}
@@ -130,6 +151,15 @@ function OverflowMenu({ sub, handlers }: { sub: Subscription; handlers: LedgerHa
           </ListItemIcon>
           {paused ? 'Resume' : 'Pause'}
         </MenuItem>
+        <MenuItem
+          onClick={() => { setAnchor(null); handlers.onToggleCancelPending(sub.id) }}
+          sx={{ fontSize: 13.5, fontWeight: 500, gap: 1.25, py: 1, color: cancelPending ? 'text.primary' : brand.red[600], '&:hover': { bgcolor: cancelPending ? 'grey.100' : brand.red[50] } }}
+        >
+          <ListItemIcon sx={{ minWidth: 0, color: cancelPending ? 'grey.500' : brand.red[500] }}>
+            {cancelPending ? <NotificationsActiveOutlinedIcon fontSize="small" /> : <NotificationsOffOutlinedIcon fontSize="small" />}
+          </ListItemIcon>
+          {cancelPending ? 'Unmark cancellation' : 'Mark to cancel'}
+        </MenuItem>
         <Divider sx={{ my: 0.5 }} />
         <MenuItem
           onClick={() => { setAnchor(null); handlers.onRemove(sub.id) }}
@@ -138,7 +168,7 @@ function OverflowMenu({ sub, handlers }: { sub: Subscription; handlers: LedgerHa
           <ListItemIcon sx={{ minWidth: 0, color: brand.red[600] }}>
             <DeleteOutlineIcon fontSize="small" />
           </ListItemIcon>
-          Cancel subscription
+          Delete
         </MenuItem>
       </Menu>
     </>
@@ -173,6 +203,7 @@ function LedgerRow({ sub, last, handlers, cardMap }: { sub: Subscription; last: 
           <Row gap={1} sx={{ mb: 0.625, flexWrap: 'wrap' }}>
             <EditableLabel value={sub.name} onChange={(v) => handlers.onRename(sub.id, v)} weight={600} />
             <SubStatusChip status={status} />
+            {sub.cancelPending && <CancelPendingChip />}
           </Row>
           <Row gap={1} sx={{ flexWrap: 'wrap' }}>
             <CardPill cardId={sub.cardId} cardMap={cardMap} />

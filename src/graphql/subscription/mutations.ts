@@ -49,8 +49,9 @@ builder.mutationFields((t) => ({
       name: t.arg.string(),
       cost: t.arg.string(),
       paused: t.arg.boolean(),
+      cancelPending: t.arg.boolean(),
     },
-    resolve: (query, _root, { id, name, cost, paused }, ctx) =>
+    resolve: (query, _root, { id, name, cost, paused, cancelPending }, ctx) =>
       prisma.subscription.update({
         ...query,
         where: { id, userId: ctx.userId },
@@ -58,6 +59,7 @@ builder.mutationFields((t) => ({
           ...(name != null && { name }),
           ...(cost != null && { cost }),
           ...(paused != null && { paused }),
+          ...(cancelPending != null && { cancelPending }),
         },
       }),
   }),

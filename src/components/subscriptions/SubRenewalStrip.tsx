@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography'
 import AccessTimeIcon from '@mui/icons-material/AccessTimeOutlined'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonthOutlined'
 import CheckIcon from '@mui/icons-material/CheckOutlined'
+import NotificationsOffOutlinedIcon from '@mui/icons-material/NotificationsOffOutlined'
 import { brand } from '@/lib/theme'
 import { Row, SurfaceCard, PanelHeader, CatGlyph } from '@/components/ui'
 import { fmtMoney } from '@/utils/format'
@@ -89,6 +90,13 @@ function RenewalTile({ item }: { item: RenewalItem }) {
           </Row>
         )}
       </Row>
+
+      {sub.cancelPending && (
+        <Row gap={0.5} sx={{ mt: 1.25, fontSize: 11, fontWeight: 600, color: brand.red[600] }}>
+          <NotificationsOffOutlinedIcon sx={{ fontSize: 12, color: brand.red[500] }} />
+          Cancel pending
+        </Row>
+      )}
     </Box>
   )
 }

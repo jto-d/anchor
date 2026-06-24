@@ -44,6 +44,7 @@ function toSub(row: {
   cardId: string
   plan?: string | null
   paused: boolean
+  cancelPending: boolean
 }): Subscription {
   return {
     id: row.id,
@@ -57,6 +58,7 @@ function toSub(row: {
     cardId: row.cardId,
     plan: row.plan ?? undefined,
     paused: row.paused,
+    cancelPending: row.cancelPending,
   }
 }
 
@@ -87,6 +89,10 @@ export function SubscriptionsView({ cards }: SubscriptionsViewProps) {
     onTogglePause: (id: string) => {
       const sub = subs.find((s) => s.id === id)
       if (sub) updateSubscription({ id, paused: !sub.paused })
+    },
+    onToggleCancelPending: (id: string) => {
+      const sub = subs.find((s) => s.id === id)
+      if (sub) updateSubscription({ id, cancelPending: !sub.cancelPending })
     },
     onRemove: (id: string) => setRemoveConfirmId(id),
   }

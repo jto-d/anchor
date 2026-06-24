@@ -13,6 +13,7 @@ builder.prismaObject('Subscription', {
     cardId: t.exposeString('cardId'),
     plan: t.exposeString('plan', { nullable: true }),
     paused: t.exposeBoolean('paused'),
+    cancelPending: t.exposeBoolean('cancelPending'),
     createdAt: t.field({ type: 'String', resolve: (s) => s.createdAt.toISOString() }),
   }),
 })

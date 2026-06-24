@@ -200,7 +200,8 @@ model Subscription {
   renewM    Int?
   cardId    String
   plan      String?
-  paused    Boolean  @default(false)
+  paused        Boolean  @default(false)
+  cancelPending Boolean  @default(false)
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
