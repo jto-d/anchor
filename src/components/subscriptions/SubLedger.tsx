@@ -12,7 +12,6 @@ import Divider from '@mui/material/Divider'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import CreditCardOutlinedIcon from '@mui/icons-material/CreditCardOutlined'
 import PercentOutlinedIcon from '@mui/icons-material/PercentOutlined'
-import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined'
 import PauseOutlinedIcon from '@mui/icons-material/PauseOutlined'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined'
@@ -20,15 +19,15 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined'
 import NotificationsOffOutlinedIcon from '@mui/icons-material/NotificationsOffOutlined'
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined'
 import { brand } from '@/lib/theme'
-import { Row, SurfaceCard, Eyebrow, CatGlyph, ProgressBar } from '@/components/ui'
+import { Row, SurfaceCard, Eyebrow, CatGlyph } from '@/components/ui'
 import { EditableMoney } from '@/components/ui'
 import { EditableLabel } from '@/components/ui'
 import { fmtMoney } from '@/utils/format'
 import {
-  coverStatus, grossNative, coveredNative, netNative, periodSuffix, fmtSubDate, nextCharge,
+  grossNative, periodSuffix, fmtSubDate, nextCharge,
   SUB_CATEGORIES,
 } from '@/data/subscriptionData'
-import type { Subscription, CoverStatus, SubCard } from '@/data/subscriptionData'
+import type { Subscription, SubCard } from '@/data/subscriptionData'
 
 const COL_W = 100
 
@@ -42,29 +41,16 @@ interface LedgerHandlers {
   onRemove: (id: string) => void
 }
 
-// --- status chip ---
-function SubStatusChip({ status }: { status: CoverStatus }) {
-  if (status === 'paused') {
-    return (
-      <Chip
-        size="small"
-        icon={<PauseOutlinedIcon />}
-        label="Paused"
-        sx={{ height: 22, fontSize: 11.5, bgcolor: 'grey.100', color: 'grey.600', '& .MuiChip-icon': { fontSize: 12, ml: '6px', mr: '-2px' }, '& .MuiChip-label': { px: '8px' } }}
-      />
-    )
-  }
-  if (status === 'covered') {
-    return (
-      <Chip
-        size="small"
-        icon={<CheckCircleOutlinedIcon />}
-        label="Covered"
-        sx={{ height: 22, fontSize: 11.5, bgcolor: brand.accentSoft, color: brand.anchor[700], '& .MuiChip-icon': { fontSize: 12, ml: '6px', mr: '-2px', color: brand.anchor[700] }, '& .MuiChip-label': { px: '8px' } }}
-      />
-    )
-  }
-  return null
+// --- paused chip ---
+function PausedChip() {
+  return (
+    <Chip
+      size="small"
+      icon={<PauseOutlinedIcon />}
+      label="Paused"
+      sx={{ height: 22, fontSize: 11.5, bgcolor: 'grey.100', color: 'grey.600', '& .MuiChip-icon': { fontSize: 12, ml: '6px', mr: '-2px' }, '& .MuiChip-label': { px: '8px' } }}
+    />
+  )
 }
 
 // --- cancel-pending chip ---
@@ -101,22 +87,6 @@ function CardPill({ cardId, cardMap }: { cardId: string; cardMap: Map<string, Su
       <Typography component="span" sx={{ fontVariantNumeric: 'tabular-nums', color: 'grey.500', fontSize: 'inherit' }}>
         ••{card.lastFour}
       </Typography>
-    </Box>
-  )
-}
-
-// --- credit chip ---
-function CreditChip({ name, full }: { name: string; full: boolean }) {
-  return (
-    <Box
-      sx={{
-        display: 'inline-flex', alignItems: 'center', gap: 0.625,
-        height: 22, px: 1, borderRadius: 999,
-        bgcolor: brand.accentSoft, color: brand.anchor[700], fontSize: 11.5, fontWeight: 600,
-      }}
-    >
-      <CheckCircleOutlinedIcon sx={{ fontSize: 13 }} />
-      {name}
     </Box>
   )
 }
@@ -177,10 +147,7 @@ function OverflowMenu({ sub, handlers }: { sub: Subscription; handlers: LedgerHa
 
 // --- ledger row ---
 function LedgerRow({ sub, last, handlers, cardMap }: { sub: Subscription; last: boolean; handlers: LedgerHandlers; cardMap: Map<string, SubCard> }) {
-  const status = coverStatus(sub)
   const gross = grossNative(sub)
-  const covered = coveredNative(sub)
-  const net = netNative(sub)
   const unit = periodSuffix(sub)
   const next = nextCharge(sub)
   const paused = !!sub.paused
@@ -198,11 +165,11 @@ function LedgerRow({ sub, last, handlers, cardMap }: { sub: Subscription; last: 
     >
       {/* identity */}
       <Row gap={1.5} sx={{ flex: 1, minWidth: 0 }}>
-        <CatGlyph icon={sub.icon} size={36} tone={status === 'covered' ? 'accent' : 'neutral'} />
+        <CatGlyph icon={sub.icon} size={36} tone="neutral" />
         <Box sx={{ minWidth: 0 }}>
           <Row gap={1} sx={{ mb: 0.625, flexWrap: 'wrap' }}>
             <EditableLabel value={sub.name} onChange={(v) => handlers.onRename(sub.id, v)} weight={600} />
-            <SubStatusChip status={status} />
+            {paused && <PausedChip />}
             {sub.cancelPending && <CancelPendingChip />}
           </Row>
           <Row gap={1} sx={{ flexWrap: 'wrap' }}>
@@ -210,10 +177,7 @@ function LedgerRow({ sub, last, handlers, cardMap }: { sub: Subscription; last: 
             <Typography sx={{ fontSize: 11.5, color: 'grey.400' }}>
               {paused ? sub.plan : `Renews ${fmtSubDate(next)}`}
             </Typography>
-            {sub.credit && (
-              <CreditChip name={sub.credit.name} full={status === 'covered'} />
-            )}
-            {!sub.credit && sub.earns && (
+            {sub.earns && (
               <Row gap={0.5} sx={{ fontSize: 11.5, color: 'grey.400' }}>
                 <PercentOutlinedIcon sx={{ fontSize: 12 }} />
                 {sub.earns}
@@ -224,28 +188,8 @@ function LedgerRow({ sub, last, handlers, cardMap }: { sub: Subscription; last: 
       </Row>
 
       {/* cost — editable */}
-      <Box sx={{ width: COL_W, display: 'flex', justifyContent: 'flex-end', alignItems: 'baseline' }}>
-        <EditableMoney value={gross} onChange={(v) => handlers.onSetCost(sub.id, v)} color={paused ? 'grey.400' : undefined} />
-        <Typography sx={{ fontSize: 11, fontWeight: 500, color: 'grey.400', ml: '1px' }}>{unit}</Typography>
-      </Box>
-
-      {/* covered */}
-      <Box sx={{ width: COL_W, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', pr: 1 }}>
-        {covered > 0
-          ? <Typography sx={{ fontSize: 14, fontWeight: 600, color: brand.anchor[600], fontVariantNumeric: 'tabular-nums' }}>−{fmtMoney(covered)}</Typography>
-          : <Typography sx={{ fontSize: 14, color: 'grey.300' }}>—</Typography>}
-      </Box>
-
-      {/* net */}
       <Box sx={{ width: COL_W, display: 'flex', justifyContent: 'flex-end', alignItems: 'baseline', pr: 1 }}>
-        <Typography
-          sx={{
-            fontSize: 14.5, fontWeight: 600, fontVariantNumeric: 'tabular-nums',
-            color: paused ? 'grey.400' : status === 'covered' ? brand.anchor[700] : 'text.primary',
-          }}
-        >
-          {fmtMoney(net)}
-        </Typography>
+        <EditableMoney value={gross} onChange={(v) => handlers.onSetCost(sub.id, v)} color={paused ? 'grey.400' : undefined} />
         <Typography sx={{ fontSize: 11, fontWeight: 500, color: 'grey.400', ml: '1px' }}>{unit}</Typography>
       </Box>
 
@@ -256,12 +200,10 @@ function LedgerRow({ sub, last, handlers, cardMap }: { sub: Subscription; last: 
 
 // --- group header ---
 function GroupHeader({
-  label, icon, count, gross, covered, net, unit, collapsed, onToggle,
+  label, icon, count, total, unit, collapsed, onToggle,
 }: {
-  label: string; icon: string; count: number; gross: number; covered: number; net: number; unit: string; collapsed: boolean; onToggle: () => void;
+  label: string; icon: string; count: number; total: number; unit: string; collapsed: boolean; onToggle: () => void;
 }) {
-  const ratio = gross > 0 ? covered / gross : 0
-
   return (
     <Box
       onClick={onToggle}
@@ -288,19 +230,9 @@ function GroupHeader({
           {count}
         </Typography>
       </Row>
-      <Row gap={1.5} sx={{ flexShrink: 0 }}>
-        {covered > 0 && (
-          <Typography sx={{ fontSize: 12, fontWeight: 600, color: brand.anchor[600], fontVariantNumeric: 'tabular-nums' }}>
-            −{fmtMoney(covered)}
-          </Typography>
-        )}
-        <Typography sx={{ fontSize: 13.5, fontWeight: 600, fontVariantNumeric: 'tabular-nums', color: 'text.primary' }}>
-          {fmtMoney(net)}<Typography component="span" sx={{ fontSize: 11.5, fontWeight: 500, color: 'grey.400' }}>{unit}</Typography>
-        </Typography>
-        <Box sx={{ width: 52 }}>
-          <ProgressBar value={ratio} thin />
-        </Box>
-      </Row>
+      <Typography sx={{ fontSize: 13.5, fontWeight: 600, fontVariantNumeric: 'tabular-nums', color: 'text.primary', flexShrink: 0 }}>
+        {fmtMoney(total)}<Typography component="span" sx={{ fontSize: 11.5, fontWeight: 500, color: 'grey.400' }}>{unit}</Typography>
+      </Typography>
     </Box>
   )
 }
@@ -316,16 +248,14 @@ function ColHeader() {
       }}
     >
       <Box sx={{ flex: 1 }}><Eyebrow sx={{ fontSize: '10px' }}>Subscription</Eyebrow></Box>
-      <Box sx={{ width: COL_W, textAlign: 'right' }}><Eyebrow sx={{ fontSize: '10px' }}>Cost</Eyebrow></Box>
-      <Box sx={{ width: COL_W, textAlign: 'right' }}><Eyebrow sx={{ fontSize: '10px' }}>Covered</Eyebrow></Box>
-      <Box sx={{ width: COL_W, textAlign: 'right' }}><Eyebrow sx={{ fontSize: '10px' }}>You pay</Eyebrow></Box>
+      <Box sx={{ width: COL_W, textAlign: 'right', pr: 1 }}><Eyebrow sx={{ fontSize: '10px' }}>Cost</Eyebrow></Box>
       <Box sx={{ width: 28 }} />
     </Box>
   )
 }
 
 // --- footer ---
-function LedgerFooter({ gross, covered, net }: { gross: number; covered: number; net: number }) {
+function LedgerFooter({ total }: { total: number }) {
   return (
     <Box
       sx={{
@@ -338,16 +268,8 @@ function LedgerFooter({ gross, covered, net }: { gross: number; covered: number;
       <Typography sx={{ flex: 1, fontSize: 13, fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase', color: 'grey.600' }}>
         Total · per year
       </Typography>
-      <Box sx={{ width: COL_W, textAlign: 'right' }}>
-        <Typography sx={{ fontSize: 15, fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>{fmtMoney(gross)}</Typography>
-      </Box>
       <Box sx={{ width: COL_W, textAlign: 'right', pr: 1 }}>
-        <Typography sx={{ fontSize: 15, fontWeight: 700, fontVariantNumeric: 'tabular-nums', color: brand.anchor[600] }}>
-          −{fmtMoney(covered)}
-        </Typography>
-      </Box>
-      <Box sx={{ width: COL_W, textAlign: 'right', pr: 1 }}>
-        <Typography sx={{ fontSize: 15, fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>{fmtMoney(net)}</Typography>
+        <Typography sx={{ fontSize: 15, fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>{fmtMoney(total)}</Typography>
       </Box>
       <Box sx={{ width: 28 }} />
     </Box>
@@ -355,20 +277,15 @@ function LedgerFooter({ gross, covered, net }: { gross: number; covered: number;
 }
 
 // --- group math ---
-function groupTotals(items: Subscription[], groupKey?: string) {
-  const annualize = true
-  let gross = 0, covered = 0
+function annualTotal(items: Subscription[]): number {
+  let total = 0
   for (const s of items) {
     if (s.paused) continue
-    const g = s.cost * (
+    total += s.cost * (
       s.period === 'monthly' ? 12 : s.period === 'quarterly' ? 4 : s.period === 'semiannual' ? 2 : 1
     )
-    const c = s.credit ? Math.min(g / 12, s.credit.covers) * 12 : 0
-    gross += g
-    covered += c
   }
-  const net = Math.max(0, gross - covered)
-  return { gross, covered, net, unit: '/yr' as const }
+  return total
 }
 
 export function SubLedger({
@@ -386,17 +303,6 @@ export function SubLedger({
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
 
   const toggleGroup = (key: string) => setCollapsed((prev) => ({ ...prev, [key]: !prev[key] }))
-
-  // Annual totals for footer
-  const annualTotals = (() => {
-    const active = subs.filter((s) => !s.paused)
-    let gross = 0, covered = 0
-    for (const s of active) {
-      gross += s.cost * (s.period === 'monthly' ? 12 : s.period === 'quarterly' ? 4 : s.period === 'semiannual' ? 2 : 1)
-      covered += s.credit ? Math.min(s.cost * (s.period === 'monthly' ? 12 : s.period === 'quarterly' ? 4 : s.period === 'semiannual' ? 2 : 1) / 12, s.credit.covers) * 12 : 0
-    }
-    return { gross, covered, net: Math.max(0, gross - covered) }
-  })()
 
   const buildGroups = () => {
     if (grouping === 'cadence') {
@@ -422,13 +328,12 @@ export function SubLedger({
         ))
       ) : (
         buildGroups().map((g) => {
-          const totals = groupTotals(g.items, g.key)
           const isCollapsed = collapsed[g.key] ?? false
           return (
             <Box key={g.key}>
               <GroupHeader
                 label={g.label} icon={g.icon} count={g.items.length}
-                gross={totals.gross} covered={totals.covered} net={totals.net} unit={totals.unit}
+                total={annualTotal(g.items)} unit="/yr"
                 collapsed={isCollapsed} onToggle={() => toggleGroup(g.key)}
               />
               {!isCollapsed && g.items.map((s, i) => (
@@ -438,7 +343,7 @@ export function SubLedger({
           )
         })
       )}
-      <LedgerFooter gross={annualTotals.gross} covered={annualTotals.covered} net={annualTotals.net} />
+      <LedgerFooter total={annualTotal(subs)} />
     </SurfaceCard>
   )
 }

@@ -10,7 +10,6 @@ import { Row, Stack } from '@/components/ui'
 import { SubSummaryStrip } from './SubSummaryStrip'
 import { SubRenewalStrip } from './SubRenewalStrip'
 import { SubLedger } from './SubLedger'
-import { CardBreakdown } from './CardBreakdown'
 import { AddSubscriptionDialog } from './AddSubscriptionDialog'
 import { RemoveSubscriptionDialog } from './RemoveSubscriptionDialog'
 import { Topbar } from '@/components/layout/Topbar'
@@ -23,7 +22,6 @@ import {
 import {
   computeSummary,
   computeRenewals,
-  computeByCard,
 } from '@/data/subscriptionData'
 import type { Subscription, SubCard } from '@/data/subscriptionData'
 import type { GroupingMode } from './SubLedger'
@@ -77,7 +75,6 @@ export function SubscriptionsView({ cards }: SubscriptionsViewProps) {
 
   const summary = computeSummary(subs)
   const renewals = computeRenewals(subs)
-  const byCard = computeByCard(subs, cards)
 
   const handlers = {
     onSetCost: (id: string, cost: number) => {
@@ -101,7 +98,7 @@ export function SubscriptionsView({ cards }: SubscriptionsViewProps) {
     <Box sx={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
       <Topbar
         title="Subscriptions"
-        subtitle="Every recurring charge — and which card credit quietly covers it."
+        subtitle="Every recurring charge — and the card it's billed to."
         rightSlot={
           <Button
             variant="contained"
@@ -128,18 +125,8 @@ export function SubscriptionsView({ cards }: SubscriptionsViewProps) {
             <SubRenewalStrip items={renewals} />
           </Stack>
 
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: 'minmax(0, 1fr) 320px',
-              gap: 3,
-              alignItems: 'start',
-              px: 4,
-              pb: 5.5,
-            }}
-          >
+          <Box sx={{ px: 4, pb: 5.5 }}>
             <SubLedger subs={subs} grouping={grouping} handlers={handlers} cards={cards} />
-            <CardBreakdown byCard={byCard} />
           </Box>
         </>
       )}

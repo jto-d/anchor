@@ -24,13 +24,6 @@ export interface SubCard {
   lastFour: string
 }
 
-export interface SubCredit {
-  cardId: string
-  name: string
-  /** Monthly-equivalent dollar amount this credit covers. */
-  covers: number
-}
-
 export interface Subscription {
   id: string
   name: string
@@ -43,7 +36,6 @@ export interface Subscription {
   renewM?: number
   cardId: string
   plan?: string
-  credit?: SubCredit
   earns?: string
   paused?: boolean
   cancelPending?: boolean
@@ -69,43 +61,9 @@ export function annualCost(s: Subscription): number {
   return s.cost * (PERIOD_MULT[s.period] ?? 12)
 }
 
-export function monthlyEquiv(s: Subscription): number {
-  return annualCost(s) / 12
-}
-
-export function coverMonthly(s: Subscription): number {
-  if (!s.credit) return 0
-  return Math.min(monthlyEquiv(s), s.credit.covers)
-}
-
-export function netMonthlyForSub(s: Subscription): number {
-  return Math.max(0, monthlyEquiv(s) - coverMonthly(s))
-}
-
-export type CoverStatus = 'paused' | 'covered' | 'partly' | 'none'
-
-export function coverStatus(s: Subscription): CoverStatus {
-  if (s.paused) return 'paused'
-  const cov = coverMonthly(s)
-  if (cov <= 0) return 'none'
-  return netMonthlyForSub(s) <= 0.001 ? 'covered' : 'partly'
-}
-
-function periodNativeMult(s: Subscription): number {
-  return s.period === 'annual' ? 12 : s.period === 'semiannual' ? 6 : s.period === 'quarterly' ? 3 : 1
-}
-
+/** Native per-period cost (what actually lands on the card each charge). */
 export function grossNative(s: Subscription): number {
   return s.cost
-}
-
-export function coveredNative(s: Subscription): number {
-  if (!s.credit) return 0
-  return Math.min(s.cost, s.credit.covers * periodNativeMult(s))
-}
-
-export function netNative(s: Subscription): number {
-  return Math.max(0, grossNative(s) - coveredNative(s))
 }
 
 export function periodSuffix(s: Subscription): string {
@@ -176,35 +134,26 @@ export function fmtSubDate(d: DateObj): string {
 
 export interface SubSummaryTotals {
   grossAnnual: number
-  coveredAnnual: number
-  netAnnual: number
-  netMonthly: number
+  monthly: number
   count: number
-  coveredCount: number
 }
 
 export function computeSummary(subs: Subscription[]): SubSummaryTotals {
   const active = subs.filter((s) => !s.paused)
-  let grossAnnual = 0, coveredAnnual = 0, coveredCount = 0
+  let grossAnnual = 0
 
   for (const s of active) {
     grossAnnual += annualCost(s)
-    const cov = coverMonthly(s) * 12
-    coveredAnnual += cov
-    if (cov > 0) coveredCount++
   }
 
-  const netAnnual = Math.max(0, grossAnnual - coveredAnnual)
-  return { grossAnnual, coveredAnnual, netAnnual, netMonthly: netAnnual / 12, count: active.length, coveredCount }
+  return { grossAnnual, monthly: grossAnnual / 12, count: active.length }
 }
 
 export interface RenewalItem {
   sub: Subscription
   date: DateObj
   days: number
-  net: number
-  covered: number
-  status: CoverStatus
+  amount: number
 }
 
 export function computeRenewals(subs: Subscription[], windowDays = 30): RenewalItem[] {
@@ -213,32 +162,8 @@ export function computeRenewals(subs: Subscription[], windowDays = 30): RenewalI
     .map((s) => {
       const date = nextCharge(s)
       const days = daysUntil(date)
-      return { sub: s, date, days, net: netNative(s), covered: coveredNative(s), status: coverStatus(s) }
+      return { sub: s, date, days, amount: grossNative(s) }
     })
     .filter((r) => r.days >= 0 && r.days <= windowDays)
     .sort((a, b) => a.days - b.days)
-}
-
-export interface ByCardRow {
-  card: SubCard
-  count: number
-  gross: number    // monthly
-  covered: number  // monthly
-}
-
-export function computeByCard(subs: Subscription[], cards: SubCard[]): ByCardRow[] {
-  const map = new Map<string, ByCardRow>(
-    cards.map((card) => [card.id, { card, count: 0, gross: 0, covered: 0 }])
-  )
-
-  for (const s of subs) {
-    if (s.paused) continue
-    const row = map.get(s.cardId)
-    if (!row) continue
-    row.count++
-    row.gross += monthlyEquiv(s)
-    row.covered += coverMonthly(s)
-  }
-
-  return [...map.values()].filter((r) => r.count > 0)
 }

@@ -4,7 +4,6 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import AccessTimeIcon from '@mui/icons-material/AccessTimeOutlined'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonthOutlined'
-import CheckIcon from '@mui/icons-material/CheckOutlined'
 import NotificationsOffOutlinedIcon from '@mui/icons-material/NotificationsOffOutlined'
 import { brand } from '@/lib/theme'
 import { Row, SurfaceCard, PanelHeader, CatGlyph } from '@/components/ui'
@@ -20,9 +19,8 @@ function dayBadge(days: number): { label: string; soon: boolean } {
 }
 
 function RenewalTile({ item }: { item: RenewalItem }) {
-  const { sub, date, days, net, covered, status } = item
+  const { sub, date, days, amount } = item
   const badge = dayBadge(days)
-  const fullyCovered = status === 'covered'
   const isSoon = badge.soon
 
   return (
@@ -59,7 +57,7 @@ function RenewalTile({ item }: { item: RenewalItem }) {
       </Row>
 
       <Row gap={1.125} sx={{ mb: 1.375 }}>
-        <CatGlyph icon={sub.icon} size={28} tone={fullyCovered ? 'accent' : 'neutral'} />
+        <CatGlyph icon={sub.icon} size={28} tone="neutral" />
         <Box sx={{ minWidth: 0 }}>
           <Typography
             noWrap
@@ -78,17 +76,11 @@ function RenewalTile({ item }: { item: RenewalItem }) {
             fontWeight: 600,
             letterSpacing: '-0.01em',
             fontVariantNumeric: 'tabular-nums',
-            color: fullyCovered ? brand.anchor[700] : 'text.primary',
+            color: 'text.primary',
           }}
         >
-          {fmtMoney(net)}
+          {fmtMoney(amount)}
         </Typography>
-        {covered > 0 && (
-          <Row gap={0.375} sx={{ fontSize: 11, fontWeight: 600, color: brand.anchor[600] }}>
-            <CheckIcon sx={{ fontSize: 12 }} />
-            {fullyCovered ? 'Covered' : `−${fmtMoney(covered)}`}
-          </Row>
-        )}
       </Row>
 
       {sub.cancelPending && (
@@ -102,7 +94,7 @@ function RenewalTile({ item }: { item: RenewalItem }) {
 }
 
 export function SubRenewalStrip({ items }: { items: RenewalItem[] }) {
-  const total = items.reduce((s, it) => s + it.net, 0)
+  const total = items.reduce((s, it) => s + it.amount, 0)
 
   return (
     <SurfaceCard sx={{ overflow: 'hidden' }}>
@@ -118,7 +110,7 @@ export function SubRenewalStrip({ items }: { items: RenewalItem[] }) {
                 {fmtMoney(total)}
               </Typography>
               <Typography sx={{ fontSize: 11.5, color: 'grey.500' }}>
-                {items.length} charge{items.length === 1 ? '' : 's'} · you pay
+                {items.length} charge{items.length === 1 ? '' : 's'} due
               </Typography>
             </Box>
           ) : undefined
