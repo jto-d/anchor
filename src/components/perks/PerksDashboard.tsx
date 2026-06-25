@@ -1,6 +1,8 @@
 'use client'
 
+import { useState } from 'react'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import { Eyebrow, ProgressBar, Row } from '@/components/ui'
@@ -14,6 +16,8 @@ import { capturedYTD, perkStatus } from '@/utils/perk'
 import { fmtDollars } from '@/utils/format'
 import type { Card, Perk } from '@/utils/types'
 
+const AT_RISK_INITIAL = 10
+
 interface PerksDashboardProps {
   cards: Card[]
   onOpenCard: (card: Card) => void
@@ -21,6 +25,7 @@ interface PerksDashboardProps {
 }
 
 export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps) {
+  const [atRiskExpanded, setAtRiskExpanded] = useState(false)
   const captured = cards.reduce((s, c) => c.perks.reduce((ps, p) => ps + capturedYTD(p), s), 0)
   const onTheTable = cards.reduce((s, c) => s + cardOnTheTable(c), 0)
   const pct = (captured + onTheTable) ? captured / (captured + onTheTable) : 0
@@ -36,6 +41,9 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
       else if (st.key === 'captured') used.push({ card: c, perk: p })
     })
   )
+
+  const atRiskOverflow = atRisk.length > AT_RISK_INITIAL
+  const visibleAtRisk = atRiskExpanded ? atRisk : atRisk.slice(0, AT_RISK_INITIAL)
 
   return (
     <Box sx={{ p: '26px 30px' }}>
@@ -85,7 +93,31 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
             All caught up. Nothing on the table.
           </Typography>
         ) : (
-          atRisk.slice(0, 6).map(({ card, perk }) => <PerkRow key={perk.id} perk={perk} card={card} cardOpenedDate={card.openedDate} onLog={onLog} />)
+          <>
+            {visibleAtRisk.map(({ card, perk }) => (
+              <PerkRow key={perk.id} perk={perk} card={card} cardOpenedDate={card.openedDate} onLog={onLog} />
+            ))}
+            {atRiskOverflow && (
+              <Row sx={{ py: 1, px: '4px' }}>
+                <Button
+                  size="small"
+                  onClick={() => setAtRiskExpanded((v) => !v)}
+                  sx={{
+                    textTransform: 'none',
+                    fontSize: 12,
+                    fontWeight: 500,
+                    color: 'text.disabled',
+                    px: 1,
+                    py: 0.5,
+                    borderRadius: '7px',
+                    '&:hover': { color: 'text.secondary', bgcolor: 'grey.100' },
+                  }}
+                >
+                  {atRiskExpanded ? 'Show less' : `Show ${atRisk.length - AT_RISK_INITIAL} more`}
+                </Button>
+              </Row>
+            )}
+          </>
         )}
       </Paper>
 
