@@ -584,7 +584,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
     network: 'Visa Signature',
     annualFee: 350,
     rewards: [
-      { cat: 'travel', rate: 4 },
+      { cat: 'travel', rate: 2 },
       { cat: 'transit', rate: 2 },
       { cat: 'hotels', rate: 2 },
       { cat: 'dining', rate: 2 },
