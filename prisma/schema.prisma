@@ -185,7 +185,7 @@ model PerkCredit {
   description  String?
   createdAt    DateTime @default(now())
 
-  perk Perk @relation(fields: [perkId], references: [id])
+  perk Perk @relation(fields: [perkId], references: [id], onDelete: Cascade)
 }
 
 model Subscription {

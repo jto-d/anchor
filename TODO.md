@@ -17,6 +17,7 @@ Responsiveness handling (likely just: go to computer view)
 ### MISC
 Card page should have link to card listing?
 Screens for no data
+Is storing Perk necessary for each individual card?
 
 ### Features?
 Onboarding flow (?)
@@ -32,7 +33,6 @@ Subscriptions
  - Ability to split
 
 Plaid integration
-Reminder to cancel a card on a specific date
 Bilt Calculator (could just be a link)
 
 Partner could also have cards?
