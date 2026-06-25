@@ -11,7 +11,9 @@ builder.mutationFields((t) => ({
     },
     resolve: async (_root, { cardId }, ctx) => {
       await prisma.$transaction([
-        prisma.perkCredit.deleteMany({ where: { perk: { creditCardId: cardId } } }),
+        prisma.perkCredit.deleteMany({
+          where: { perk: { creditCard: { id: cardId, userId: ctx.userId } } },
+        }),
         prisma.creditCard.delete({ where: { id: cardId, userId: ctx.userId } }),
       ])
       return true
