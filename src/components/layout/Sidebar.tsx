@@ -32,10 +32,10 @@ const NAV_ITEMS: { key: string; label: string; Icon: SvgIconComponent }[] = [
   { key: 'cards', label: 'Cards', Icon: CreditCardIcon },
   { key: 'budgeting', label: 'Budgeting', Icon: PieChartOutlineIcon },
   { key: 'subscriptions', label: 'Subscriptions', Icon: RepeatIcon },
+  { key: 'accounts', label: 'Accounts', Icon: AccountBalanceOutlinedIcon },
 ]
 
 const COMING_SOON_ITEMS: { key: string; label: string; Icon: SvgIconComponent }[] = [
-  { key: 'accounts', label: 'Accounts', Icon: AccountBalanceOutlinedIcon },
   { key: 'split', label: 'Split', Icon: CallSplitIcon },
   { key: 'chatbot', label: 'Chatbot', Icon: ChatBubbleOutlineIcon },
 ]
