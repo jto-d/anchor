@@ -11,6 +11,24 @@ datasource db {
   provider = "postgresql"
 }
 
+enum AccountType {
+  CHECKING
+  SAVINGS
+  SAVINGS_HISA
+  CD
+  BROKERAGE
+  TRADITIONAL_401K
+  ROTH_401K
+  ROTH_IRA
+  HSA
+  CRYPTO
+}
+
+enum AccountSource {
+  PLAID
+  MANUAL
+}
+
 enum PerkPeriod {
   MONTHLY
   QUARTERLY
@@ -39,6 +57,8 @@ model User {
   savingsGoals       SavingsGoal[]
   surplusAllocations SurplusAllocation[]
   subscriptions      Subscription[]
+  plaidItems         PlaidItem[]
+  accounts           Account[]
 }
 
 model IncomeSource {
@@ -205,4 +225,35 @@ model Subscription {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
+}
+
+model PlaidItem {
+  id              String   @id @default(cuid())
+  userId          String
+  accessToken     String
+  itemId          String   @unique
+  institutionId   String?
+  institutionName String
+  createdAt       DateTime @default(now())
+
+  user     User      @relation(fields: [userId], references: [id])
+  accounts Account[]
+}
+
+model Account {
+  id               String        @id @default(cuid())
+  userId           String
+  plaidItemId      String?
+  plaidAccountId   String?
+  source           AccountSource
+  type             AccountType
+  nick             String
+  inst             String
+  balance          Decimal       @db.Decimal(12, 2)
+  isEmergencyFund  Boolean       @default(false)
+  balanceUpdatedAt DateTime      @default(now())
+  createdAt        DateTime      @default(now())
+
+  user      User       @relation(fields: [userId], references: [id])
+  plaidItem PlaidItem? @relation(fields: [plaidItemId], references: [id], onDelete: SetNull)
 }
