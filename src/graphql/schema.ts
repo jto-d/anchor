@@ -16,5 +16,7 @@ import './surplus/mutations'
 import './subscription/type'
 import './subscription/queries'
 import './subscription/mutations'
+import './account/type'
+import './account/mutations'
 
 export const schema = builder.toSchema()

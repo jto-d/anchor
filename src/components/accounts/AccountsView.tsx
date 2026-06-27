@@ -3,35 +3,62 @@
 import { useState, useMemo, useCallback, useRef } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import CircularProgress from '@mui/material/CircularProgress'
 import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
 import AddIcon from '@mui/icons-material/Add'
 import VisibilityIcon from '@mui/icons-material/VisibilityOutlined'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOffOutlined'
 import LandmarkIcon from '@mui/icons-material/AccountBalanceOutlined'
 import LinkIcon from '@mui/icons-material/LinkOutlined'
 import EditIcon from '@mui/icons-material/EditOutlined'
+import { useQuery, useMutation } from '@urql/next'
 import { Topbar } from '@/components/layout/Topbar'
-import { SurfaceCard, Toast } from '@/components/ui'
+import { SurfaceCard, Toast, Row, Segmented } from '@/components/ui'
 import { AreaChart } from './AccountPrimitives'
 import { NetWorthSummary } from './NetWorthSummary'
-import { TrendChart } from './TrendChart'
 import { AccountsPanel, type AccountGroup } from './AccountsList'
 import { AddAccountDialog } from './AddAccountDialog'
 import {
+  ListAccountsDocument,
+  RemoveAccountDocument,
+} from './accounts.queries'
+import {
   type Account, type Holding, type AccountType,
-  ACCOUNT_TYPES, SEED_ACCOUNTS, SEED_HOLDINGS,
+  ACCOUNT_TYPES, SEED_HOLDINGS,
   SERIES, MONTHS, TODAY, RANGE_COUNTS,
-  makeSeries, netWorthSeries, fmtMoney,
+  makeSeries, netWorthSeries,
 } from '@/data/accountData'
 import { brand } from '@/lib/theme'
-import { Segmented } from '@/components/ui'
 
-let _uid = 1
-function uid(prefix: string) { return `${prefix}_${Date.now().toString(36)}${_uid++}` }
+// Map server account shape → local Account interface
+function toLocalAccount(a: {
+  id: string; nick: string; inst: string; type: string; source: string
+  balance: string; isEmergencyFund: boolean; balanceUpdatedAt: string; createdAt: string
+}): Account {
+  const balance = parseFloat(a.balance)
+  if (!SERIES[a.id]) {
+    const type = a.type as AccountType
+    const isInv = ACCOUNT_TYPES[type]?.group === 'inv'
+    SERIES[a.id] = makeSeries(a.id, balance, isInv ? 0.013 : 0.003, isInv ? 0.03 : 0.01)
+  }
+  return {
+    id: a.id,
+    nick: a.nick,
+    inst: a.inst,
+    type: a.type as AccountType,
+    source: a.source as 'PLAID' | 'MANUAL',
+    balance,
+    isEmergencyFund: a.isEmergencyFund,
+    refreshed: new Date(a.balanceUpdatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    drift: 0,
+    vol: 0,
+  }
+}
 
 function buildGroups(accounts: Account[]): AccountGroup[] {
-  const cash = accounts.filter((a) => ACCOUNT_TYPES[a.type].group === 'cash')
-  const inv = accounts.filter((a) => ACCOUNT_TYPES[a.type].group === 'inv')
+  const cash = accounts.filter((a) => ACCOUNT_TYPES[a.type]?.group === 'cash')
+  const inv = accounts.filter((a) => ACCOUNT_TYPES[a.type]?.group === 'inv')
   const sum = (arr: Account[]) => arr.reduce((s, a) => s + (a.balance ?? 0), 0)
   return [
     { key: 'cash', label: 'Cash', glyph: 'wallet', accounts: cash, total: sum(cash) },
@@ -40,10 +67,11 @@ function buildGroups(accounts: Account[]): AccountGroup[] {
 }
 
 export function AccountsView() {
-  const [accounts, setAccounts] = useState<Account[]>(() => SEED_ACCOUNTS.map((a) => ({ ...a })))
-  const [holdings] = useState<Record<string, Holding[]>>(() => ({ ...SEED_HOLDINGS }))
+  const [{ data, fetching, error }, reexecuteQuery] = useQuery({ query: ListAccountsDocument })
+  const [, removeAccount] = useMutation(RemoveAccountDocument)
+
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({ a_brk: true })
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({})
   const [range, setRange] = useState('1Y')
   const [privacy, setPrivacy] = useState(false)
   const [addOpen, setAddOpen] = useState(false)
@@ -57,13 +85,20 @@ export function AccountsView() {
     toastTimer.current = setTimeout(() => setToast(null), 2600)
   }, [])
 
+  const accounts: Account[] = useMemo(
+    () => (data?.listAccounts ?? []).map(toLocalAccount),
+    [data],
+  )
+
+  const holdings: Record<string, Holding[]> = SEED_HOLDINGS
+
   const model = useMemo(() => {
     const groups = buildGroups(accounts)
     const cashTotal = groups[0].total
     const invTotal = groups[1].total
     const netWorth = cashTotal + invTotal
     const series = netWorthSeries(accounts)
-    const delta = series[series.length - 1] - series[series.length - 2]
+    const delta = series.length >= 2 ? series[series.length - 1] - series[series.length - 2] : 0
     return { groups, cashTotal, invTotal, netWorth, series, delta }
   }, [accounts])
 
@@ -71,81 +106,83 @@ export function AccountsView() {
   const onToggleExpand = useCallback((id: string) => setExpanded((p) => ({ ...p, [id]: !p[id] })), [])
 
   const nudge = (a: Account): number => {
-    const isInv = ACCOUNT_TYPES[a.type].group === 'inv'
+    const isInv = ACCOUNT_TYPES[a.type]?.group === 'inv'
     const pctMove = (Math.random() - 0.45) * (isInv ? 0.012 : 0.003)
     const nb = Math.max(0, Math.round(a.balance * (1 + pctMove)))
     if (SERIES[a.id]) SERIES[a.id] = [...(SERIES[a.id]?.slice(0, 11) ?? []), nb]
     return nb
   }
 
+  // Refresh is still local (real Plaid balance refresh is a future feature)
+  const [localBalances, setLocalBalances] = useState<Record<string, number>>({})
+
   const onRefresh = useCallback((id: string) => {
-    setAccounts((prev) => prev.map((a) => {
-      if (a.id !== id || a.source !== 'PLAID') return a
-      return { ...a, balance: nudge(a), refreshed: 'Just now' }
-    }))
     const a = accounts.find((x) => x.id === id)
-    flash(`${a?.inst ?? 'Account'} refreshed.`)
+    if (!a || a.source !== 'PLAID') return
+    setLocalBalances((prev) => ({ ...prev, [id]: nudge(a) }))
+    flash(`${a.inst} refreshed.`)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts, flash])
 
   const onRefreshGroup = useCallback((key: string) => {
-    setAccounts((prev) => prev.map((a) => {
-      if (ACCOUNT_TYPES[a.type].group !== key || a.source !== 'PLAID') return a
-      return { ...a, balance: nudge(a), refreshed: 'Just now' }
-    }))
+    const group = accounts.filter((a) => ACCOUNT_TYPES[a.type]?.group === key && a.source === 'PLAID')
+    setLocalBalances((prev) => {
+      const next = { ...prev }
+      group.forEach((a) => { next[a.id] = nudge(a) })
+      return next
+    })
     flash(`${key === 'cash' ? 'Cash' : 'Investment'} accounts refreshed.`)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flash])
+  }, [accounts, flash])
 
-  const onManage = useCallback((id: string, action: string) => {
+  const onManage = useCallback(async (id: string, action: string) => {
     if (action === 'unlink' || action === 'remove') {
-      setAccounts((prev) => prev.filter((a) => a.id !== id))
+      const a = accounts.find((x) => x.id === id)
+      await removeAccount({ id })
       setExpanded((p) => { const n = { ...p }; delete n[id]; return n })
+      reexecuteQuery({ requestPolicy: 'network-only' })
       flash(action === 'unlink' ? 'Account unlinked.' : 'Account removed.')
     } else {
       flash('Editing is coming soon.')
     }
-  }, [flash])
+  }, [accounts, removeAccount, reexecuteQuery, flash])
 
-  const onAddManual = useCallback((payload: Partial<Account>) => {
-    const id = uid('a')
-    const acc: Account = {
-      id,
-      source: 'MANUAL',
-      refreshed: 'Just now',
-      drift: 0.004,
-      vol: 0.01,
-      type: 'CHECKING',
-      inst: '',
-      nick: '',
-      balance: 0,
-      ...payload,
-    }
-    SERIES[id] = makeSeries(id, acc.balance, acc.drift, acc.vol)
-    setAccounts((prev) => [...prev, acc])
-    flash(`${acc.nick} added.`)
-  }, [flash])
+  // Merge local balance overrides (from nudge) onto server accounts
+  const displayAccounts = useMemo(
+    () => accounts.map((a) => localBalances[a.id] !== undefined ? { ...a, balance: localBalances[a.id] } : a),
+    [accounts, localBalances],
+  )
 
-  const onLinkPlaid = useCallback((
-    inst: { name: string },
-    picked: { id: string; type: AccountType; nick: string; balance: number }[],
-  ) => {
-    const added: Account[] = picked.map((d) => {
-      const id = uid('a')
-      const drift = ACCOUNT_TYPES[d.type].group === 'inv' ? 0.013 : 0.003
-      const vol = ACCOUNT_TYPES[d.type].group === 'inv' ? 0.03 : 0.02
-      SERIES[id] = makeSeries(id, d.balance, drift, vol)
-      return { id, type: d.type, source: 'PLAID', inst: inst.name, nick: d.nick, balance: d.balance, refreshed: 'Just now', drift, vol }
-    })
-    setAccounts((prev) => [...prev, ...added])
-    flash(`Linked ${added.length} account${added.length === 1 ? '' : 's'} from ${inst.name}.`)
-  }, [flash])
+  const displayModel = useMemo(() => {
+    const groups = buildGroups(displayAccounts)
+    const cashTotal = groups[0].total
+    const invTotal = groups[1].total
+    const netWorth = cashTotal + invTotal
+    const series = netWorthSeries(displayAccounts)
+    const delta = series.length >= 2 ? series[series.length - 1] - series[series.length - 2] : 0
+    return { groups, cashTotal, invTotal, netWorth, series, delta }
+  }, [displayAccounts])
 
-  // range-sliced series for hero chart
-  const n = Math.min(model.series.length, RANGE_COUNTS[range] ?? 12)
-  const heroSeries = model.series.slice(model.series.length - n)
+  const n = Math.min(displayModel.series.length, RANGE_COUNTS[range] ?? 12)
+  const heroSeries = displayModel.series.slice(displayModel.series.length - n)
 
-  const isEmpty = accounts.length === 0
+  const isEmpty = !fetching && accounts.length === 0
+
+  if (fetching) {
+    return (
+      <Box sx={{ flex: 1, display: 'grid', placeItems: 'center' }}>
+        <CircularProgress />
+      </Box>
+    )
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ flex: 1, display: 'grid', placeItems: 'center', p: 3 }}>
+        <Typography color="error">{error.message}</Typography>
+      </Box>
+    )
+  }
 
   if (isEmpty) {
     return (
@@ -168,13 +205,17 @@ export function AccountsView() {
             <Box component="p" sx={{ m: '8px 0 22px', fontSize: 14, color: 'text.secondary', lineHeight: 1.5 }}>
               See your full net worth in one place. Link a bank or brokerage with Plaid, or add a balance manually.
             </Box>
-            <Box sx={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+            <Row justify="center" gap={1.25}>
               <Button variant="contained" startIcon={<LinkIcon />} onClick={() => setAddOpen(true)}>Link with Plaid</Button>
               <Button variant="outlined" startIcon={<EditIcon />} onClick={() => setAddOpen(true)}>Add manually</Button>
-            </Box>
+            </Row>
           </Box>
         </Box>
-        <AddAccountDialog open={addOpen} onClose={() => setAddOpen(false)} onAddManual={onAddManual} onLinkPlaid={onLinkPlaid} />
+        <AddAccountDialog
+          open={addOpen}
+          onClose={() => setAddOpen(false)}
+          onSuccess={() => { reexecuteQuery({ requestPolicy: 'network-only' }); flash('Account added.') }}
+        />
         <Toast message={toast} onClose={() => setToast(null)} />
       </Box>
     )
@@ -204,19 +245,17 @@ export function AccountsView() {
       <Box sx={{ px: '32px', pb: '48px', pt: '24px', display: 'flex', flexDirection: 'column', gap: '22px', minWidth: 980 }}>
         {/* Hero: net worth + trend chart side by side */}
         <SurfaceCard sx={{ display: 'grid', gridTemplateColumns: '380px minmax(0,1fr)', overflow: 'hidden' }}>
-          {/* Net worth summary */}
           <Box sx={{ p: '24px 26px', borderRight: '1px solid', borderColor: 'divider', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <NetWorthSummary
-              netWorth={model.netWorth}
-              cashTotal={model.cashTotal}
-              invTotal={model.invTotal}
-              delta={model.delta}
-              count={accounts.length}
+              netWorth={displayModel.netWorth}
+              cashTotal={displayModel.cashTotal}
+              invTotal={displayModel.invTotal}
+              delta={displayModel.delta}
+              count={displayAccounts.length}
               privacy={privacy}
             />
           </Box>
 
-          {/* Trend chart panel */}
           <Box sx={{ p: '14px 18px 10px', display: 'flex', flexDirection: 'column' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: '4px' }}>
               <Box sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary' }}>Trend</Box>
@@ -241,7 +280,7 @@ export function AccountsView() {
 
         {/* Accounts list */}
         <AccountsPanel
-          groups={model.groups}
+          groups={displayModel.groups}
           holdings={holdings}
           expanded={expanded}
           collapsed={collapsed}
@@ -252,7 +291,11 @@ export function AccountsView() {
         />
       </Box>
 
-      <AddAccountDialog open={addOpen} onClose={() => setAddOpen(false)} onAddManual={onAddManual} onLinkPlaid={onLinkPlaid} />
+      <AddAccountDialog
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        onSuccess={() => { reexecuteQuery({ requestPolicy: 'network-only' }); flash('Account added.') }}
+      />
       <Toast message={toast} onClose={() => setToast(null)} />
     </Box>
   )

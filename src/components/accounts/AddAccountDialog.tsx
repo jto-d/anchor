@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import CircularProgress from '@mui/material/CircularProgress'
 import Dialog from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
 import Divider from '@mui/material/Divider'
@@ -18,17 +19,18 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import AddIcon from '@mui/icons-material/Add'
 import LinkIcon from '@mui/icons-material/LinkOutlined'
-import EditIcon from '@mui/icons-material/EditOutlined'
-import SearchIcon from '@mui/icons-material/SearchOutlined'
-import LockIcon from '@mui/icons-material/LockOutlined'
-import ShieldIcon from '@mui/icons-material/ShieldOutlined'
-import CheckIcon from '@mui/icons-material/Check'
+import { usePlaidLink } from 'react-plaid-link'
+import { useMutation } from '@urql/next'
 import { CatGlyph } from '@/components/ui'
-import { fmtMoney } from '@/data/accountData'
 import {
-  ACCOUNT_TYPES, CASH_TYPE_KEYS, INV_TYPE_KEYS, PLAID_INSTITUTIONS,
-  type Account, type AccountType,
+  ACCOUNT_TYPES, CASH_TYPE_KEYS, INV_TYPE_KEYS,
+  type AccountType,
 } from '@/data/accountData'
+import {
+  CreatePlaidLinkTokenDocument,
+  ExchangePlaidTokenDocument,
+  AddManualAccountDocument,
+} from './accounts.queries'
 import { brand } from '@/lib/theme'
 
 // ─── Modal shell ─────────────────────────────────────────────────────────────
@@ -96,132 +98,77 @@ function PathChoice({
 interface PlaidFlowProps {
   onClose: () => void
   onBack: () => void
-  onLink: (inst: { name: string }, accounts: { id: string; type: AccountType; nick: string; balance: number }[]) => void
+  onSuccess: () => void
 }
 
-function PlaidFlow({ onClose, onBack, onLink }: PlaidFlowProps) {
-  const [stage, setStage] = useState<'search' | 'connecting' | 'select'>('search')
-  const [inst, setInst] = useState<{ name: string; glyph: string; color: string } | null>(null)
-  const [q, setQ] = useState('')
-  const [picked, setPicked] = useState<Record<string, boolean>>({})
+function PlaidFlow({ onClose, onBack, onSuccess }: PlaidFlowProps) {
+  const [linkToken, setLinkToken] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  const [, createLinkToken] = useMutation(CreatePlaidLinkTokenDocument)
+  const [, exchangeToken] = useMutation(ExchangePlaidTokenDocument)
 
   useEffect(() => {
-    if (stage === 'connecting') {
-      const t = setTimeout(() => setStage('select'), 1500)
-      return () => clearTimeout(t)
-    }
-  }, [stage])
+    createLinkToken({}).then((res) => {
+      if (res.error) {
+        setError(res.error.message.replace(/^\[.*?\]\s*/, '') || 'Failed to initialize Plaid.')
+      } else {
+        setLinkToken(res.data?.createPlaidLinkToken ?? null)
+      }
+    })
+  // only run once on mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-  const discovered = inst
-    ? [
-        { id: 'd1', type: 'CHECKING' as AccountType, nick: `${inst.name} checking`, balance: 3120 },
-        { id: 'd2', type: 'SAVINGS' as AccountType, nick: `${inst.name} savings`, balance: 12480 },
-        { id: 'd3', type: 'BROKERAGE' as AccountType, nick: `${inst.name} brokerage`, balance: 28750 },
-      ]
-    : []
+  const handleSuccess = useCallback(async (publicToken: string, metadata: { institution: { institution_id: string; name: string } | null }) => {
+    const inst = metadata.institution
+    if (!inst) return
+    await exchangeToken({
+      publicToken,
+      institutionId: inst.institution_id,
+      institutionName: inst.name,
+    })
+    onSuccess()
+  }, [exchangeToken, onSuccess])
 
-  if (stage === 'connecting') {
+  const { open, ready } = usePlaidLink({
+    token: linkToken,
+    onSuccess: handleSuccess,
+    onExit: () => onBack(),
+  })
+
+  if (error) {
     return (
       <Box>
-        <ModalHeader title="Connecting" sub={`Securely signing in to ${inst?.name}…`} onClose={onClose} />
-        <Box sx={{ p: '48px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '18px' }}>
-          <Box sx={{ width: 52, height: 52, borderRadius: '999px', border: `3px solid ${brand.zinc[100]}`, borderTopColor: 'primary.main', animation: 'spin 0.8s linear infinite', '@keyframes spin': { to: { transform: 'rotate(360deg)' } } }} />
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: 12.5, color: 'text.secondary' }}>
-            <LockIcon sx={{ fontSize: 14, color: brand.anchor[600] }} />
-            Bank-grade encryption · read-only access
-          </Box>
-        </Box>
+        <ModalHeader title="Link with Plaid" onClose={onClose} onBack={onBack} />
+        <Box sx={{ p: '40px 24px', textAlign: 'center', color: 'error.main', fontSize: 13 }}>{error}</Box>
       </Box>
     )
   }
 
-  if (stage === 'select') {
-    const anyPicked = Object.values(picked).some(Boolean)
-    const pickedCount = Object.values(picked).filter(Boolean).length
-    return (
-      <Box>
-        <ModalHeader title={`${inst?.name} accounts`} sub="Choose which accounts to track in Anchor." onClose={onClose} onBack={() => setStage('search')} />
-        <Box sx={{ p: '14px 22px' }}>
-          {discovered.map((d) => {
-            const on = !!picked[d.id]
-            const meta = ACCOUNT_TYPES[d.type]
-            return (
-              <Box
-                key={d.id}
-                component="button"
-                onClick={() => setPicked((p) => ({ ...p, [d.id]: !p[d.id] }))}
-                sx={{
-                  display: 'flex', alignItems: 'center', gap: '12px', width: '100%',
-                  textAlign: 'left', p: '12px', mb: 1, borderRadius: '12px', cursor: 'pointer',
-                  border: `1px solid ${on ? brand.anchor[700] : brand.zinc[200]}`,
-                  bgcolor: on ? brand.accentSoft : '#fff',
-                  fontFamily: 'inherit', transition: 'all 150ms ease',
-                }}
-              >
-                <CatGlyph icon={meta.glyph} size={34} tone={on ? 'accent' : 'neutral'} />
-                <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography sx={{ fontSize: 13.5, fontWeight: 600 }}>{d.nick}</Typography>
-                  <Typography sx={{ fontSize: 11.5, color: 'text.disabled' }}>{meta.label}</Typography>
-                </Box>
-                <Typography sx={{ fontSize: 13.5, fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>{fmtMoney(d.balance)}</Typography>
-                <Box sx={{ width: 20, height: 20, flexShrink: 0, borderRadius: '6px', display: 'grid', placeItems: 'center', bgcolor: on ? 'primary.main' : '#fff', border: `1px solid ${on ? brand.anchor[700] : brand.zinc[300]}`, color: '#fff' }}>
-                  {on && <CheckIcon sx={{ fontSize: 13 }} />}
-                </Box>
-              </Box>
-            )
-          })}
-        </Box>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', p: '14px 22px 20px', borderTop: '1px solid', borderColor: 'divider' }}>
-          <Button variant="text" onClick={onClose}>Cancel</Button>
-          <Button
-            variant="contained"
-            startIcon={<LinkIcon />}
-            disabled={!anyPicked}
-            onClick={() => inst && onLink(inst, discovered.filter((d) => picked[d.id]))}
-          >
-            Link {pickedCount || ''} account{pickedCount === 1 ? '' : 's'}
-          </Button>
-        </Box>
-      </Box>
-    )
-  }
-
-  // search stage
-  const filtered = PLAID_INSTITUTIONS.filter((i) => i.name.toLowerCase().includes(q.toLowerCase()))
   return (
     <Box>
-      <ModalHeader title="Link with Plaid" sub="Search for your bank or brokerage." onClose={onClose} onBack={onBack} />
-      <Box sx={{ p: '16px 22px 20px' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: '9px', height: 40, px: '12px', borderRadius: '8px', border: '1px solid', borderColor: 'grey.300', mb: '14px' }}>
-          <SearchIcon sx={{ fontSize: 16, color: 'text.disabled' }} />
-          <InputBase
-            autoFocus
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search institutions"
-            sx={{ flex: 1, fontSize: 14 }}
-          />
-        </Box>
-        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-          {filtered.map((i) => (
-            <Box
-              key={i.name}
-              component="button"
-              onClick={() => { setInst(i); setStage('connecting') }}
-              sx={{
-                display: 'flex', alignItems: 'center', gap: '10px',
-                p: '11px 12px', borderRadius: '12px', border: '1px solid', borderColor: 'divider',
-                bgcolor: '#fff', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit',
-                transition: 'background 120ms ease', '&:hover': { bgcolor: brand.zinc[50] },
-              }}
-            >
-              <Box sx={{ width: 30, height: 30, flexShrink: 0, borderRadius: '8px', bgcolor: i.color, display: 'grid', placeItems: 'center' }}>
-                <CatGlyph icon={i.glyph} size={30} sx={{ bgcolor: 'transparent', color: '#fff' }} />
-              </Box>
-              <Typography noWrap sx={{ fontSize: 13, fontWeight: 600 }}>{i.name}</Typography>
+      <ModalHeader title="Link with Plaid" sub="Connect a bank or brokerage securely." onClose={onClose} onBack={onBack} />
+      <Box sx={{ p: '48px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+        {!ready || !linkToken ? (
+          <>
+            <CircularProgress size={36} />
+            <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>Initializing secure connection…</Typography>
+          </>
+        ) : (
+          <>
+            <CatGlyph icon="building" size={52} tone="accent" />
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography sx={{ fontSize: 15, fontWeight: 600, mb: '6px' }}>Ready to connect</Typography>
+              <Typography sx={{ fontSize: 13, color: 'text.secondary', lineHeight: 1.5 }}>
+                Plaid will open a secure window to link your account. Your credentials are never stored.
+              </Typography>
             </Box>
-          ))}
-        </Box>
+            <Button variant="contained" startIcon={<LinkIcon />} onClick={() => open()} sx={{ height: 40, px: '24px' }}>
+              Open Plaid Link
+            </Button>
+          </>
+        )}
       </Box>
     </Box>
   )
@@ -232,28 +179,34 @@ function PlaidFlow({ onClose, onBack, onLink }: PlaidFlowProps) {
 interface ManualFormProps {
   onClose: () => void
   onBack: () => void
-  onAdd: (payload: Partial<Account>) => void
+  onSuccess: () => void
 }
 
-function ManualForm({ onClose, onBack, onAdd }: ManualFormProps) {
+function ManualForm({ onClose, onBack, onSuccess }: ManualFormProps) {
   const [type, setType] = useState<AccountType>('CHECKING')
   const [nick, setNick] = useState('')
   const [inst, setInst] = useState('')
   const [balance, setBalance] = useState('')
   const [ef, setEf] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [, addManualAccount] = useMutation(AddManualAccountDocument)
+
   const meta = ACCOUNT_TYPES[type]
   const isSavings = type === 'SAVINGS'
   const valid = nick.trim() && balance !== '' && !Number.isNaN(parseFloat(balance))
 
-  const submit = () => {
-    if (!valid) return
-    onAdd({
+  const submit = async () => {
+    if (!valid || saving) return
+    setSaving(true)
+    await addManualAccount({
       type,
       nick: nick.trim(),
       inst: inst.trim() || meta.label,
-      balance: Math.max(0, Math.round(parseFloat(balance) * 100) / 100),
+      balance: String(Math.max(0, Math.round(parseFloat(balance) * 100) / 100)),
       isEmergencyFund: isSavings && ef,
     })
+    setSaving(false)
+    onSuccess()
   }
 
   return (
@@ -329,8 +282,8 @@ function ManualForm({ onClose, onBack, onAdd }: ManualFormProps) {
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', p: '14px 22px 20px', borderTop: '1px solid', borderColor: 'divider' }}>
         <Button variant="text" onClick={onClose}>Cancel</Button>
-        <Button variant="contained" startIcon={<AddIcon />} disabled={!valid} onClick={submit}>
-          Add account
+        <Button variant="contained" startIcon={<AddIcon />} disabled={!valid || saving} onClick={submit}>
+          {saving ? 'Adding…' : 'Add account'}
         </Button>
       </Box>
     </Box>
@@ -342,14 +295,14 @@ function ManualForm({ onClose, onBack, onAdd }: ManualFormProps) {
 interface AddAccountDialogProps {
   open: boolean
   onClose: () => void
-  onAddManual: (payload: Partial<Account>) => void
-  onLinkPlaid: (inst: { name: string }, accounts: { id: string; type: AccountType; nick: string; balance: number }[]) => void
+  onSuccess: () => void
 }
 
-export function AddAccountDialog({ open, onClose, onAddManual, onLinkPlaid }: AddAccountDialogProps) {
+export function AddAccountDialog({ open, onClose, onSuccess }: AddAccountDialogProps) {
   const [path, setPath] = useState<null | 'plaid' | 'manual'>(null)
 
   const handleClose = () => { setPath(null); onClose() }
+  const handleSuccess = () => { setPath(null); onSuccess(); onClose() }
 
   return (
     <Dialog
@@ -361,9 +314,9 @@ export function AddAccountDialog({ open, onClose, onAddManual, onLinkPlaid }: Ad
     >
       <DialogContent sx={{ p: 0 }}>
         {path === 'plaid' ? (
-          <PlaidFlow onClose={handleClose} onBack={() => setPath(null)} onLink={(inst, accs) => { onLinkPlaid(inst, accs); handleClose() }} />
+          <PlaidFlow onClose={handleClose} onBack={() => setPath(null)} onSuccess={handleSuccess} />
         ) : path === 'manual' ? (
-          <ManualForm onClose={handleClose} onBack={() => setPath(null)} onAdd={(payload) => { onAddManual(payload); handleClose() }} />
+          <ManualForm onClose={handleClose} onBack={() => setPath(null)} onSuccess={handleSuccess} />
         ) : (
           <Box>
             <ModalHeader title="Add an account" sub="Link automatically, or enter the balance yourself." onClose={handleClose} />
