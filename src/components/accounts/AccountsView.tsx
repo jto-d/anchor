@@ -59,10 +59,12 @@ function toLocalAccount(a: {
 function buildGroups(accounts: Account[]): AccountGroup[] {
   const cash = accounts.filter((a) => ACCOUNT_TYPES[a.type]?.group === 'cash')
   const inv = accounts.filter((a) => ACCOUNT_TYPES[a.type]?.group === 'inv')
+  const credit = accounts.filter((a) => ACCOUNT_TYPES[a.type]?.group === 'credit')
   const sum = (arr: Account[]) => arr.reduce((s, a) => s + (a.balance ?? 0), 0)
   return [
     { key: 'cash', label: 'Cash', glyph: 'wallet', accounts: cash, total: sum(cash) },
     { key: 'inv', label: 'Investments', glyph: 'trendingUp', accounts: inv, total: sum(inv) },
+    { key: 'credit', label: 'Credit Cards', glyph: 'creditCard', accounts: credit, total: sum(credit) },
   ]
 }
 
@@ -96,10 +98,11 @@ export function AccountsView() {
     const groups = buildGroups(accounts)
     const cashTotal = groups[0].total
     const invTotal = groups[1].total
-    const netWorth = cashTotal + invTotal
+    const creditTotal = groups[2].total
+    const netWorth = cashTotal + invTotal - creditTotal
     const series = netWorthSeries(accounts)
     const delta = series.length >= 2 ? series[series.length - 1] - series[series.length - 2] : 0
-    return { groups, cashTotal, invTotal, netWorth, series, delta }
+    return { groups, cashTotal, invTotal, creditTotal, netWorth, series, delta }
   }, [accounts])
 
   const onToggleGroup = useCallback((k: string) => setCollapsed((p) => ({ ...p, [k]: !p[k] })), [])
@@ -118,13 +121,14 @@ export function AccountsView() {
 
   const onRefresh = useCallback((id: string) => {
     const a = accounts.find((x) => x.id === id)
-    if (!a || a.source !== 'PLAID') return
+    if (!a || a.source !== 'PLAID' || ACCOUNT_TYPES[a.type]?.group === 'credit') return
     setLocalBalances((prev) => ({ ...prev, [id]: nudge(a) }))
     flash(`${a.inst} refreshed.`)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts, flash])
 
   const onRefreshGroup = useCallback((key: string) => {
+    if (key === 'credit') return
     const group = accounts.filter((a) => ACCOUNT_TYPES[a.type]?.group === key && a.source === 'PLAID')
     setLocalBalances((prev) => {
       const next = { ...prev }
@@ -157,10 +161,11 @@ export function AccountsView() {
     const groups = buildGroups(displayAccounts)
     const cashTotal = groups[0].total
     const invTotal = groups[1].total
-    const netWorth = cashTotal + invTotal
+    const creditTotal = groups[2].total
+    const netWorth = cashTotal + invTotal - creditTotal
     const series = netWorthSeries(displayAccounts)
     const delta = series.length >= 2 ? series[series.length - 1] - series[series.length - 2] : 0
-    return { groups, cashTotal, invTotal, netWorth, series, delta }
+    return { groups, cashTotal, invTotal, creditTotal, netWorth, series, delta }
   }, [displayAccounts])
 
   const n = Math.min(displayModel.series.length, RANGE_COUNTS[range] ?? 12)
@@ -250,6 +255,7 @@ export function AccountsView() {
               netWorth={displayModel.netWorth}
               cashTotal={displayModel.cashTotal}
               invTotal={displayModel.invTotal}
+              creditTotal={displayModel.creditTotal}
               delta={displayModel.delta}
               count={displayAccounts.length}
               privacy={privacy}

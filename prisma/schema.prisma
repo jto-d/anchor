@@ -23,6 +23,8 @@ enum AccountType {
   HSA
   FIVE_TWO_NINE
   CRYPTO
+  CREDIT_CARD
+  CHARGE_CARD
 }
 
 enum AccountSource {

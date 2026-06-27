@@ -23,7 +23,7 @@ import { usePlaidLink } from 'react-plaid-link'
 import { useMutation } from '@urql/next'
 import { CatGlyph } from '@/components/ui'
 import {
-  ACCOUNT_TYPES, CASH_TYPE_KEYS, INV_TYPE_KEYS,
+  ACCOUNT_TYPES, CASH_TYPE_KEYS, INV_TYPE_KEYS, CREDIT_TYPE_KEYS,
   type AccountType,
 } from '@/data/accountData'
 import {
@@ -223,6 +223,9 @@ function ManualForm({ onClose, onBack, onSuccess }: ManualFormProps) {
               <Divider />
               <MenuItem disabled sx={{ fontSize: 11, fontWeight: 700, opacity: 1, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Investments</MenuItem>
               {INV_TYPE_KEYS.map((k) => <MenuItem key={k} value={k}>{ACCOUNT_TYPES[k].label}</MenuItem>)}
+              <Divider />
+              <MenuItem disabled sx={{ fontSize: 11, fontWeight: 700, opacity: 1, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Credit Cards</MenuItem>
+              {CREDIT_TYPE_KEYS.map((k) => <MenuItem key={k} value={k}>{ACCOUNT_TYPES[k].label}</MenuItem>)}
             </Select>
           </FormControl>
         </Box>

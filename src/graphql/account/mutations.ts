@@ -16,12 +16,13 @@ const SUBTYPE_MAP: Partial<Record<string, AccountType>> = {
   hsa:             'HSA',
   '529':           'FIVE_TWO_NINE',
   crypto:          'CRYPTO',
+  'credit card':   'CREDIT_CARD',
 }
 
 const TYPE_FALLBACK: Partial<Record<string, AccountType>> = {
   depository: 'CHECKING',
   investment: 'BROKERAGE',
-  credit:     'CHECKING',
+  credit:     'CREDIT_CARD',
   loan:       'CHECKING',
   other:      'CHECKING',
 }

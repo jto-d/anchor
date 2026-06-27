@@ -1,0 +1,3 @@
+-- AddValue
+ALTER TYPE "AccountType" ADD VALUE 'CREDIT_CARD';
+ALTER TYPE "AccountType" ADD VALUE 'CHARGE_CARD';

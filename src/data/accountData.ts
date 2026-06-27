@@ -10,9 +10,11 @@ export type AccountType =
   | 'HSA'
   | 'FIVE_TWO_NINE'
   | 'CRYPTO'
+  | 'CREDIT_CARD'
+  | 'CHARGE_CARD'
 
 export type AccountSource = 'PLAID' | 'MANUAL'
-export type AccountGroup = 'cash' | 'inv'
+export type AccountGroup = 'cash' | 'inv' | 'credit'
 export type AssetClass = 'stock' | 'intl' | 'bond' | 'cash'
 
 export interface Account {
@@ -54,12 +56,15 @@ export const ACCOUNT_TYPES: Record<AccountType, AccountTypeMeta> = {
   HSA:             { label: 'HSA',             glyph: 'heartPulse', group: 'inv' },
   FIVE_TWO_NINE:   { label: '529',             glyph: 'graduation', group: 'inv' },
   CRYPTO:          { label: 'Crypto',          glyph: 'bitcoin',    group: 'inv' },
+  CREDIT_CARD:     { label: 'Credit card',     glyph: 'creditCard', group: 'credit' },
+  CHARGE_CARD:     { label: 'Charge card',     glyph: 'creditCard', group: 'credit' },
 }
 
 export const CASH_TYPE_KEYS: AccountType[] = ['CHECKING', 'SAVINGS', 'CD', 'MONEY_MARKET']
 export const INV_TYPE_KEYS: AccountType[] = [
   'BROKERAGE', 'FOUR_OH_ONE_K', 'ROTH_IRA', 'TRADITIONAL_IRA', 'HSA', 'FIVE_TWO_NINE', 'CRYPTO',
 ]
+export const CREDIT_TYPE_KEYS: AccountType[] = ['CREDIT_CARD', 'CHARGE_CARD']
 
 export const ASSET_CLASSES: Record<AssetClass, { label: string; color: string }> = {
   stock: { label: 'U.S. stocks', color: '#0B6360' },
@@ -142,8 +147,9 @@ export function netWorthSeries(accounts: Account[]): number[] {
   const n = 12
   const out = new Array(n).fill(0)
   accounts.forEach((a) => {
+    const sign = ACCOUNT_TYPES[a.type]?.group === 'credit' ? -1 : 1
     const s = SERIES[a.id] ?? makeSeries(a.id, a.balance, a.drift, a.vol)
-    for (let i = 0; i < n; i++) out[i] += s[i] ?? 0
+    for (let i = 0; i < n; i++) out[i] += sign * (s[i] ?? 0)
   })
   return out
 }
