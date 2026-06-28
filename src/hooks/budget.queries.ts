@@ -72,6 +72,8 @@ export const BudgetYearDocument = graphql(`
         savingsContribs { accountId amount }
         surplusAllocations { goalId amount }
       }
+      budgetStartYear
+      budgetStartMonth
     }
   }
 `)

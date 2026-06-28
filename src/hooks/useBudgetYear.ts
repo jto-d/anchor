@@ -174,5 +174,11 @@ export function useBudgetYear(year: number) {
     return { months, catYear, savYear, goalYear, annual, completed, projected, currentLabel, currentIdx }
   }, [raw, monthlyData, year, currentYear, currentMonth])
 
-  return { fetching, hasData: raw != null, ...derived }
+  return {
+    fetching,
+    hasData: raw != null,
+    budgetStartYear: raw?.budgetStartYear ?? null,
+    budgetStartMonth: raw?.budgetStartMonth ?? null,
+    ...derived,
+  }
 }

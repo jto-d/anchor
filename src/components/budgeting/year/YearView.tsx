@@ -22,7 +22,8 @@ export function YearView() {
   const [year, setYear] = useState(now.getFullYear())
   const atMax = year >= now.getFullYear()
 
-  const { fetching, hasData, months, catYear, savYear, goalYear, annual, completed, projected, currentLabel, currentIdx } = useBudgetYear(year)
+  const { fetching, hasData, budgetStartYear, months, catYear, savYear, goalYear, annual, completed, projected, currentLabel, currentIdx } = useBudgetYear(year)
+  const atMin = budgetStartYear != null && year <= budgetStartYear
 
   if (fetching && !hasData) {
     return (
@@ -37,8 +38,8 @@ export function YearView() {
 
   const yearStepper = (
     <Row inline gap="2px" sx={{ p: '3px', bgcolor: 'grey.100', border: '1px solid', borderColor: 'divider', borderRadius: '9px' }}>
-      <IconButton size="small" onClick={() => setYear((y) => y - 1)}
-        sx={{ width: 32, height: 32, borderRadius: '7px', color: 'text.secondary', '&:hover': { bgcolor: '#fff', boxShadow: brand.shadow.sm } }}>
+      <IconButton size="small" onClick={() => setYear((y) => y - 1)} disabled={atMin}
+        sx={{ width: 32, height: 32, borderRadius: '7px', color: atMin ? 'text.disabled' : 'text.secondary', '&:hover': { bgcolor: atMin ? 'transparent' : '#fff', boxShadow: atMin ? 'none' : brand.shadow.sm } }}>
         <ChevronLeftIcon sx={{ fontSize: 17 }} />
       </IconButton>
       <Typography variant="bodyStrong" sx={{ minWidth: 52, textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>

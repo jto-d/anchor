@@ -155,7 +155,8 @@ builder.queryField('budgetYear', (t) =>
     resolve: async (_root, { year }, ctx) => {
       const userId = ctx.userId
 
-      const [incomeSources, groups, savings, goals] = await Promise.all([
+      const [user, incomeSources, groups, savings, goals] = await Promise.all([
+        prisma.user.findUnique({ where: { id: userId }, select: { budgetStartYear: true, budgetStartMonth: true } }),
         prisma.incomeSource.findMany({ where: { userId }, orderBy: { position: 'asc' } }),
         prisma.budgetGroup.findMany({
           where: { userId },
@@ -227,7 +228,11 @@ builder.queryField('budgetYear', (t) =>
         return { month, hasData, categorySpends, savingsContribs, surplusAllocations }
       })
 
-      return { incomeSources: incomeSourcesOut, groups: groupsOut, savings: savingsOut, goals: goalsOut, monthlyData }
+      return {
+        incomeSources: incomeSourcesOut, groups: groupsOut, savings: savingsOut, goals: goalsOut, monthlyData,
+        budgetStartYear: user?.budgetStartYear ?? null,
+        budgetStartMonth: user?.budgetStartMonth ?? null,
+      }
     },
   })
 )
