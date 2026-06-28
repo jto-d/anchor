@@ -7,8 +7,8 @@ import InputAdornment from '@mui/material/InputAdornment'
 import TextField from '@mui/material/TextField'
 import CheckIcon from '@mui/icons-material/Check'
 import { AppDialog, Row, Stack } from '@/components/ui'
-import { annualValue, capturedYTD } from '@/utils/perk'
-import { fmtCents, toAmount } from '@/utils/format'
+import { perkCoverage } from '@/utils/perk'
+import { fmtCents } from '@/utils/format'
 import type { Perk } from '@/utils/types'
 
 interface LogCreditDialogProps {
@@ -29,18 +29,17 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
   useEffect(() => {
     if (!perk) return
     setShown(perk)
-    const isOpenEnded = toAmount(perk.totalAmount) === 0
-    const defaultAmt = isOpenEnded
-      ? 0
-      : Math.min(toAmount(perk.totalAmount), Math.max(0, annualValue(perk) - capturedYTD(perk)))
-    setAmount(isOpenEnded ? '' : String(defaultAmt))
+    const cov = perkCoverage(perk, { basis: 'year' })
+    const defaultAmt = cov.openEnded ? 0 : Math.min(perk.totalAmount, cov.remaining)
+    setAmount(cov.openEnded ? '' : String(defaultAmt))
     setDate(new Date().toISOString().slice(0, 10))
     setDesc('')
     setTouched(false)
   }, [perk?.id])
 
-  const isOpenEnded = shown ? toAmount(shown.totalAmount) === 0 : false
-  const remaining = shown && !isOpenEnded ? Math.max(0, annualValue(shown) - capturedYTD(shown)) : 0
+  const cov = shown ? perkCoverage(shown, { basis: 'year' }) : null
+  const isOpenEnded = cov?.openEnded ?? false
+  const remaining = cov?.remaining ?? 0
 
   const amtNum = parseFloat(amount)
   const amtInvalid = touched && (isNaN(amtNum) || amtNum <= 0)
@@ -102,7 +101,7 @@ export function LogCreditDialog({ perk, onClose, onSave }: LogCreditDialogProps)
               startIcon={<CheckIcon />}
               onClick={() => {
                 setTouched(true)
-                const n = toAmount(amount)
+                const n = parseFloat(amount)
                 if (isNaN(n) || n <= 0 || !date) return
                 onSave(shown.id, n, date, desc.trim())
               }}

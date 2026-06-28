@@ -39,7 +39,7 @@ export const ExchangePlaidTokenDocument = graphql(`
 `)
 
 export const AddManualAccountDocument = graphql(`
-  mutation AddManualAccount($type: String!, $nick: String!, $inst: String!, $balance: String!, $isEmergencyFund: Boolean) {
+  mutation AddManualAccount($type: String!, $nick: String!, $inst: String!, $balance: Float!, $isEmergencyFund: Boolean) {
     addManualAccount(type: $type, nick: $nick, inst: $inst, balance: $balance, isEmergencyFund: $isEmergencyFund) {
       id
       nick

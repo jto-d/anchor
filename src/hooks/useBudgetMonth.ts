@@ -106,11 +106,12 @@ export function useBudgetMonth(sel: MonthSel) {
 
   const raw = data?.budgetMonth
 
-  // GraphQL exposes Decimal as String (see CLAUDE.md) — parse to numbers up front.
+  // Money arrives as numbers (GraphQL exposes Decimal as Float — see CLAUDE.md);
+  // these maps only layer optimistic local overrides on top of the server values.
   const incomeSources: IncomeSource[] = useMemo(() =>
     (raw?.incomeSources ?? []).map((s) => ({
       ...s,
-      amount: localIncome[s.id] ?? Number(s.amount),
+      amount: localIncome[s.id] ?? s.amount,
     })), [raw, localIncome])
 
   const groups: GroupData[] = useMemo(() =>
@@ -118,27 +119,22 @@ export function useBudgetMonth(sel: MonthSel) {
       ...g,
       categories: g.categories.map((c) => ({
         ...c,
-        budget: localBudgets[c.id] ?? Number(c.budget),
-        monthSpent: localSpends[c.id] ?? Number(c.monthSpent),
+        budget: localBudgets[c.id] ?? c.budget,
+        monthSpent: localSpends[c.id] ?? c.monthSpent,
       })),
     })), [raw, localBudgets, localSpends])
 
   const savings: SavingsData[] = useMemo(() =>
     (raw?.savings ?? []).map((s) => ({
       ...s,
-      monthly: localSavingsMonthly[s.id] ?? Number(s.monthly),
-      annualLimit: s.annualLimit != null ? Number(s.annualLimit) : null,
-      monthContrib: localContribs[s.id] ?? Number(s.monthContrib),
-      ytd: Number(s.ytd),
+      monthly: localSavingsMonthly[s.id] ?? s.monthly,
+      monthContrib: localContribs[s.id] ?? s.monthContrib,
     })), [raw, localSavingsMonthly, localContribs])
 
   const goals: GoalData[] = useMemo(() =>
     (raw?.goals ?? []).map((g) => ({
       ...g,
-      target: g.target != null ? Number(g.target) : null,
-      base: Number(g.base),
-      running: Number(g.running),
-      monthAllocated: localAllocations[g.id] ?? Number(g.monthAllocated),
+      monthAllocated: localAllocations[g.id] ?? g.monthAllocated,
     })), [raw, localAllocations])
 
   const totals: Totals = useMemo(() => {

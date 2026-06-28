@@ -36,9 +36,9 @@ import { brand } from '@/lib/theme'
 // Map server account shape → local Account interface
 function toLocalAccount(a: {
   id: string; nick: string; inst: string; type: string; source: string
-  balance: string; isEmergencyFund: boolean; balanceUpdatedAt: string; createdAt: string
+  balance: number; isEmergencyFund: boolean; balanceUpdatedAt: string; createdAt: string
 }): Account {
-  const balance = parseFloat(a.balance)
+  const balance = a.balance
   if (!SERIES[a.id]) {
     const type = a.type as AccountType
     const isInv = ACCOUNT_TYPES[type]?.group === 'inv'

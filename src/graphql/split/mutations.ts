@@ -1,5 +1,6 @@
 import { builder } from '../builder'
 import { prisma } from '@/lib/prisma'
+import { roundCents } from '@/utils/money'
 
 builder.mutationFields((t) => ({
   setSplitPartner: t.prismaField({
@@ -21,7 +22,7 @@ builder.mutationFields((t) => ({
       month: t.arg.int({ required: true }),
       date: t.arg.string(),
       desc: t.arg.string({ required: true }),
-      amount: t.arg.string({ required: true }),
+      amount: t.arg.float({ required: true }),
       payer: t.arg.string({ required: true }),
       cat: t.arg.string({ required: true }),
       splitYou: t.arg.int({ required: true }),
@@ -36,7 +37,7 @@ builder.mutationFields((t) => ({
           month: args.month,
           date: args.date ?? null,
           desc: args.desc,
-          amount: args.amount,
+          amount: roundCents(args.amount),
           payer: args.payer,
           cat: args.cat,
           splitYou: args.splitYou,
@@ -51,7 +52,7 @@ builder.mutationFields((t) => ({
       id: t.arg.string({ required: true }),
       date: t.arg.string(),
       desc: t.arg.string(),
-      amount: t.arg.string(),
+      amount: t.arg.float(),
       payer: t.arg.string(),
       cat: t.arg.string(),
       splitYou: t.arg.int(),
@@ -66,7 +67,7 @@ builder.mutationFields((t) => ({
         data: {
           ...(date !== undefined && { date: date ?? null }),
           ...(desc != null && { desc }),
-          ...(amount != null && { amount }),
+          ...(amount != null && { amount: roundCents(amount) }),
           ...(payer != null && { payer }),
           ...(cat != null && { cat }),
           ...(splitYou != null && { splitYou }),
@@ -93,7 +94,7 @@ builder.mutationFields((t) => ({
       year: t.arg.int({ required: true }),
       month: t.arg.int({ required: true }),
       date: t.arg.string(),
-      amount: t.arg.string({ required: true }),
+      amount: t.arg.float({ required: true }),
       fromPayer: t.arg.string({ required: true }),
     },
     resolve: (query, _root, args, ctx) =>
@@ -104,7 +105,7 @@ builder.mutationFields((t) => ({
           year: args.year,
           month: args.month,
           date: args.date ?? null,
-          amount: args.amount,
+          amount: roundCents(args.amount),
           fromPayer: args.fromPayer,
         },
       }),

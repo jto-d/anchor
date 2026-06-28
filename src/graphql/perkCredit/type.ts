@@ -4,8 +4,8 @@ builder.prismaObject("PerkCredit", {
     fields: (t) => ({
         id: t.exposeID("id"),
         amount: t.field({
-            type: "String",
-            resolve: (pc) => pc.amount.toString(),
+            type: "Float",
+            resolve: (pc) => pc.amount.toNumber(),
         }),
         date: t.field({
             type: "String",

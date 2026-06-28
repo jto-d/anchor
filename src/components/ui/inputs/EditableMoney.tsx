@@ -6,6 +6,7 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { brand } from '@/lib/theme'
 import { fmtMoney } from '@/utils/format'
+import { roundCents } from '@/utils/money'
 
 interface EditableMoneyProps {
   value: number
@@ -27,7 +28,7 @@ export function EditableMoney({ value, onChange, muted, color, size = 14, weight
 
   const commit = useCallback(() => {
     const cleaned = draft.replace(/[^0-9.]/g, '')
-    const n = cleaned === '' ? 0 : Math.max(0, parseFloat(cleaned))
+    const n = cleaned === '' ? 0 : Math.max(0, roundCents(parseFloat(cleaned)))
     setEditing(false)
     if (!Number.isNaN(n) && n !== value) onChange(n)
   }, [draft, value, onChange])

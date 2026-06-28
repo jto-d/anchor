@@ -5,6 +5,7 @@ import {
   capturedInCycle,
   capturedYTD,
   capturedThisMonth,
+  perkCoverage,
   perkPct,
   perkStatus,
 } from '../perk'
@@ -14,14 +15,14 @@ import type { Perk } from '../types'
 type TestPerk = {
   period: string
   resetType: string
-  totalAmount: string
-  perkCredits: Array<{ id: string; amount: string; date: string; description?: string | null; createdAt: string }>
+  totalAmount: number
+  perkCredits: Array<{ id: string; amount: number; date: string; description?: string | null; createdAt: string }>
 }
 
 const p = (fields: Partial<TestPerk> & Pick<TestPerk, 'period' | 'totalAmount'>): Perk =>
   ({ resetType: 'CALENDAR', perkCredits: [], ...fields } as unknown as Perk)
 
-const credit = (date: string, amount: string) => ({
+const credit = (date: string, amount: number) => ({
   id: 'c1',
   amount,
   date,
@@ -34,19 +35,19 @@ const NOW = new Date(2026, 5, 12) // June 12 2026
 
 describe('annualValue', () => {
   it('annualizes monthly perk by 12', () => {
-    expect(annualValue(p({ period: 'MONTHLY', totalAmount: '25' }))).toBe(300)
+    expect(annualValue(p({ period: 'MONTHLY', totalAmount: 25 }))).toBe(300)
   })
   it('annualizes quarterly perk by 4', () => {
-    expect(annualValue(p({ period: 'QUARTERLY', totalAmount: '100' }))).toBe(400)
+    expect(annualValue(p({ period: 'QUARTERLY', totalAmount: 100 }))).toBe(400)
   })
   it('annualizes semi-annual perk by 2', () => {
-    expect(annualValue(p({ period: 'SEMI_ANNUAL', totalAmount: '150' }))).toBe(300)
+    expect(annualValue(p({ period: 'SEMI_ANNUAL', totalAmount: 150 }))).toBe(300)
   })
   it('annual perk is 1× its amount', () => {
-    expect(annualValue(p({ period: 'ANNUAL', totalAmount: '300' }))).toBe(300)
+    expect(annualValue(p({ period: 'ANNUAL', totalAmount: 300 }))).toBe(300)
   })
   it('annualizes quadrennial perk by 0.25', () => {
-    expect(annualValue(p({ period: 'QUADRENNIAL', totalAmount: '400' }))).toBe(100)
+    expect(annualValue(p({ period: 'QUADRENNIAL', totalAmount: 400 }))).toBe(100)
   })
 })
 
@@ -136,14 +137,14 @@ describe('cycleWindow — anniversary reset', () => {
 
 describe('capturedInCycle', () => {
   it('returns 0 with no credits', () => {
-    expect(capturedInCycle(p({ period: 'ANNUAL', totalAmount: '300' }), null, NOW)).toBe(0)
+    expect(capturedInCycle(p({ period: 'ANNUAL', totalAmount: 300 }), null, NOW)).toBe(0)
   })
 
   it('sums credits within the current annual cycle', () => {
     const perk = p({
       period: 'ANNUAL',
-      totalAmount: '300',
-      perkCredits: [credit('2026-03-01', '100'), credit('2026-05-15', '75')],
+      totalAmount: 300,
+      perkCredits: [credit('2026-03-01', 100), credit('2026-05-15', 75)],
     })
     expect(capturedInCycle(perk, null, NOW)).toBe(175)
   })
@@ -151,8 +152,8 @@ describe('capturedInCycle', () => {
   it('excludes credits from a previous year', () => {
     const perk = p({
       period: 'ANNUAL',
-      totalAmount: '300',
-      perkCredits: [credit('2025-12-31', '50'), credit('2026-01-01', '100')],
+      totalAmount: 300,
+      perkCredits: [credit('2025-12-31', 50), credit('2026-01-01', 100)],
     })
     expect(capturedInCycle(perk, null, NOW)).toBe(100)
   })
@@ -160,8 +161,8 @@ describe('capturedInCycle', () => {
   it('sums credits within the current monthly cycle', () => {
     const perk = p({
       period: 'MONTHLY',
-      totalAmount: '25',
-      perkCredits: [credit('2026-06-05', '10'), credit('2026-06-10', '15'), credit('2026-05-30', '99')],
+      totalAmount: 25,
+      perkCredits: [credit('2026-06-05', 10), credit('2026-06-10', 15), credit('2026-05-30', 99)],
     })
     expect(capturedInCycle(perk, null, NOW)).toBe(25)
   })
@@ -171,11 +172,11 @@ describe('capturedYTD', () => {
   it('sums all credits in the current calendar year', () => {
     const perk = p({
       period: 'MONTHLY',
-      totalAmount: '25',
+      totalAmount: 25,
       perkCredits: [
-        credit('2026-01-10', '25'),
-        credit('2026-03-15', '25'),
-        credit('2025-12-31', '25'),
+        credit('2026-01-10', 25),
+        credit('2026-03-15', 25),
+        credit('2025-12-31', 25),
       ],
     })
     expect(capturedYTD(perk, NOW)).toBe(50)
@@ -186,23 +187,54 @@ describe('capturedThisMonth', () => {
   it('sums only credits in the current month', () => {
     const perk = p({
       period: 'MONTHLY',
-      totalAmount: '25',
-      perkCredits: [credit('2026-06-01', '10'), credit('2026-05-31', '15')],
+      totalAmount: 25,
+      perkCredits: [credit('2026-06-01', 10), credit('2026-05-31', 15)],
     })
     expect(capturedThisMonth(perk, NOW)).toBe(10)
   })
 })
 
+describe('perkCoverage', () => {
+  it('cycle basis: partial progress', () => {
+    const perk = p({ period: 'ANNUAL', totalAmount: 100, perkCredits: [credit('2026-03-01', 40)] })
+    const cov = perkCoverage(perk, { basis: 'cycle', now: NOW })
+    expect(cov).toMatchObject({ cap: 100, captured: 40, remaining: 60, pct: 0.4, covered: false, openEnded: false })
+  })
+
+  it('cycle basis: fully covered clamps pct at 1 and remaining at 0', () => {
+    const perk = p({ period: 'ANNUAL', totalAmount: 100, perkCredits: [credit('2026-03-01', 150)] })
+    const cov = perkCoverage(perk, { basis: 'cycle', now: NOW })
+    expect(cov.pct).toBe(1)
+    expect(cov.remaining).toBe(0)
+    expect(cov.covered).toBe(true)
+  })
+
+  it('open-ended perk (cap 0) is openEnded with pct 0 and no remaining', () => {
+    const perk = p({ period: 'ANNUAL', totalAmount: 0, perkCredits: [credit('2026-03-01', 40)] })
+    const cov = perkCoverage(perk, { basis: 'cycle', now: NOW })
+    expect(cov).toMatchObject({ openEnded: true, pct: 0, remaining: 0, covered: false })
+  })
+
+  it('year basis: measures YTD against the annualized value', () => {
+    // MONTHLY $25 → annual cap 300; one $25 credit this year → 25/300
+    const perk = p({ period: 'MONTHLY', totalAmount: 25, perkCredits: [credit('2026-02-01', 25)] })
+    const cov = perkCoverage(perk, { basis: 'year', now: NOW })
+    expect(cov.cap).toBe(300)
+    expect(cov.captured).toBe(25)
+    expect(cov.remaining).toBe(275)
+  })
+})
+
 describe('perkPct', () => {
   it('returns 0 with no credits', () => {
-    expect(perkPct(p({ period: 'ANNUAL', totalAmount: '100' }), null, NOW)).toBe(0)
+    expect(perkPct(p({ period: 'ANNUAL', totalAmount: 100 }), null, NOW)).toBe(0)
   })
 
   it('returns 0.5 at half captured', () => {
     const perk = p({
       period: 'ANNUAL',
-      totalAmount: '100',
-      perkCredits: [credit('2026-03-01', '50')],
+      totalAmount: 100,
+      perkCredits: [credit('2026-03-01', 50)],
     })
     expect(perkPct(perk, null, NOW)).toBe(0.5)
   })
@@ -210,14 +242,14 @@ describe('perkPct', () => {
   it('caps at 1 when over-captured', () => {
     const perk = p({
       period: 'ANNUAL',
-      totalAmount: '100',
-      perkCredits: [credit('2026-03-01', '200')],
+      totalAmount: 100,
+      perkCredits: [credit('2026-03-01', 200)],
     })
     expect(perkPct(perk, null, NOW)).toBe(1)
   })
 
   it('returns 0 when totalAmount is 0', () => {
-    expect(perkPct(p({ period: 'ANNUAL', totalAmount: '0' }), null, NOW)).toBe(0)
+    expect(perkPct(p({ period: 'ANNUAL', totalAmount: 0 }), null, NOW)).toBe(0)
   })
 })
 
@@ -225,27 +257,27 @@ describe('perkStatus', () => {
   it('returns captured when fully used', () => {
     const perk = p({
       period: 'ANNUAL',
-      totalAmount: '100',
-      perkCredits: [credit('2026-03-01', '100')],
+      totalAmount: 100,
+      perkCredits: [credit('2026-03-01', 100)],
     })
     expect(perkStatus(perk, null, NOW).key).toBe('captured')
   })
 
   it('returns open when nothing captured', () => {
-    expect(perkStatus(p({ period: 'ANNUAL', totalAmount: '100' }), null, NOW).key).toBe('open')
+    expect(perkStatus(p({ period: 'ANNUAL', totalAmount: 100 }), null, NOW).key).toBe('open')
   })
 
   it('returns partial when partially captured', () => {
     const perk = p({
       period: 'ANNUAL',
-      totalAmount: '100',
-      perkCredits: [credit('2026-01-01', '50')],
+      totalAmount: 100,
+      perkCredits: [credit('2026-01-01', 50)],
     })
     expect(perkStatus(perk, null, NOW).key).toBe('partial')
   })
 
   it('returns open for MONTHLY perk with no credits, outside the final 5 days', () => {
-    const perk = p({ period: 'MONTHLY', totalAmount: '25' })
+    const perk = p({ period: 'MONTHLY', totalAmount: 25 })
     expect(perkStatus(perk, null, NOW).key).toBe('open')
   })
 
@@ -253,8 +285,8 @@ describe('perkStatus', () => {
     const lateJune = new Date(2026, 5, 29) // Jun 29 — within 5 days of the Jul 1 reset
     const perk = p({
       period: 'MONTHLY',
-      totalAmount: '25',
-      perkCredits: [credit('2026-05-15', '25')],
+      totalAmount: 25,
+      perkCredits: [credit('2026-05-15', 25)],
     })
     expect(perkStatus(perk, null, lateJune).key).toBe('expiring')
   })
@@ -262,8 +294,8 @@ describe('perkStatus', () => {
   it('returns partial for MONTHLY perk with some credits this month, outside the final 5 days', () => {
     const perk = p({
       period: 'MONTHLY',
-      totalAmount: '25',
-      perkCredits: [credit('2026-06-01', '10')],
+      totalAmount: 25,
+      perkCredits: [credit('2026-06-01', 10)],
     })
     expect(perkStatus(perk, null, NOW).key).toBe('partial')
   })
@@ -272,8 +304,8 @@ describe('perkStatus', () => {
     const december = new Date(2026, 11, 15) // within the final month before the Jan 1 2027 reset
     const perk = p({
       period: 'ANNUAL',
-      totalAmount: '100',
-      perkCredits: [credit('2026-03-01', '50')],
+      totalAmount: 100,
+      perkCredits: [credit('2026-03-01', 50)],
     })
     expect(perkStatus(perk, null, december).key).toBe('expiring')
   })

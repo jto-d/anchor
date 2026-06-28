@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { roundCents } from '@/utils/money'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
@@ -211,7 +212,7 @@ function InlineEditor({
           variant="contained"
           startIcon={<CheckIcon />}
           disabled={!valid}
-          onClick={() => onSave({ desc: desc.trim(), amount: Math.round(parseFloat(amount) * 100) / 100, date: date || null, payer, cat, splitYou, splitThem: 100 - splitYou })}
+          onClick={() => onSave({ desc: desc.trim(), amount: roundCents(parseFloat(amount)), date: date || null, payer, cat, splitYou, splitThem: 100 - splitYou })}
         >
           Save changes
         </Button>

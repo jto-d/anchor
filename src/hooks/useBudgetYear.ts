@@ -70,21 +70,11 @@ export function useBudgetYear(year: number) {
   const monthlyData = raw?.monthlyData ?? []
 
   const derived = useMemo(() => {
-    const incomeSources = (raw?.incomeSources ?? []).map((s) => ({ ...s, amount: Number(s.amount) }))
-    const groups = (raw?.groups ?? []).map((g) => ({
-      ...g,
-      categories: (g.categories ?? []).map((c) => ({ ...c, budget: Number(c.budget) })),
-    }))
-    const savings = (raw?.savings ?? []).map((s) => ({
-      ...s,
-      monthly: Number(s.monthly),
-      annualLimit: s.annualLimit != null ? Number(s.annualLimit) : null,
-    }))
-    const goals = (raw?.goals ?? []).map((g) => ({
-      ...g,
-      target: g.target != null ? Number(g.target) : null,
-      running: Number(g.running),
-    }))
+    // Money arrives as numbers (GraphQL exposes Decimal as Float — see CLAUDE.md).
+    const incomeSources = raw?.incomeSources ?? []
+    const groups = raw?.groups ?? []
+    const savings = raw?.savings ?? []
+    const goals = raw?.goals ?? []
 
     const allCats = groups.flatMap((g) => g.categories.map((c) => ({ ...c, group: g.label })))
     const monthlyIncome = incomeSources.reduce((s, x) => s + x.amount, 0)
@@ -105,19 +95,19 @@ export function useBudgetYear(year: number) {
       const catSpent = mData?.hasData
         ? allCats.reduce((s, c) => {
             const spend = mData.categorySpends.find((sp) => sp.categoryId === c.id)
-            return s + (spend ? Number(spend.amount) : 0)
+            return s + (spend ? spend.amount : 0)
           }, 0)
         : catBudgetTotal
 
       const savContrib = mData?.hasData
         ? savings.reduce((s, sv) => {
             const contrib = mData.savingsContribs.find((sc) => sc.accountId === sv.id)
-            return s + (contrib ? Number(contrib.amount) : 0)
+            return s + (contrib ? contrib.amount : 0)
           }, 0)
         : savBudgetTotal
 
       const outflow = catSpent + savContrib
-      const allocated = (mData?.surplusAllocations ?? []).reduce((s, a) => s + Number(a.amount), 0)
+      const allocated = (mData?.surplusAllocations ?? []).reduce((s, a) => s + a.amount, 0)
 
       return {
         m, status, estimated,
@@ -133,7 +123,7 @@ export function useBudgetYear(year: number) {
         const mData = monthlyData.find((d) => d.month === mo.m)
         if (mData?.hasData) {
           const spend = mData.categorySpends.find((sp) => sp.categoryId === c.id)
-          return s + (spend ? Number(spend.amount) : 0)
+          return s + (spend ? spend.amount : 0)
         }
         return s + c.budget
       }, 0)
@@ -145,7 +135,7 @@ export function useBudgetYear(year: number) {
       months.forEach((mo) => {
         const mData = monthlyData.find((d) => d.month === mo.m)
         const v = mData?.hasData
-          ? Number(mData.savingsContribs.find((sc) => sc.accountId === sv.id)?.amount ?? 0)
+          ? (mData.savingsContribs.find((sc) => sc.accountId === sv.id)?.amount ?? 0)
           : sv.monthly
         total += v
         if (currentIdx >= 0 && mo.m <= currentIdx) ytd += v

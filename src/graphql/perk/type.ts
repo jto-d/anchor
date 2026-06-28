@@ -13,8 +13,8 @@ builder.prismaObject("Perk", {
         id: t.exposeID("id"),
         name: t.exposeString("name"),
         totalAmount: t.field({
-            type: "String",
-            resolve: (perk) => perk.totalAmount.toString(),
+            type: "Float",
+            resolve: (perk) => perk.totalAmount.toNumber(),
         }),
         period: t.expose("period", { type: PerkPeriod }),
         resetType: t.expose("resetType", { type: ResetType }),

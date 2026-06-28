@@ -1,12 +1,12 @@
 import { PERIOD_META } from './constants'
-import { toAmount } from './format'
+import { clamp01 } from './format'
 import type { Perk, StatusKey } from './types'
 
 export type CycleWindow = { start: Date; end: Date }
 
 export function annualValue(perk: Perk): number {
   const meta = PERIOD_META[perk.period as keyof typeof PERIOD_META]
-  return toAmount(perk.totalAmount) * (meta?.per ?? 1)
+  return perk.totalAmount * (meta?.per ?? 1)
 }
 
 // ── Cycle window helpers ──────────────────────────────────────────────────────
@@ -147,7 +147,7 @@ export function capturedInCycle(perk: Perk, cardOpenedDate?: string | null, now 
       const d = new Date(c.date + 'T00:00:00')
       return d >= start && d < end
     })
-    .reduce((s, c) => s + toAmount(c.amount), 0)
+    .reduce((s, c) => s + c.amount, 0)
 }
 
 // Sum of credits in the current calendar year — used for the monthly perk annual-rollup bar.
@@ -155,7 +155,7 @@ export function capturedYTD(perk: Perk, now = new Date()): number {
   const y = now.getFullYear()
   return perk.perkCredits
     .filter((c) => new Date(c.date + 'T00:00:00').getFullYear() === y)
-    .reduce((s, c) => s + toAmount(c.amount), 0)
+    .reduce((s, c) => s + c.amount, 0)
 }
 
 export function capturedThisMonth(perk: Perk, now = new Date()): number {
@@ -166,15 +166,47 @@ export function capturedThisMonth(perk: Perk, now = new Date()): number {
       const d = new Date(c.date + 'T00:00:00')
       return d.getFullYear() === y && d.getMonth() === m
     })
-    .reduce((s, c) => s + toAmount(c.amount), 0)
+    .reduce((s, c) => s + c.amount, 0)
+}
+
+// ── Coverage (the single "how much of this perk is done" source) ──────────────
+
+export type CoverageBasis = 'cycle' | 'year'
+
+export interface PerkCoverage {
+  cap: number        // the budget being measured against
+  captured: number   // dollars logged toward it
+  remaining: number  // unused budget (0 for open-ended perks)
+  pct: number        // 0..1 fraction of cap captured (0 for open-ended)
+  covered: boolean   // cap fully captured
+  openEnded: boolean // perk has no cap (totalAmount === 0)
+}
+
+/**
+ * Canonical perk coverage. `basis: 'cycle'` measures the current reset window
+ * against the per-period budget; `basis: 'year'` measures the calendar-year
+ * total against the annualized value. Every "captured / remaining / covered"
+ * question routes through this — no inline `totalAmount === 0` / `pct >= 1`.
+ */
+export function perkCoverage(
+  perk: Perk,
+  opts: { basis: CoverageBasis; cardOpenedDate?: string | null; now?: Date },
+): PerkCoverage {
+  const { basis, cardOpenedDate, now = new Date() } = opts
+  const openEnded = perk.totalAmount === 0
+  const cap = basis === 'cycle' ? perk.totalAmount : annualValue(perk)
+  const captured = basis === 'cycle'
+    ? capturedInCycle(perk, cardOpenedDate, now)
+    : capturedYTD(perk, now)
+  const remaining = openEnded ? 0 : Math.max(0, cap - captured)
+  const pct = openEnded ? 0 : clamp01(captured / cap)
+  return { cap, captured, remaining, pct, covered: !openEnded && pct >= 1, openEnded }
 }
 
 // ── Derived status ────────────────────────────────────────────────────────────
 
 export function perkPct(perk: Perk, cardOpenedDate?: string | null, now = new Date()): number {
-  const perPeriod = toAmount(perk.totalAmount)
-  if (perPeriod === 0) return 0
-  return Math.min(1, capturedInCycle(perk, cardOpenedDate, now) / perPeriod)
+  return perkCoverage(perk, { basis: 'cycle', cardOpenedDate, now }).pct
 }
 
 export function perkStatus(
@@ -182,11 +214,11 @@ export function perkStatus(
   cardOpenedDate?: string | null,
   now = new Date()
 ): { key: StatusKey; label: string } {
-  if (toAmount(perk.totalAmount) === 0) return { key: 'ongoing', label: 'Ongoing' }
-  const pct = perkPct(perk, cardOpenedDate, now)
-  if (pct >= 1) return { key: 'captured', label: 'Captured' }
+  const cov = perkCoverage(perk, { basis: 'cycle', cardOpenedDate, now })
+  if (cov.openEnded) return { key: 'ongoing', label: 'Ongoing' }
+  if (cov.covered) return { key: 'captured', label: 'Captured' }
   if (isInResetWindow(perk, cardOpenedDate, now)) return { key: 'expiring', label: 'Resets soon' }
-  if (pct === 0) return { key: 'open', label: 'Available' }
+  if (cov.pct === 0) return { key: 'open', label: 'Available' }
   return { key: 'partial', label: 'In progress' }
 }
 

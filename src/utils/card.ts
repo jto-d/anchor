@@ -1,5 +1,4 @@
-import { annualValue, capturedInCycle, capturedYTD } from './perk'
-import { toAmount } from './format'
+import { annualValue, capturedInCycle, capturedYTD, perkCoverage } from './perk'
 import { CARD_CATALOG } from '@/data/cardCatalog'
 import type { Card, VerdictKey } from './types'
 
@@ -18,7 +17,7 @@ export function cardAvailable(card: Card): number {
 // Sum of unused budget remaining in each perk's active cycle. Open-ended perks (totalAmount === 0) have no cap to miss.
 export function cardOnTheTable(card: Card): number {
   return card.perks.reduce(
-    (s, p) => toAmount(p.totalAmount) === 0 ? s : s + Math.max(0, toAmount(p.totalAmount) - capturedInCycle(p, card.openedDate)),
+    (s, p) => s + perkCoverage(p, { basis: 'cycle', cardOpenedDate: card.openedDate }).remaining,
     0
   )
 }

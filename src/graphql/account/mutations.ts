@@ -3,6 +3,7 @@ import { builder } from '../builder'
 import { prisma } from '@/lib/prisma'
 import { plaid } from '@/lib/plaid'
 import { CountryCode, Products } from 'plaid'
+import { roundCents } from '@/utils/money'
 
 const SUBTYPE_MAP: Partial<Record<string, AccountType>> = {
   checking:        'CHECKING',
@@ -113,7 +114,7 @@ builder.mutationFields((t) => ({
       type:           t.arg.string({ required: true }),
       nick:           t.arg.string({ required: true }),
       inst:           t.arg.string({ required: true }),
-      balance:        t.arg.string({ required: true }),
+      balance:        t.arg.float({ required: true }),
       isEmergencyFund: t.arg.boolean(),
     },
     resolve: async (query, _root, { type, nick, inst, balance, isEmergencyFund }, ctx) => {
@@ -127,8 +128,7 @@ builder.mutationFields((t) => ({
       if (inst.length > MAX_INST_LENGTH) {
         throw new Error('Institution name must be less than 100 characters')
       }
-      const balanceNum = parseFloat(balance)
-      if (isNaN(balanceNum) || balanceNum < 0) {
+      if (isNaN(balance) || balance < 0) {
         throw new Error('balance must be a non-negative number')
       }
       return prisma.account.create({
@@ -139,7 +139,7 @@ builder.mutationFields((t) => ({
           type: type as AccountType,
           nick,
           inst,
-          balance: balanceNum,
+          balance: roundCents(balance),
           isEmergencyFund: isEmergencyFund ?? false,
         },
       })

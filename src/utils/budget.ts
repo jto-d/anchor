@@ -1,8 +1,8 @@
 // Shared domain types for the budgeting feature.
 //
-// Amounts arrive from GraphQL as strings (Decimal/DateTime are exposed as
-// String — see CLAUDE.md "Pothos conventions"); every shape here is the
-// already-parsed numeric form produced by `useBudgetMonth`.
+// Money arrives from GraphQL as numbers (Decimal columns are exposed as Float —
+// see CLAUDE.md "Pothos conventions"); dates still arrive as strings. Every
+// shape here is the numeric form produced by `useBudgetMonth`.
 
 /** The month currently in view, as a zero-based month index. */
 export interface MonthSel {

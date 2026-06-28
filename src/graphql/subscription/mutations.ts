@@ -1,5 +1,6 @@
 import { builder } from '../builder'
 import { prisma } from '@/lib/prisma'
+import { roundCents } from '@/utils/money'
 
 const MAX_NAME_LENGTH = 50
 
@@ -10,7 +11,7 @@ builder.mutationFields((t) => ({
       name: t.arg.string({ required: true }),
       cat: t.arg.string({ required: true }),
       icon: t.arg.string({ required: true }),
-      cost: t.arg.string({ required: true }),
+      cost: t.arg.float({ required: true }),
       period: t.arg.string({ required: true }),
       day: t.arg.int({ required: true }),
       renewM: t.arg.int(),
@@ -28,7 +29,7 @@ builder.mutationFields((t) => ({
           name: args.name,
           cat: args.cat,
           icon: args.icon,
-          cost: args.cost,
+          cost: roundCents(args.cost),
           period: args.period,
           day: args.day,
           renewM: args.renewM ?? null,
@@ -53,7 +54,7 @@ builder.mutationFields((t) => ({
     args: {
       id: t.arg.string({ required: true }),
       name: t.arg.string(),
-      cost: t.arg.string(),
+      cost: t.arg.float(),
       paused: t.arg.boolean(),
       cancelPending: t.arg.boolean(),
     },
@@ -66,7 +67,7 @@ builder.mutationFields((t) => ({
         where: { id, userId: ctx.userId },
         data: {
           ...(name != null && { name }),
-          ...(cost != null && { cost }),
+          ...(cost != null && { cost: roundCents(cost) }),
           ...(paused != null && { paused }),
           ...(cancelPending != null && { cancelPending }),
         },

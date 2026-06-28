@@ -53,17 +53,17 @@ const DEFAULT_PARTNER = 'Your partner'
 
 function toLocalExpense(e: {
   id: string; year: number; month: number; date?: string | null
-  desc: string; amount: string; payer: string; cat: string
+  desc: string; amount: number; payer: string; cat: string
   splitYou: number; splitThem: number; createdAt: string
 }): SplitExpense {
-  return { ...e, date: e.date ?? null, amount: parseFloat(e.amount) }
+  return { ...e, date: e.date ?? null }
 }
 
 function toLocalSettlement(s: {
   id: string; year: number; month: number; date?: string | null
-  amount: string; fromPayer: string; createdAt: string
+  amount: number; fromPayer: string; createdAt: string
 }): SplitSettlement {
-  return { ...s, date: s.date ?? null, amount: parseFloat(s.amount) }
+  return { ...s, date: s.date ?? null }
 }
 
 export function SplitView() {
@@ -128,7 +128,7 @@ export function SplitView() {
       month,
       date: payload.date,
       desc: payload.desc,
-      amount: String(payload.amount),
+      amount: payload.amount,
       payer: payload.payer,
       cat: payload.cat,
       splitYou: payload.splitYou,
@@ -144,7 +144,7 @@ export function SplitView() {
       id,
       ...(patch.desc != null && { desc: patch.desc }),
       ...(patch.date !== undefined && { date: patch.date }),
-      ...(patch.amount != null && { amount: String(patch.amount) }),
+      ...(patch.amount != null && { amount: Number(patch.amount) }),
       ...(patch.payer != null && { payer: patch.payer }),
       ...(patch.cat != null && { cat: patch.cat }),
       ...(patch.splitYou != null && { splitYou: patch.splitYou }),
@@ -168,7 +168,7 @@ export function SplitView() {
       year,
       month,
       date: payload.date,
-      amount: String(payload.amount),
+      amount: payload.amount,
       fromPayer: payload.fromPayer,
     })
     reexecute({ requestPolicy: 'network-only' })

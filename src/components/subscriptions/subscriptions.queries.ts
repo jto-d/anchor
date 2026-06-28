@@ -24,7 +24,7 @@ export const AddSubscriptionDocument = graphql(`
     $name: String!
     $cat: String!
     $icon: String!
-    $cost: String!
+    $cost: Float!
     $period: String!
     $day: Int!
     $renewM: Int
@@ -64,7 +64,7 @@ export const RemoveSubscriptionDocument = graphql(`
 `)
 
 export const UpdateSubscriptionDocument = graphql(`
-  mutation UpdateSubscription($id: String!, $name: String, $cost: String, $paused: Boolean, $cancelPending: Boolean) {
+  mutation UpdateSubscription($id: String!, $name: String, $cost: Float, $paused: Boolean, $cancelPending: Boolean) {
     updateSubscription(id: $id, name: $name, cost: $cost, paused: $paused, cancelPending: $cancelPending) {
       id
       name

@@ -1,5 +1,6 @@
 import { builder } from "../builder"
 import { prisma } from "@/lib/prisma"
+import { roundCents } from "@/utils/money"
 
 builder.mutationFields((t) => ({
   logPerkCredit: t.prismaField({
@@ -26,7 +27,7 @@ builder.mutationFields((t) => ({
         ...query,
         data: {
           perkId,
-          amount,
+          amount: roundCents(amount),
           date: parsedDate,
           description: description ?? null,
         },

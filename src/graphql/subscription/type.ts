@@ -6,7 +6,7 @@ builder.prismaObject('Subscription', {
     name: t.exposeString('name'),
     cat: t.exposeString('cat'),
     icon: t.exposeString('icon'),
-    cost: t.field({ type: 'String', resolve: (s) => s.cost.toString() }),
+    cost: t.field({ type: 'Float', resolve: (s) => s.cost.toNumber() }),
     period: t.exposeString('period'),
     day: t.exposeInt('day'),
     renewM: t.exposeInt('renewM', { nullable: true }),

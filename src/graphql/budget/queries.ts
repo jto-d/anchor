@@ -76,7 +76,7 @@ builder.queryField('budgetMonth', (t) =>
         id: s.id,
         label: s.label,
         sub: s.sub,
-        amount: s.amount.toString(),
+        amount: Number(s.amount),
         position: s.position,
       }))
 
@@ -90,9 +90,9 @@ builder.queryField('budgetMonth', (t) =>
           id: c.id,
           label: c.label,
           icon: c.icon,
-          budget: (c.monthlyBudgets[0]?.budget ?? c.budget).toString(),
+          budget: Number(c.monthlyBudgets[0]?.budget ?? c.budget),
           position: c.position,
-          monthSpent: (c.spends[0]?.amount ?? 0).toString(),
+          monthSpent: Number(c.spends[0]?.amount ?? 0),
         })),
       }))
 
@@ -107,11 +107,11 @@ builder.queryField('budgetMonth', (t) =>
           label: s.label,
           accountType: s.accountType,
           icon: s.icon,
-          monthly: s.monthly.toString(),
-          annualLimit: s.annualLimit?.toString() ?? null,
+          monthly: Number(s.monthly),
+          annualLimit: s.annualLimit == null ? null : Number(s.annualLimit),
           position: s.position,
-          monthContrib: monthContrib.toString(),
-          ytd: ytd.toString(),
+          monthContrib: Number(monthContrib),
+          ytd,
         }
       })
 
@@ -127,12 +127,12 @@ builder.queryField('budgetMonth', (t) =>
           id: g.id,
           name: g.name,
           icon: g.icon,
-          target: g.target?.toString() ?? null,
-          base: g.base.toString(),
+          target: g.target == null ? null : Number(g.target),
+          base: Number(g.base),
           targetYear: g.targetYear,
           targetMonth: g.targetMonth,
-          running: running.toString(),
-          monthAllocated: (monthAlloc?.amount ?? 0).toString(),
+          running,
+          monthAllocated: Number(monthAlloc?.amount ?? 0),
         }
       })
 
@@ -181,30 +181,30 @@ builder.queryField('budgetYear', (t) =>
 
       const incomeSourcesOut = incomeSources.map((s) => ({
         id: s.id, label: s.label, sub: s.sub,
-        amount: s.amount.toString(), position: s.position,
+        amount: Number(s.amount), position: s.position,
       }))
 
       const groupsOut = groups.map((g) => ({
         id: g.id, label: g.label, icon: g.icon, position: g.position,
         categories: g.categories.map((c) => ({
           id: c.id, label: c.label, icon: c.icon,
-          budget: c.budget.toString(), position: c.position, monthSpent: '0',
+          budget: Number(c.budget), position: c.position, monthSpent: 0,
         })),
       }))
 
       const savingsOut = savings.map((s) => ({
         id: s.id, label: s.label, accountType: s.accountType, icon: s.icon,
-        monthly: s.monthly.toString(), annualLimit: s.annualLimit?.toString() ?? null,
-        position: s.position, monthContrib: '0', ytd: '0',
+        monthly: Number(s.monthly), annualLimit: s.annualLimit == null ? null : Number(s.annualLimit),
+        position: s.position, monthContrib: 0, ytd: 0,
       }))
 
       // Goals: running = base + all allocations this year
       const goalsOut = goals.map((g) => {
         const running = Number(g.base) + g.allocations.reduce((sum, a) => sum + Number(a.amount), 0)
         return {
-          id: g.id, name: g.name, icon: g.icon, target: g.target?.toString() ?? null,
-          base: g.base.toString(), targetYear: g.targetYear, targetMonth: g.targetMonth,
-          running: running.toString(), monthAllocated: '0',
+          id: g.id, name: g.name, icon: g.icon, target: g.target == null ? null : Number(g.target),
+          base: Number(g.base), targetYear: g.targetYear, targetMonth: g.targetMonth,
+          running, monthAllocated: 0,
         }
       })
 
@@ -213,16 +213,16 @@ builder.queryField('budgetYear', (t) =>
         const categorySpends = groups.flatMap((g) =>
           g.categories.flatMap((c) => {
             const spend = c.spends.find((s) => s.month === month)
-            return spend ? [{ categoryId: c.id, amount: spend.amount.toString() }] : []
+            return spend ? [{ categoryId: c.id, amount: Number(spend.amount) }] : []
           })
         )
         const savingsContribs = savings.flatMap((s) => {
           const contrib = s.contributions.find((c) => c.month === month)
-          return contrib ? [{ accountId: s.id, amount: contrib.amount.toString() }] : []
+          return contrib ? [{ accountId: s.id, amount: Number(contrib.amount) }] : []
         })
         const surplusAllocations = goals.flatMap((g) => {
           const alloc = g.allocations.find((a) => a.month === month)
-          return alloc ? [{ goalId: g.id, amount: alloc.amount.toString() }] : []
+          return alloc ? [{ goalId: g.id, amount: Number(alloc.amount) }] : []
         })
         const hasData = categorySpends.length > 0 || savingsContribs.length > 0
         return { month, hasData, categorySpends, savingsContribs, surplusAllocations }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { roundCents } from '@/utils/money'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -202,7 +203,7 @@ function ManualForm({ onClose, onBack, onSuccess }: ManualFormProps) {
       type,
       nick: nick.trim(),
       inst: inst.trim() || meta.label,
-      balance: String(Math.max(0, Math.round(parseFloat(balance) * 100) / 100)),
+      balance: Math.max(0, roundCents(parseFloat(balance))),
       isEmergencyFund: isSavings && ef,
     })
     setSaving(false)

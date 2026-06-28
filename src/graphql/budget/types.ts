@@ -4,46 +4,46 @@ import { builder } from '../builder'
 
 export const MonthlySpendItemPayload = builder.objectRef<{
   categoryId: string
-  amount: string
+  amount: number
 }>('MonthlySpendItemPayload')
 
 builder.objectType(MonthlySpendItemPayload, {
   fields: (t) => ({
     categoryId: t.string({ resolve: (x) => x.categoryId }),
-    amount: t.string({ resolve: (x) => x.amount }),
+    amount: t.float({ resolve: (x) => x.amount }),
   }),
 })
 
 export const MonthlyContribItemPayload = builder.objectRef<{
   accountId: string
-  amount: string
+  amount: number
 }>('MonthlyContribItemPayload')
 
 builder.objectType(MonthlyContribItemPayload, {
   fields: (t) => ({
     accountId: t.string({ resolve: (x) => x.accountId }),
-    amount: t.string({ resolve: (x) => x.amount }),
+    amount: t.float({ resolve: (x) => x.amount }),
   }),
 })
 
 export const SurplusAllocItemPayload = builder.objectRef<{
   goalId: string
-  amount: string
+  amount: number
 }>('SurplusAllocItemPayload')
 
 builder.objectType(SurplusAllocItemPayload, {
   fields: (t) => ({
     goalId: t.string({ resolve: (x) => x.goalId }),
-    amount: t.string({ resolve: (x) => x.amount }),
+    amount: t.float({ resolve: (x) => x.amount }),
   }),
 })
 
 export const BudgetMonthDataPayload = builder.objectRef<{
   month: number
   hasData: boolean
-  categorySpends: { categoryId: string; amount: string }[]
-  savingsContribs: { accountId: string; amount: string }[]
-  surplusAllocations: { goalId: string; amount: string }[]
+  categorySpends: { categoryId: string; amount: number }[]
+  savingsContribs: { accountId: string; amount: number }[]
+  surplusAllocations: { goalId: string; amount: number }[]
 }>('BudgetMonthDataPayload')
 
 builder.objectType(BudgetMonthDataPayload, {
@@ -57,24 +57,24 @@ builder.objectType(BudgetMonthDataPayload, {
 })
 
 export const BudgetYearPayload = builder.objectRef<{
-  incomeSources: { id: string; label: string; sub: string | null; amount: string; position: number }[]
+  incomeSources: { id: string; label: string; sub: string | null; amount: number; position: number }[]
   groups: {
     id: string; label: string; icon: string; position: number;
-    categories: { id: string; label: string; icon: string; budget: string; position: number; monthSpent: string }[]
+    categories: { id: string; label: string; icon: string; budget: number; position: number; monthSpent: number }[]
   }[]
   savings: {
-    id: string; label: string; accountType: string; icon: string; monthly: string;
-    annualLimit: string | null; position: number; monthContrib: string; ytd: string;
+    id: string; label: string; accountType: string; icon: string; monthly: number;
+    annualLimit: number | null; position: number; monthContrib: number; ytd: number;
   }[]
   goals: {
-    id: string; name: string; icon: string; target: string | null; base: string;
-    targetYear: number | null; targetMonth: number | null; running: string; monthAllocated: string;
+    id: string; name: string; icon: string; target: number | null; base: number;
+    targetYear: number | null; targetMonth: number | null; running: number; monthAllocated: number;
   }[]
   monthlyData: {
     month: number; hasData: boolean;
-    categorySpends: { categoryId: string; amount: string }[];
-    savingsContribs: { accountId: string; amount: string }[];
-    surplusAllocations: { goalId: string; amount: string }[];
+    categorySpends: { categoryId: string; amount: number }[];
+    savingsContribs: { accountId: string; amount: number }[];
+    surplusAllocations: { goalId: string; amount: number }[];
   }[]
   budgetStartYear: number | null
   budgetStartMonth: number | null
@@ -98,9 +98,9 @@ export const BudgetCategoryPayload = builder.objectRef<{
   id: string
   label: string
   icon: string
-  budget: string
+  budget: number
   position: number
-  monthSpent: string
+  monthSpent: number
 }>('BudgetCategoryPayload')
 
 builder.objectType(BudgetCategoryPayload, {
@@ -108,9 +108,9 @@ builder.objectType(BudgetCategoryPayload, {
     id: t.string({ resolve: (c) => c.id }),
     label: t.string({ resolve: (c) => c.label }),
     icon: t.string({ resolve: (c) => c.icon }),
-    budget: t.string({ resolve: (c) => c.budget }),
+    budget: t.float({ resolve: (c) => c.budget }),
     position: t.int({ resolve: (c) => c.position }),
-    monthSpent: t.string({ resolve: (c) => c.monthSpent }),
+    monthSpent: t.float({ resolve: (c) => c.monthSpent }),
   }),
 })
 
@@ -123,9 +123,9 @@ export const BudgetGroupPayload = builder.objectRef<{
     id: string
     label: string
     icon: string
-    budget: string
+    budget: number
     position: number
-    monthSpent: string
+    monthSpent: number
   }[]
 }>('BudgetGroupPayload')
 
@@ -143,7 +143,7 @@ export const IncomeSourcePayload = builder.objectRef<{
   id: string
   label: string
   sub: string | null
-  amount: string
+  amount: number
   position: number
 }>('IncomeSourcePayload')
 
@@ -152,7 +152,7 @@ builder.objectType(IncomeSourcePayload, {
     id: t.string({ resolve: (s) => s.id }),
     label: t.string({ resolve: (s) => s.label }),
     sub: t.string({ nullable: true, resolve: (s) => s.sub }),
-    amount: t.string({ resolve: (s) => s.amount }),
+    amount: t.float({ resolve: (s) => s.amount }),
     position: t.int({ resolve: (s) => s.position }),
   }),
 })
@@ -162,11 +162,11 @@ export const SavingsAccountPayload = builder.objectRef<{
   label: string
   accountType: string
   icon: string
-  monthly: string
-  annualLimit: string | null
+  monthly: number
+  annualLimit: number | null
   position: number
-  monthContrib: string
-  ytd: string
+  monthContrib: number
+  ytd: number
 }>('SavingsAccountPayload')
 
 builder.objectType(SavingsAccountPayload, {
@@ -175,11 +175,11 @@ builder.objectType(SavingsAccountPayload, {
     label: t.string({ resolve: (s) => s.label }),
     accountType: t.string({ resolve: (s) => s.accountType }),
     icon: t.string({ resolve: (s) => s.icon }),
-    monthly: t.string({ resolve: (s) => s.monthly }),
-    annualLimit: t.string({ nullable: true, resolve: (s) => s.annualLimit }),
+    monthly: t.float({ resolve: (s) => s.monthly }),
+    annualLimit: t.float({ nullable: true, resolve: (s) => s.annualLimit }),
     position: t.int({ resolve: (s) => s.position }),
-    monthContrib: t.string({ resolve: (s) => s.monthContrib }),
-    ytd: t.string({ resolve: (s) => s.ytd }),
+    monthContrib: t.float({ resolve: (s) => s.monthContrib }),
+    ytd: t.float({ resolve: (s) => s.ytd }),
   }),
 })
 
@@ -187,12 +187,12 @@ export const SavingsGoalPayload = builder.objectRef<{
   id: string
   name: string
   icon: string
-  target: string | null
-  base: string
+  target: number | null
+  base: number
   targetYear: number | null
   targetMonth: number | null
-  running: string
-  monthAllocated: string
+  running: number
+  monthAllocated: number
 }>('SavingsGoalPayload')
 
 builder.objectType(SavingsGoalPayload, {
@@ -200,45 +200,45 @@ builder.objectType(SavingsGoalPayload, {
     id: t.string({ resolve: (g) => g.id }),
     name: t.string({ resolve: (g) => g.name }),
     icon: t.string({ resolve: (g) => g.icon }),
-    target: t.string({ nullable: true, resolve: (g) => g.target }),
-    base: t.string({ resolve: (g) => g.base }),
+    target: t.float({ nullable: true, resolve: (g) => g.target }),
+    base: t.float({ resolve: (g) => g.base }),
     targetYear: t.int({ nullable: true, resolve: (g) => g.targetYear }),
     targetMonth: t.int({ nullable: true, resolve: (g) => g.targetMonth }),
-    running: t.string({ resolve: (g) => g.running }),
-    monthAllocated: t.string({ resolve: (g) => g.monthAllocated }),
+    running: t.float({ resolve: (g) => g.running }),
+    monthAllocated: t.float({ resolve: (g) => g.monthAllocated }),
   }),
 })
 
 export const BudgetMonthPayload = builder.objectRef<{
-  incomeSources: { id: string; label: string; sub: string | null; amount: string; position: number }[]
+  incomeSources: { id: string; label: string; sub: string | null; amount: number; position: number }[]
   groups: {
     id: string
     label: string
     icon: string
     position: number
-    categories: { id: string; label: string; icon: string; budget: string; position: number; monthSpent: string }[]
+    categories: { id: string; label: string; icon: string; budget: number; position: number; monthSpent: number }[]
   }[]
   savings: {
     id: string
     label: string
     accountType: string
     icon: string
-    monthly: string
-    annualLimit: string | null
+    monthly: number
+    annualLimit: number | null
     position: number
-    monthContrib: string
-    ytd: string
+    monthContrib: number
+    ytd: number
   }[]
   goals: {
     id: string
     name: string
     icon: string
-    target: string | null
-    base: string
+    target: number | null
+    base: number
     targetYear: number | null
     targetMonth: number | null
-    running: string
-    monthAllocated: string
+    running: number
+    monthAllocated: number
   }[]
   budgetStartYear: number | null
   budgetStartMonth: number | null

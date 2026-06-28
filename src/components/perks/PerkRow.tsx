@@ -15,7 +15,7 @@ import ScheduleOutlinedIcon from '@mui/icons-material/ScheduleOutlined'
 import { Dot, ProgressBar, Row, StatusChip } from '@/components/ui'
 import { tabularNums } from '@/lib/sx'
 import { capturedYTD, capturedThisMonth, capturedInCycle, annualValue, perkPct, perkStatus, periodLabel, nextResetDate } from '@/utils/perk'
-import { fmtDollars, fmtCents, fmtDate, toAmount } from '@/utils/format'
+import { fmtDollars, fmtCents, fmtDate } from '@/utils/format'
 import { resolveCardDesign } from '@/utils/cardDesigns'
 import type { Card, Perk } from '@/utils/types'
 
@@ -31,7 +31,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
   const isMonthly = perk.period === 'MONTHLY'
 
   const captured   = capturedInCycle(perk, cardOpenedDate)
-  const perPeriod  = toAmount(perk.totalAmount)
+  const perPeriod  = perk.totalAmount
   const isOpenEnded = perPeriod === 0
   const annual     = annualValue(perk)
   const ytd        = capturedYTD(perk)
@@ -177,7 +177,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
                     component="span"
                     sx={{ ...tabularNums, fontSize: 13, fontWeight: 500, color: 'primary.main' }}
                   >
-                    +{fmtCents(toAmount(c.amount))}
+                    +{fmtCents(c.amount)}
                   </Typography>
                 </Row>
               ))}

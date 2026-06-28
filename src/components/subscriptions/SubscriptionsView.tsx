@@ -35,7 +35,7 @@ function toSub(row: {
   name: string
   cat: string
   icon: string
-  cost: string
+  cost: number
   period: string
   day: number
   renewM?: number | null
@@ -49,7 +49,7 @@ function toSub(row: {
     name: row.name,
     cat: row.cat,
     icon: row.icon,
-    cost: Number(row.cost),
+    cost: row.cost,
     period: row.period as Subscription['period'],
     day: row.day,
     renewM: row.renewM ?? undefined,
@@ -78,7 +78,7 @@ export function SubscriptionsView({ cards }: SubscriptionsViewProps) {
 
   const handlers = {
     onSetCost: (id: string, cost: number) => {
-      updateSubscription({ id, cost: cost.toString() })
+      updateSubscription({ id, cost })
     },
     onRename: (id: string, name: string) => {
       updateSubscription({ id, name })
@@ -139,7 +139,7 @@ export function SubscriptionsView({ cards }: SubscriptionsViewProps) {
             name: sub.name,
             cat: sub.cat,
             icon: sub.icon,
-            cost: sub.cost.toString(),
+            cost: sub.cost,
             period: sub.period,
             day: sub.day,
             renewM: sub.renewM ?? null,

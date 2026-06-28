@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { roundCents } from '@/utils/money'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
@@ -181,7 +182,7 @@ function normalizeDraft(draft: ExpenseDraft) {
   const splitYou = Math.max(0, Math.min(100, Math.round(draft.splitYou)))
   return {
     desc: draft.desc.trim(),
-    amount: Math.round(parseFloat(String(draft.amount)) * 100) / 100,
+    amount: roundCents(parseFloat(String(draft.amount))),
     date: draft.date || null,
     payer: draft.payer,
     cat: draft.cat,

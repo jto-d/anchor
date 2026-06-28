@@ -46,7 +46,7 @@ export const AddSplitExpenseDocument = graphql(`
     $month: Int!
     $date: String
     $desc: String!
-    $amount: String!
+    $amount: Float!
     $payer: String!
     $cat: String!
     $splitYou: Int!
@@ -83,7 +83,7 @@ export const UpdateSplitExpenseDocument = graphql(`
     $id: String!
     $date: String
     $desc: String
-    $amount: String
+    $amount: Float
     $payer: String
     $cat: String
     $splitYou: Int
@@ -125,7 +125,7 @@ export const AddSplitSettlementDocument = graphql(`
     $year: Int!
     $month: Int!
     $date: String
-    $amount: String!
+    $amount: Float!
     $fromPayer: String!
   ) {
     addSplitSettlement(
