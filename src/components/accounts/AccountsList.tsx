@@ -15,6 +15,8 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUpOutlined'
 import EditIcon from '@mui/icons-material/EditOutlined'
 import DeleteIcon from '@mui/icons-material/DeleteOutlined'
 import LinkOffIcon from '@mui/icons-material/LinkOffOutlined'
+import ShieldAddIcon from '@mui/icons-material/AddModeratorOutlined'
+import ShieldRemoveIcon from '@mui/icons-material/GppBadOutlined'
 import { SurfaceCard, CatGlyph } from '@/components/ui'
 import { Money, SourceBadge, Sparkline, HoldingsDetail, OverflowMenu } from './AccountPrimitives'
 import {
@@ -47,6 +49,9 @@ export function AccountRow({
 
   const menuItems = [
     { key: 'edit', label: 'Edit account', icon: EditIcon },
+    account.isEmergencyFund
+      ? { key: 'emergency', label: 'Remove emergency fund', icon: ShieldRemoveIcon }
+      : { key: 'emergency', label: 'Set as emergency fund', icon: ShieldAddIcon },
     account.source === 'PLAID'
       ? { key: 'unlink', label: 'Unlink account', icon: LinkOffIcon, danger: true }
       : { key: 'remove', label: 'Remove account', icon: DeleteIcon, danger: true },

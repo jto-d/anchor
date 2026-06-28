@@ -23,6 +23,7 @@ import { EditAccountDialog } from './EditAccountDialog'
 import {
   ListAccountsDocument,
   RemoveAccountDocument,
+  UpdateAccountDocument,
 } from './accounts.queries'
 import {
   type Account, type Holding, type AccountType,
@@ -72,6 +73,7 @@ function buildGroups(accounts: Account[]): AccountGroup[] {
 export function AccountsView() {
   const [{ data, fetching, error }, reexecuteQuery] = useQuery({ query: ListAccountsDocument })
   const [, removeAccount] = useMutation(RemoveAccountDocument)
+  const [, updateAccount] = useMutation(UpdateAccountDocument)
 
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
@@ -149,8 +151,14 @@ export function AccountsView() {
       flash(action === 'unlink' ? 'Account unlinked.' : 'Account removed.')
     } else if (action === 'edit') {
       setEditAccount(accounts.find((x) => x.id === id) ?? null)
+    } else if (action === 'emergency') {
+      const a = accounts.find((x) => x.id === id)
+      if (!a) return
+      await updateAccount({ id, isEmergencyFund: !a.isEmergencyFund })
+      reexecuteQuery({ requestPolicy: 'network-only' })
+      flash(a.isEmergencyFund ? 'Emergency fund removed.' : 'Emergency fund set.')
     }
-  }, [accounts, removeAccount, reexecuteQuery, flash])
+  }, [accounts, removeAccount, updateAccount, reexecuteQuery, flash])
 
   // Merge local balance overrides (from nudge) onto server accounts
   const displayAccounts = useMemo(

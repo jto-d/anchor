@@ -55,8 +55,8 @@ export const AddManualAccountDocument = graphql(`
 `)
 
 export const UpdateAccountDocument = graphql(`
-  mutation UpdateAccount($id: String!, $nick: String, $type: String) {
-    updateAccount(id: $id, nick: $nick, type: $type) {
+  mutation UpdateAccount($id: String!, $nick: String, $type: String, $isEmergencyFund: Boolean) {
+    updateAccount(id: $id, nick: $nick, type: $type, isEmergencyFund: $isEmergencyFund) {
       id
       nick
       inst
