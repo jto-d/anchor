@@ -5,6 +5,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import { theme } from '@/lib/theme'
 import { Providers } from '@/lib/urql'
+import { ToastProvider } from '@/components/ui/feedback/ToastProvider'
 import { AuthSessionProvider } from './session-provider'
 
 export const metadata: Metadata = {
@@ -24,7 +25,9 @@ export default function RootLayout({
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <AuthSessionProvider>
-              <Providers>{children}</Providers>
+              <Providers>
+                <ToastProvider>{children}</ToastProvider>
+              </Providers>
             </AuthSessionProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>

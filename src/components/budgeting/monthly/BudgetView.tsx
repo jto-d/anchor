@@ -4,9 +4,7 @@ import { useCallback, useState } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
-import Snackbar from '@mui/material/Snackbar'
 import Typography from '@mui/material/Typography'
-import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
 import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined'
 import { brand } from '@/lib/theme'
 import { AppDialog, Row, Stack } from '@/components/ui'
@@ -141,18 +139,6 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
           </Button>
         </Row>
       </AppDialog>
-
-      <Snackbar
-        open={!!budget.toast}
-        autoHideDuration={2800}
-        onClose={budget.dismissToast}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Row gap={1.1} sx={{ bgcolor: 'grey.900', color: '#fff', px: '18px', py: '11px', borderRadius: 999, fontSize: 13, fontWeight: 500, boxShadow: brand.shadow.lg }}>
-          <AutoAwesomeOutlinedIcon sx={{ fontSize: 15, color: brand.anchor[300] }} />
-          {budget.toast}
-        </Row>
-      </Snackbar>
     </Box>
   )
 }

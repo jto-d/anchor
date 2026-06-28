@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery, useMutation } from '@urql/next'
+import { useToast } from '@/components/ui'
 import {
   BudgetMonthDocument,
   SetIncomeAmountDocument,
@@ -41,14 +42,7 @@ import type { GoalData, GroupData, IncomeSource, MonthSel, SavingsData, Totals }
  * so the UI reflects edits instantly. Overrides are cleared on each refetch.
  */
 export function useBudgetMonth(sel: MonthSel) {
-  const [toast, setToast] = useState<string | null>(null)
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const flash = useCallback((msg: string) => {
-    setToast(msg)
-    if (timerRef.current) clearTimeout(timerRef.current)
-    timerRef.current = setTimeout(() => setToast(null), 2800)
-  }, [])
+  const notify = useToast()
 
   const [{ data, fetching }, reexecute] = useQuery({
     query: BudgetMonthDocument,
@@ -187,8 +181,8 @@ export function useBudgetMonth(sel: MonthSel) {
   const addIncome = useCallback(async () => {
     await addIncomeSource({ label: 'New income', amount: 0 })
     refetch()
-    flash('Income source added — name it and set an amount.')
-  }, [addIncomeSource, refetch, flash])
+    notify('Income source added — name it and set an amount.')
+  }, [addIncomeSource, refetch, notify])
 
   const removeIncome = useCallback(async (id: string) => {
     await removeIncomeSource({ id }); refetch()
@@ -197,8 +191,8 @@ export function useBudgetMonth(sel: MonthSel) {
   const addCategory = useCallback(async (groupId: string) => {
     await addBudgetCategory({ groupId, label: 'New category', icon: 'banknote', budget: 0 })
     refetch()
-    flash('Category added — name it and set a budget.')
-  }, [addBudgetCategory, refetch, flash])
+    notify('Category added — name it and set a budget.')
+  }, [addBudgetCategory, refetch, notify])
 
   const renameCategory = useCallback(async (id: string, label: string) => {
     await renameCategoryMut({ id, label }); refetch()
@@ -211,8 +205,8 @@ export function useBudgetMonth(sel: MonthSel) {
   const addSavings = useCallback(async () => {
     await addSavingsAccount({ label: 'New account', accountType: 'Custom', icon: 'banknote', monthly: 0 })
     refetch()
-    flash('Savings account added.')
-  }, [addSavingsAccount, refetch, flash])
+    notify('Savings account added.')
+  }, [addSavingsAccount, refetch, notify])
 
   const renameSavings = useCallback(async (id: string, label: string) => {
     await renameSavingsAccountMut({ id, label }); refetch()
@@ -229,8 +223,8 @@ export function useBudgetMonth(sel: MonthSel) {
   const addGroup = useCallback(async () => {
     await addBudgetGroupMut({ label: 'New group', icon: 'tag' })
     refetch()
-    flash('Group added — name it and add categories.')
-  }, [addBudgetGroupMut, refetch, flash])
+    notify('Group added — name it and add categories.')
+  }, [addBudgetGroupMut, refetch, notify])
 
   const renameGroup = useCallback(async (id: string, label: string) => {
     await renameBudgetGroupMut({ id, label }); refetch()
@@ -249,8 +243,8 @@ export function useBudgetMonth(sel: MonthSel) {
   const addGoal = useCallback(async () => {
     await addSavingsGoalMut({ name: 'New goal', icon: 'star' })
     refetch()
-    flash('Goal added — name it and set a target.')
-  }, [addSavingsGoalMut, refetch, flash])
+    notify('Goal added — name it and set a target.')
+  }, [addSavingsGoalMut, refetch, notify])
 
   const renameGoal = useCallback(async (id: string, name: string) => {
     await renameSavingsGoalMut({ id, name }); refetch()
@@ -279,8 +273,6 @@ export function useBudgetMonth(sel: MonthSel) {
     totals,
     budgetStartYear: raw?.budgetStartYear ?? null,
     budgetStartMonth: raw?.budgetStartMonth ?? null,
-    toast,
-    dismissToast: useCallback(() => setToast(null), []),
     setBudget,
     setSpent,
     setSavingsMonthly: setSavingsMonthlyAmount,

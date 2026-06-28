@@ -3,46 +3,32 @@
 import { useState } from 'react'
 import { useQuery, useMutation } from '@urql/next'
 import Alert from '@mui/material/Alert'
-import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { Topbar } from '@/components/layout/Topbar'
-import { Row, Segmented, Stack, Toast } from '@/components/ui'
+import { Row, Stack, useToast } from '@/components/ui'
 import { PerksDashboard } from '@/components/perks/PerksDashboard'
 import { CardDetail } from '@/components/perks/CardDetail'
 import { LogCreditDialog } from '@/components/perks/LogCreditDialog'
 import { CardsView } from '@/components/cards/CardsView'
-import { AddCardDialog } from '@/components/cards/AddCardDialog'
-import { RemoveCardDialog } from '@/components/cards/RemoveCardDialog'
-import { BudgetView, YearView } from '@/components/budgeting'
+import { BudgetingView } from '@/components/budgeting'
 import { SubscriptionsView } from '@/components/subscriptions'
 import { AccountsView } from '@/components/accounts/AccountsView'
 import { SplitView } from '@/components/split/SplitView'
-import { CARD_CATALOG } from '@/data/cardCatalog'
 import type { SubCard } from '@/data/subscriptionData'
 import type { Card, Perk } from '@/utils/types'
-import {
-  MeDocument,
-  LogPerkCreditDocument,
-  RemoveCardDocument,
-  AddCardDocument,
-} from './me-view.queries'
+import { MeDocument, LogPerkCreditDocument } from './me-view.queries'
 
 type Route = 'perks' | 'card' | 'cards' | 'budgeting' | 'subscriptions' | 'accounts' | 'split'
 
 export function MeView() {
   const [route, setRoute] = useState<Route>('perks')
-  const [budgetView, setBudgetView] = useState<'monthly' | 'yearly'>('monthly')
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
   const [dialogPerk, setDialogPerk] = useState<Perk | null>(null)
-  const [addCardOpen, setAddCardOpen] = useState(false)
-  const [pendingRemoveId, setPendingRemoveId] = useState<string | null>(null)
-  const [toast, setToast] = useState<string | null>(null)
+  const notify = useToast()
 
   const [{ data, fetching, error }, reexecuteQuery] = useQuery({ query: MeDocument })
   const [, logPerkCredit] = useMutation(LogPerkCreditDocument)
-  const [, removeCard] = useMutation(RemoveCardDocument)
-  const [, addCard] = useMutation(AddCardDocument)
 
   const cards: Card[] = (data?.me.creditCards ?? []) as Card[]
   const selectedCard = cards.find((c) => c.id === selectedCardId) ?? null
@@ -78,28 +64,7 @@ export function MeView() {
     await logPerkCredit({ perkId, amount, date, description: description || undefined })
     reexecuteQuery({ requestPolicy: 'network-only' })
     setDialogPerk(null)
-    setToast(`Logged $${amount.toFixed(2)} to ${perkName}`)
-  }
-
-  async function handleAddCard(catalogKey: string, lastFour: string, openedDate: string) {
-    const result = await addCard({ catalogKey, lastFour: lastFour || undefined, openedDate: openedDate || undefined })
-    reexecuteQuery({ requestPolicy: 'network-only' })
-    setAddCardOpen(false)
-    if (result.error) {
-      setToast(result.error.message.replace(/^\[\w+\]\s*/, ''))
-    } else {
-      const name = CARD_CATALOG[catalogKey]?.name ?? 'Card'
-      setToast(`${name} added to your wallet`)
-    }
-  }
-
-  async function handleRemoveCard() {
-    if (!pendingRemoveId) return
-    const name = cards.find((c) => c.id === pendingRemoveId)?.name ?? 'Card'
-    await removeCard({ cardId: pendingRemoveId })
-    reexecuteQuery({ requestPolicy: 'network-only' })
-    setPendingRemoveId(null)
-    setToast(`${name} removed from your wallet`)
+    notify(`Logged $${amount.toFixed(2)} to ${perkName}`)
   }
 
   if (fetching) {
@@ -150,20 +115,10 @@ export function MeView() {
             <CardDetail card={selectedCard} onBack={back} onLog={setDialogPerk} />
           </>
         ) : route === 'cards' ? (
-          <>
-            <Topbar
-              title="Cards"
-              subtitle="Your wallet and where each card earns the most."
-              onAddCard={() => setAddCardOpen(true)}
-            />
-            <CardsView
-              cards={cards}
-              onAddCard={() => setAddCardOpen(true)}
-              onManageCard={(action, cardId) => {
-                if (action === 'remove') setPendingRemoveId(cardId)
-              }}
-            />
-          </>
+          <CardsView
+            cards={cards}
+            onRefetch={() => reexecuteQuery({ requestPolicy: 'network-only' })}
+          />
         ) : route === 'subscriptions' ? (
           <SubscriptionsView cards={subCards} />
         ) : route === 'accounts' ? (
@@ -171,25 +126,7 @@ export function MeView() {
         ) : route === 'split' ? (
           <SplitView />
         ) : route === 'budgeting' ? (
-          <>
-            <Topbar
-              title="Budgeting"
-              subtitle="Plan the month, log what you spend, send the surplus to a goal."
-              rightSlot={
-                <Segmented
-                  size="sm"
-                  value={budgetView}
-                  onChange={(v) => setBudgetView(v as 'monthly' | 'yearly')}
-                  options={[{ value: 'monthly', label: 'Monthly' }, { value: 'yearly', label: 'Yearly' }]}
-                />
-              }
-            />
-            {budgetView === 'monthly' ? (
-              <BudgetView userEmail={userEmail} />
-            ) : (
-              <YearView />
-            )}
-          </>
+          <BudgetingView userEmail={userEmail} />
         ) : (
           <>
             <Topbar title="Dashboard" subtitle="Track every perk before it expires." />
@@ -199,21 +136,6 @@ export function MeView() {
       </Stack>
 
       <LogCreditDialog perk={livePerk} onClose={() => setDialogPerk(null)} onSave={handleSaveCredit} />
-
-      <AddCardDialog
-        open={addCardOpen}
-        existingDesigns={cards.map((c) => c.design).filter((d): d is string => !!d)}
-        onClose={() => setAddCardOpen(false)}
-        onAdd={handleAddCard}
-      />
-
-      <RemoveCardDialog
-        cardName={pendingRemoveId ? (cards.find((c) => c.id === pendingRemoveId)?.name ?? 'this card') : null}
-        onClose={() => setPendingRemoveId(null)}
-        onConfirm={handleRemoveCard}
-      />
-
-      <Toast message={toast} onClose={() => setToast(null)} />
     </Row>
   )
 }
