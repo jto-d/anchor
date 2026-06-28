@@ -18,6 +18,7 @@ import {
   monthTotals,
   balanceStatus,
   monthKey,
+  monthLabel,
   currentYearMonth,
   type SplitExpense,
   type SplitSettlement,
@@ -106,7 +107,7 @@ export function SplitView() {
     key: selectedKey,
     year: parseInt(selectedKey.split('-')[0]),
     month: parseInt(selectedKey.split('-')[1]) - 1,
-    label: selectedKey,
+    label: monthLabel(parseInt(selectedKey.split('-')[0]), parseInt(selectedKey.split('-')[1]) - 1),
     expenses: [],
     settlements: [],
   }

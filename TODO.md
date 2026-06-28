@@ -25,10 +25,7 @@ Preview how a card fits into your spending
  - recommendations based on weak spending categories?
  - catalog of cards (compare cards spending cats in grid view?)
 Accounts
- - Separate tab
- - view savings, how much of your money is allocated where, etc.
-Money splitting
- - Mirror excel sheet
+ - Plaid linking
 Subscriptions
  - Ability to split
 
