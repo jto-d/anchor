@@ -1,6 +1,8 @@
 import { builder } from '../builder'
 import { prisma } from '@/lib/prisma'
 
+const MAX_NAME_LENGTH = 50
+
 builder.mutationFields((t) => ({
   addSubscription: t.prismaField({
     type: 'Subscription',
@@ -15,8 +17,11 @@ builder.mutationFields((t) => ({
       cardId: t.arg.string({ required: true }),
       plan: t.arg.string(),
     },
-    resolve: (query, _root, args, ctx) =>
-      prisma.subscription.create({
+    resolve: (query, _root, args, ctx) => {
+      if (args.name.length > MAX_NAME_LENGTH) {
+        throw new Error('Name must be less than 50 characters')
+      }
+      return prisma.subscription.create({
         ...query,
         data: {
           userId: ctx.userId,
@@ -30,7 +35,8 @@ builder.mutationFields((t) => ({
           cardId: args.cardId,
           plan: args.plan ?? null,
         },
-      }),
+      })
+    },
   }),
 
   removeSubscription: t.field({
@@ -51,8 +57,11 @@ builder.mutationFields((t) => ({
       paused: t.arg.boolean(),
       cancelPending: t.arg.boolean(),
     },
-    resolve: (query, _root, { id, name, cost, paused, cancelPending }, ctx) =>
-      prisma.subscription.update({
+    resolve: (query, _root, { id, name, cost, paused, cancelPending }, ctx) => {
+      if (name && name.length > MAX_NAME_LENGTH) {
+        throw new Error('Name must be less than 50 characters')
+      }
+      return prisma.subscription.update({
         ...query,
         where: { id, userId: ctx.userId },
         data: {
@@ -61,6 +70,7 @@ builder.mutationFields((t) => ({
           ...(paused != null && { paused }),
           ...(cancelPending != null && { cancelPending }),
         },
-      }),
+      })
+    },
   }),
 }))

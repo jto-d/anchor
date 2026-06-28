@@ -27,6 +27,9 @@ const TYPE_FALLBACK: Partial<Record<string, AccountType>> = {
   other:      'CHECKING',
 }
 
+const MAX_NICK_LENGTH = 100
+const MAX_INST_LENGTH = 50
+
 function resolveAccountType(type: string, subtype: string | null | undefined): AccountType {
   if (subtype) {
     const mapped = SUBTYPE_MAP[subtype.toLowerCase()]
@@ -118,6 +121,12 @@ builder.mutationFields((t) => ({
       if (!validTypes.includes(type as AccountType)) {
         throw new Error(`Invalid account type: ${type}`)
       }
+      if (nick.length > MAX_NICK_LENGTH) {
+        throw new Error('Nickname must be less than 100 characters')
+      }
+      if (inst.length > MAX_INST_LENGTH) {
+        throw new Error('Institution name must be less than 100 characters')
+      }
       const balanceNum = parseFloat(balance)
       if (isNaN(balanceNum) || balanceNum < 0) {
         throw new Error('balance must be a non-negative number')
@@ -151,6 +160,9 @@ builder.mutationFields((t) => ({
       if (type) {
         const validTypes = Object.values(AccountType)
         if (!validTypes.includes(type as AccountType)) throw new Error(`Invalid type: ${type}`)
+      }
+      if (nick && nick.length > MAX_NICK_LENGTH) {
+        throw new Error('Nickname must be less than 100 characters')
       }
       return prisma.account.update({
         ...query,
