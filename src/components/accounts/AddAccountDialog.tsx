@@ -311,9 +311,7 @@ export function AddAccountDialog({ open, onClose, onSuccess }: AddAccountDialogP
     <Dialog
       open={open}
       onClose={handleClose}
-      maxWidth="xs"
-      fullWidth
-      slotProps={{ paper: { sx: { borderRadius: '18px', overflow: 'hidden' } } }}
+      slotProps={{ paper: { sx: { width: 440, maxWidth: 'calc(100vw - 48px)', borderRadius: '18px', overflow: 'hidden' } } }}
     >
       <DialogContent sx={{ p: 0 }}>
         {path === 'plaid' ? (

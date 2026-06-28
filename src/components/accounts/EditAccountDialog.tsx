@@ -119,9 +119,7 @@ export function EditAccountDialog({ open, account, onClose, onSuccess }: EditAcc
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="xs"
-      fullWidth
-      slotProps={{ paper: { sx: { borderRadius: '18px', overflow: 'hidden' } } }}
+      slotProps={{ paper: { sx: { width: 400, maxWidth: 'calc(100vw - 48px)', borderRadius: '18px', overflow: 'hidden' } } }}
     >
       <DialogContent sx={{ p: 0 }}>
         {account && <EditForm key={account.id} account={account} onClose={onClose} onSuccess={onSuccess} />}
