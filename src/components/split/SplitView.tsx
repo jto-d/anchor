@@ -112,7 +112,10 @@ export function SplitView() {
   }
 
   const idx = months.findIndex((m) => m.key === selectedKey)
-  const canPrev = idx < months.length - 1 || idx === -1
+  // idx === -1 means selectedKey is the current (empty) month, not yet in the list.
+  // canPrev: there is an older month to go to (higher index in newest-first array),
+  //          OR we're on the empty current month and there are actual months below it.
+  const canPrev = idx === -1 ? months.length > 0 : idx < months.length - 1
   const canNext = idx > 0
   const totals = useMemo(() => monthTotals(selectedMonth), [selectedMonth])
   const status = useMemo(() => balanceStatus(totals.net), [totals.net])
