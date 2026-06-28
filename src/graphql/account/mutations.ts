@@ -137,6 +137,31 @@ builder.mutationFields((t) => ({
     },
   }),
 
+  updateAccount: t.prismaField({
+    type: 'Account',
+    args: {
+      id:   t.arg.string({ required: true }),
+      nick: t.arg.string(),
+      type: t.arg.string(),
+    },
+    resolve: async (query, _root, { id, nick, type }, ctx) => {
+      const account = await prisma.account.findUnique({ where: { id } })
+      if (!account || account.userId !== ctx.userId) throw new Error('Not found')
+      if (type) {
+        const validTypes = Object.values(AccountType)
+        if (!validTypes.includes(type as AccountType)) throw new Error(`Invalid type: ${type}`)
+      }
+      return prisma.account.update({
+        ...query,
+        where: { id },
+        data: {
+          ...(nick != null ? { nick } : {}),
+          ...(type != null ? { type: type as AccountType } : {}),
+        },
+      })
+    },
+  }),
+
   removeAccount: t.field({
     type: 'Boolean',
     args: {

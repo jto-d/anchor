@@ -54,6 +54,22 @@ export const AddManualAccountDocument = graphql(`
   }
 `)
 
+export const UpdateAccountDocument = graphql(`
+  mutation UpdateAccount($id: String!, $nick: String, $type: String) {
+    updateAccount(id: $id, nick: $nick, type: $type) {
+      id
+      nick
+      inst
+      type
+      source
+      balance
+      isEmergencyFund
+      balanceUpdatedAt
+      createdAt
+    }
+  }
+`)
+
 export const RemoveAccountDocument = graphql(`
   mutation RemoveAccount($id: String!) {
     removeAccount(id: $id)

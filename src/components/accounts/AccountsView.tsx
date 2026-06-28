@@ -19,6 +19,7 @@ import { AreaChart } from './AccountPrimitives'
 import { NetWorthSummary } from './NetWorthSummary'
 import { AccountsPanel, type AccountGroup } from './AccountsList'
 import { AddAccountDialog } from './AddAccountDialog'
+import { EditAccountDialog } from './EditAccountDialog'
 import {
   ListAccountsDocument,
   RemoveAccountDocument,
@@ -77,6 +78,7 @@ export function AccountsView() {
   const [range, setRange] = useState('1Y')
   const [privacy, setPrivacy] = useState(false)
   const [addOpen, setAddOpen] = useState(false)
+  const [editAccount, setEditAccount] = useState<Account | null>(null)
   const [toast, setToast] = useState<string | null>(null)
   const [showSparklines] = useState(false)
   const toastTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
@@ -141,13 +143,12 @@ export function AccountsView() {
 
   const onManage = useCallback(async (id: string, action: string) => {
     if (action === 'unlink' || action === 'remove') {
-      const a = accounts.find((x) => x.id === id)
       await removeAccount({ id })
       setExpanded((p) => { const n = { ...p }; delete n[id]; return n })
       reexecuteQuery({ requestPolicy: 'network-only' })
       flash(action === 'unlink' ? 'Account unlinked.' : 'Account removed.')
-    } else {
-      flash('Editing is coming soon.')
+    } else if (action === 'edit') {
+      setEditAccount(accounts.find((x) => x.id === id) ?? null)
     }
   }, [accounts, removeAccount, reexecuteQuery, flash])
 
@@ -220,6 +221,12 @@ export function AccountsView() {
           open={addOpen}
           onClose={() => setAddOpen(false)}
           onSuccess={() => { reexecuteQuery({ requestPolicy: 'network-only' }); flash('Account added.') }}
+        />
+        <EditAccountDialog
+          open={editAccount !== null}
+          account={editAccount}
+          onClose={() => setEditAccount(null)}
+          onSuccess={() => { reexecuteQuery({ requestPolicy: 'network-only' }); flash('Account updated.') }}
         />
         <Toast message={toast} onClose={() => setToast(null)} />
       </Box>
@@ -301,6 +308,12 @@ export function AccountsView() {
         open={addOpen}
         onClose={() => setAddOpen(false)}
         onSuccess={() => { reexecuteQuery({ requestPolicy: 'network-only' }); flash('Account added.') }}
+      />
+      <EditAccountDialog
+        open={editAccount !== null}
+        account={editAccount}
+        onClose={() => setEditAccount(null)}
+        onSuccess={() => { reexecuteQuery({ requestPolicy: 'network-only' }); flash('Account updated.') }}
       />
       <Toast message={toast} onClose={() => setToast(null)} />
     </Box>

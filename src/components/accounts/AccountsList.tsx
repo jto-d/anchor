@@ -46,11 +46,7 @@ export function AccountRow({
   const refreshable = account.source === 'PLAID'
 
   const menuItems = [
-    {
-      key: 'edit',
-      label: account.source === 'MANUAL' ? 'Edit balance' : 'Edit nickname',
-      icon: EditIcon,
-    },
+    { key: 'edit', label: 'Edit account', icon: EditIcon },
     account.source === 'PLAID'
       ? { key: 'unlink', label: 'Unlink account', icon: LinkOffIcon, danger: true }
       : { key: 'remove', label: 'Remove account', icon: DeleteIcon, danger: true },
