@@ -18,5 +18,8 @@ import './subscription/queries'
 import './subscription/mutations'
 import './account/type'
 import './account/mutations'
+import './split/type'
+import './split/queries'
+import './split/mutations'
 
 export const schema = builder.toSchema()

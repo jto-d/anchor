@@ -17,6 +17,7 @@ import { RemoveCardDialog } from '@/components/cards/RemoveCardDialog'
 import { BudgetView, YearView } from '@/components/budgeting'
 import { SubscriptionsView } from '@/components/subscriptions'
 import { AccountsView } from '@/components/accounts/AccountsView'
+import { SplitView } from '@/components/split/SplitView'
 import { CARD_CATALOG } from '@/data/cardCatalog'
 import type { SubCard } from '@/data/subscriptionData'
 import type { Card, Perk } from '@/utils/types'
@@ -27,7 +28,7 @@ import {
   AddCardDocument,
 } from './me-view.queries'
 
-type Route = 'perks' | 'card' | 'cards' | 'budgeting' | 'subscriptions' | 'accounts'
+type Route = 'perks' | 'card' | 'cards' | 'budgeting' | 'subscriptions' | 'accounts' | 'split'
 
 export function MeView() {
   const [route, setRoute] = useState<Route>('perks')
@@ -133,6 +134,7 @@ export function MeView() {
           else if (key === 'budgeting') setRoute('budgeting')
           else if (key === 'subscriptions') setRoute('subscriptions')
           else if (key === 'accounts') setRoute('accounts')
+          else if (key === 'split') setRoute('split')
           else setRoute('perks')
           setSelectedCardId(null)
         }}
@@ -166,6 +168,8 @@ export function MeView() {
           <SubscriptionsView cards={subCards} />
         ) : route === 'accounts' ? (
           <AccountsView />
+        ) : route === 'split' ? (
+          <SplitView />
         ) : route === 'budgeting' ? (
           <>
             <Topbar
