@@ -35,15 +35,18 @@ interface BudgetLedgerProps {
   onRenameGroup: (id: string, label: string) => void
   onRemoveGroup: (id: string) => void
   totals: Totals
+  subscriptionsMonthly?: number
 }
 
 const SAVINGS_GROUP: GroupData = { id: '__savings', label: 'Savings', icon: 'savings', position: 999, categories: [] }
+const SUBS_GROUP: GroupData = { id: '__subscriptions', label: 'Subscriptions', icon: 'repeat', position: 998, categories: [] }
 
 export function BudgetLedger({
   groups, savings, collapsed, onToggle,
   onBudget, onSpent, onRenameCategory, onRemoveCategory,
   onSavingsMonthly, onContribute, onRenameSavings, onRemoveSavings,
   onAddCategory, onAddSavings, onAddGroup, onRenameGroup, onRemoveGroup, totals,
+  subscriptionsMonthly = 0,
 }: BudgetLedgerProps) {
   const [pendingDelete, setPendingDelete] = useState<GroupData | null>(null)
 
@@ -89,6 +92,29 @@ export function BudgetLedger({
             Add group
           </Button>
         </Row>
+
+        {subscriptionsMonthly > 0 && (
+          <Box>
+            <GroupHeader
+              group={SUBS_GROUP}
+              spent={subscriptionsMonthly}
+              budget={subscriptionsMonthly}
+              collapsed={!!collapsed['__subscriptions']}
+              onToggle={() => onToggle('__subscriptions')}
+            />
+            <Collapse in={!collapsed['__subscriptions']}>
+              <LedgerRow
+                id="__subscriptions_total"
+                label="Monthly total"
+                icon="repeat"
+                budget={subscriptionsMonthly}
+                spent={subscriptionsMonthly}
+                autoFilled
+                last
+              />
+            </Collapse>
+          </Box>
+        )}
 
         <Box>
           <GroupHeader

@@ -42,7 +42,7 @@ builder.queryField('budgetMonth', (t) =>
       }
 
       // Fetch all data in parallel
-      const [user, incomeSources, groups, savings, goals] = await Promise.all([
+      const [user, incomeSources, groups, savings, goals, subscriptions] = await Promise.all([
         prisma.user.findUnique({ where: { id: userId }, select: { budgetStartYear: true, budgetStartMonth: true } }),
         prisma.incomeSource.findMany({ where: { userId }, orderBy: { position: 'asc' } }),
         prisma.budgetGroup.findMany({
@@ -68,6 +68,10 @@ builder.queryField('budgetMonth', (t) =>
         prisma.savingsGoal.findMany({
           where: { userId },
           include: { allocations: true },
+        }),
+        prisma.subscription.findMany({
+          where: { userId, paused: false, cancelPending: false },
+          select: { cost: true, period: true, renewM: true },
         }),
       ])
 
@@ -136,6 +140,31 @@ builder.queryField('budgetMonth', (t) =>
         }
       })
 
+      // month is 0-based. Annual/semiannual charge in their specific renewal month(s);
+      // quarterly has no tracked start month so we use the monthly equivalent;
+      // monthly charges every month.
+      const subscriptionsMonthly = subscriptions.reduce((sum, s) => {
+        const cost = Number(s.cost)
+        switch (s.period) {
+          case 'monthly':
+            return sum + cost
+          case 'quarterly':
+            return sum + (cost * 4) / 12
+          case 'semiannual': {
+            const renewM = s.renewM ?? 0
+            if (month === renewM || month === (renewM + 6) % 12) return sum + cost
+            return sum
+          }
+          case 'annual': {
+            const renewM = s.renewM ?? 0
+            if (month === renewM) return sum + cost
+            return sum
+          }
+          default:
+            return sum
+        }
+      }, 0)
+
       return {
         incomeSources: incomeSourcesOut,
         groups: groupsOut,
@@ -143,6 +172,7 @@ builder.queryField('budgetMonth', (t) =>
         goals: goalsOut,
         budgetStartYear: user?.budgetStartYear ?? null,
         budgetStartMonth: user?.budgetStartMonth ?? null,
+        subscriptionsMonthly,
       }
     },
   })

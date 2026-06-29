@@ -131,19 +131,21 @@ export function useBudgetMonth(sel: MonthSel) {
       monthAllocated: localAllocations[g.id] ?? g.monthAllocated,
     })), [raw, localAllocations])
 
+  const subscriptionsMonthly = raw?.subscriptionsMonthly ?? 0
+
   const totals: Totals = useMemo(() => {
     const income = incomeSources.reduce((s, x) => s + x.amount, 0)
     const catBudget = groups.flatMap((g) => g.categories).reduce((s, c) => s + c.budget, 0)
     const savBudget = savings.reduce((s, x) => s + x.monthly, 0)
-    const budgeted = catBudget + savBudget
+    const budgeted = catBudget + savBudget + subscriptionsMonthly
     const catSpent = groups.flatMap((g) => g.categories).reduce((s, c) => s + c.monthSpent, 0)
     const savContrib = savings.reduce((s, x) => s + x.monthContrib, 0)
-    const spentSaved = catSpent + savContrib
+    const spentSaved = catSpent + savContrib + subscriptionsMonthly
     const allocated = goals.reduce((s, g) => s + g.monthAllocated, 0)
     const baseSurplus = income - budgeted
     const surplus = baseSurplus - allocated
     return { income, budgeted, spentSaved, allocated, baseSurplus, surplus, incomeCount: incomeSources.length }
-  }, [incomeSources, groups, savings, goals])
+  }, [incomeSources, groups, savings, goals, subscriptionsMonthly])
 
   const setBudget = useCallback(async (catId: string, v: number) => {
     setLocalBudgets((p) => ({ ...p, [catId]: v }))
@@ -271,6 +273,7 @@ export function useBudgetMonth(sel: MonthSel) {
     savings,
     goals,
     totals,
+    subscriptionsMonthly,
     budgetStartYear: raw?.budgetStartYear ?? null,
     budgetStartMonth: raw?.budgetStartMonth ?? null,
     setBudget,
