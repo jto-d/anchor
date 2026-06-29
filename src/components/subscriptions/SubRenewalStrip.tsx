@@ -83,12 +83,10 @@ function RenewalTile({ item }: { item: RenewalItem }) {
         </Typography>
       </Row>
 
-      {sub.cancelPending && (
-        <Row gap={0.5} sx={{ mt: 1.25, fontSize: 11, fontWeight: 600, color: brand.red[600] }}>
-          <NotificationsOffOutlinedIcon sx={{ fontSize: 12, color: brand.red[500] }} />
-          Cancel pending
-        </Row>
-      )}
+      <Row gap={0.5} sx={{ mt: 1.25, fontSize: 11, fontWeight: 600, color: brand.red[600], visibility: sub.cancelPending ? 'visible' : 'hidden' }}>
+        <NotificationsOffOutlinedIcon sx={{ fontSize: 12, color: brand.red[500] }} />
+        Cancel pending
+      </Row>
     </Box>
   )
 }

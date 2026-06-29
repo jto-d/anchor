@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback, useRef } from 'react'
+import { useState, useMemo } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -11,7 +11,7 @@ import HistoryIcon from '@mui/icons-material/History'
 import EditIcon from '@mui/icons-material/EditOutlined'
 import { useQuery, useMutation } from '@urql/next'
 import { Topbar } from '@/components/layout/Topbar'
-import { Segmented, Toast, Row } from '@/components/ui'
+import { Segmented, Row, useToast } from '@/components/ui'
 import { brand } from '@/lib/theme'
 import {
   groupByMonth,
@@ -84,14 +84,7 @@ export function SplitView() {
   const [settleOpen, setSettleOpen] = useState(false)
   const [confirm, setConfirm] = useState<Confirm | null>(null)
   const [partnerOpen, setPartnerOpen] = useState(false)
-  const [toast, setToast] = useState<string | null>(null)
-  const toastTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
-
-  const flash = useCallback((msg: string) => {
-    setToast(msg)
-    clearTimeout(toastTimer.current)
-    toastTimer.current = setTimeout(() => setToast(null), 2600)
-  }, [])
+  const notify = useToast()
 
   const partnerName = data?.splitPartner?.name ?? DEFAULT_PARTNER
   const expenses = useMemo(() => (data?.splitExpenses ?? []).map(toLocalExpense), [data])
@@ -136,7 +129,7 @@ export function SplitView() {
     })
     reexecute({ requestPolicy: 'network-only' })
     setAddOpen(false)
-    flash('Expense added.')
+    notify('Expense added.')
   }
 
   async function handleSaveExpense(id: string, patch: Partial<ExpenseDraft>) {
@@ -151,7 +144,7 @@ export function SplitView() {
       ...(patch.splitThem != null && { splitThem: patch.splitThem }),
     })
     reexecute({ requestPolicy: 'network-only' })
-    flash('Expense updated.')
+    notify('Expense updated.')
   }
 
   async function handleRemoveExpense() {
@@ -159,7 +152,7 @@ export function SplitView() {
     await removeExpense({ id: confirm.id })
     reexecute({ requestPolicy: 'network-only' })
     setConfirm(null)
-    flash('Expense removed.')
+    notify('Expense removed.')
   }
 
   async function handleSettle(payload: { amount: number; date: string | null; fromPayer: string }) {
@@ -173,7 +166,7 @@ export function SplitView() {
     })
     reexecute({ requestPolicy: 'network-only' })
     setSettleOpen(false)
-    flash('Settlement recorded.')
+    notify('Settlement recorded.')
   }
 
   async function handleRemoveSettlement() {
@@ -181,14 +174,14 @@ export function SplitView() {
     await removeSettlement({ id: confirm.id })
     reexecute({ requestPolicy: 'network-only' })
     setConfirm(null)
-    flash('Settlement removed.')
+    notify('Settlement removed.')
   }
 
   async function handleSetPartner(name: string) {
     await setSplitPartner({ name })
     reexecute({ requestPolicy: 'network-only' })
     setPartnerOpen(false)
-    flash(`Split partner set to "${name}".`)
+    notify(`Split partner set to "${name}".`)
   }
 
   function handleGoPrev() {
@@ -349,8 +342,6 @@ export function SplitView() {
         onClose={() => setPartnerOpen(false)}
         onSave={handleSetPartner}
       />
-
-      <Toast message={toast} onClose={() => setToast(null)} />
     </Box>
   )
 }

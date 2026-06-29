@@ -9,6 +9,7 @@ export const BudgetMonthDocument = graphql(`
     budgetMonth(year: $year, month: $month) {
       budgetStartYear
       budgetStartMonth
+      subscriptionsMonthly
       incomeSources {
         id
         label

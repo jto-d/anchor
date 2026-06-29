@@ -18,7 +18,7 @@ export function GroupHeader({
   budget: number
   collapsed: boolean
   onToggle: () => void
-  onAdd: () => void
+  onAdd?: () => void
   onRename?: (label: string) => void
   onRemove?: () => void
 }) {
@@ -61,9 +61,11 @@ export function GroupHeader({
             {group.label}
           </Typography>
         )}
-        <Box component="span" sx={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.04em', color: 'text.disabled' }}>
-          {group.categories.length}
-        </Box>
+        {onAdd && (
+          <Box component="span" sx={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.04em', color: 'text.disabled' }}>
+            {group.categories.length}
+          </Box>
+        )}
       </Box>
       <Row gap={1.5}>
         <Typography variant="label" sx={{ color: over ? brand.red[600] : 'text.secondary', ...tabularNums }}>
@@ -73,14 +75,16 @@ export function GroupHeader({
         <Box sx={{ width: 52 }}>
           <ProgressBar value={ratio} color={over ? brand.red[500] : brand.anchor[600]} thin />
         </Box>
-        <IconButton
-          size="small"
-          title="Add line item"
-          onClick={(e) => { e.stopPropagation(); onAdd() }}
-          sx={{ width: 28, height: 28, borderRadius: '7px', color: 'text.secondary' }}
-        >
-          <AddIcon sx={{ fontSize: 16 }} />
-        </IconButton>
+        {onAdd && (
+          <IconButton
+            size="small"
+            title="Add line item"
+            onClick={(e) => { e.stopPropagation(); onAdd() }}
+            sx={{ width: 28, height: 28, borderRadius: '7px', color: 'text.secondary' }}
+          >
+            <AddIcon sx={{ fontSize: 16 }} />
+          </IconButton>
+        )}
         {onRemove && (
           <IconButton
             size="small"

@@ -24,12 +24,19 @@ Onboarding flow (?)
 Preview how a card fits into your spending
  - recommendations based on weak spending categories?
  - catalog of cards (compare cards spending cats in grid view?)
+Points
+ - History of point redemption (stats)
+ - Current point totals 
 Accounts
  - Plaid linking
 Subscriptions
- - Ability to split
+ - Ability to split autmomatically
+Split
+ - Ability to split rent automatically
+Notifications
+ - Reminder to cancel credit card, subscription, etc.
 
-Plaid integration
 Bilt Calculator (could just be a link)
+  maybe make this a skill for the chatbot
 
 Partner could also have cards?

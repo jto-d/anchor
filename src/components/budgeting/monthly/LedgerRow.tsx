@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
+import AutorenewIcon from '@mui/icons-material/Autorenew'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import { brand } from '@/lib/theme'
 import { CatGlyph, EditableLabel, EditableMoney, ListRow, ProgressBar, Row } from '@/components/ui'
@@ -15,16 +16,18 @@ interface LedgerRowProps {
   budget: number
   spent: number
   isSavings?: boolean
+  /** When true, budget/spent are auto-calculated and the fields are read-only. */
+  autoFilled?: boolean
   ytd?: number
   annualLimit?: number | null
   last?: boolean
-  onBudget: (v: number) => void
-  onSpent: (v: number) => void
+  onBudget?: (v: number) => void
+  onSpent?: (v: number) => void
   onRename?: (v: string) => void
   onRemove?: () => void
 }
 
-export function LedgerRow({ id, label, icon, budget, spent, isSavings, ytd, annualLimit, last, onBudget, onSpent, onRename, onRemove }: LedgerRowProps) {
+export function LedgerRow({ id, label, icon, budget, spent, isSavings, autoFilled, ytd, annualLimit, last, onBudget, onSpent, onRename, onRemove }: LedgerRowProps) {
   const remaining = budget - spent
   const over = remaining < -0.001
 
@@ -56,11 +59,18 @@ export function LedgerRow({ id, label, icon, budget, spent, isSavings, ytd, annu
             : <Typography sx={{ fontSize: 14, fontWeight: 500 }}>{label}</Typography>
           }
         </Row>
-        <Row justify="end" sx={{ width: COL_W }}>
-          <EditableMoney value={budget} onChange={onBudget} weight={500} />
+        <Row justify="end" gap={0.5} sx={{ width: COL_W }}>
+          {onBudget
+            ? <EditableMoney value={budget} onChange={onBudget} weight={500} />
+            : <Typography sx={{ ...tabularNums, fontSize: 14, fontWeight: 500, color: 'text.primary' }}>{fmtMoney(budget)}</Typography>
+          }
+          {autoFilled && <AutorenewIcon sx={{ fontSize: 12, color: 'text.disabled', flexShrink: 0 }} />}
         </Row>
         <Row justify="end" sx={{ width: COL_W }}>
-          <EditableMoney value={spent} onChange={onSpent} muted weight={500} />
+          {onSpent
+            ? <EditableMoney value={spent} onChange={onSpent} muted weight={500} />
+            : <Typography sx={{ ...tabularNums, fontSize: 14, fontWeight: 500, color: 'text.disabled' }}>{fmtMoney(spent)}</Typography>
+          }
         </Row>
         <Row justify="end" sx={{ width: COL_W, pr: 1 }}>
           <Typography variant="bodyStrong" sx={{

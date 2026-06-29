@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback, useRef } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -14,7 +14,7 @@ import LinkIcon from '@mui/icons-material/LinkOutlined'
 import EditIcon from '@mui/icons-material/EditOutlined'
 import { useQuery, useMutation } from '@urql/next'
 import { Topbar } from '@/components/layout/Topbar'
-import { SurfaceCard, Toast, Row, Segmented } from '@/components/ui'
+import { SurfaceCard, Row, Segmented, useToast } from '@/components/ui'
 import { AreaChart } from './AccountPrimitives'
 import { NetWorthSummary } from './NetWorthSummary'
 import { AccountsPanel, type AccountGroup } from './AccountsList'
@@ -81,15 +81,8 @@ export function AccountsView() {
   const [privacy, setPrivacy] = useState(false)
   const [addOpen, setAddOpen] = useState(false)
   const [editAccount, setEditAccount] = useState<Account | null>(null)
-  const [toast, setToast] = useState<string | null>(null)
   const [showSparklines] = useState(false)
-  const toastTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
-
-  const flash = useCallback((msg: string) => {
-    setToast(msg)
-    clearTimeout(toastTimer.current)
-    toastTimer.current = setTimeout(() => setToast(null), 2600)
-  }, [])
+  const notify = useToast()
 
   const accounts: Account[] = useMemo(
     () => (data?.listAccounts ?? []).map(toLocalAccount),
@@ -127,9 +120,9 @@ export function AccountsView() {
     const a = accounts.find((x) => x.id === id)
     if (!a || a.source !== 'PLAID' || ACCOUNT_TYPES[a.type]?.group === 'credit') return
     setLocalBalances((prev) => ({ ...prev, [id]: nudge(a) }))
-    flash(`${a.inst} refreshed.`)
+    notify(`${a.inst} refreshed.`)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accounts, flash])
+  }, [accounts, notify])
 
   const onRefreshGroup = useCallback((key: string) => {
     if (key === 'credit') return
@@ -139,16 +132,16 @@ export function AccountsView() {
       group.forEach((a) => { next[a.id] = nudge(a) })
       return next
     })
-    flash(`${key === 'cash' ? 'Cash' : 'Investment'} accounts refreshed.`)
+    notify(`${key === 'cash' ? 'Cash' : 'Investment'} accounts refreshed.`)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accounts, flash])
+  }, [accounts, notify])
 
   const onManage = useCallback(async (id: string, action: string) => {
     if (action === 'unlink' || action === 'remove') {
       await removeAccount({ id })
       setExpanded((p) => { const n = { ...p }; delete n[id]; return n })
       reexecuteQuery({ requestPolicy: 'network-only' })
-      flash(action === 'unlink' ? 'Account unlinked.' : 'Account removed.')
+      notify(action === 'unlink' ? 'Account unlinked.' : 'Account removed.')
     } else if (action === 'edit') {
       setEditAccount(accounts.find((x) => x.id === id) ?? null)
     } else if (action === 'emergency') {
@@ -156,9 +149,9 @@ export function AccountsView() {
       if (!a) return
       await updateAccount({ id, isEmergencyFund: !a.isEmergencyFund })
       reexecuteQuery({ requestPolicy: 'network-only' })
-      flash(a.isEmergencyFund ? 'Emergency fund removed.' : 'Emergency fund set.')
+      notify(a.isEmergencyFund ? 'Emergency fund removed.' : 'Emergency fund set.')
     }
-  }, [accounts, removeAccount, updateAccount, reexecuteQuery, flash])
+  }, [accounts, removeAccount, updateAccount, reexecuteQuery, notify])
 
   // Merge local balance overrides (from nudge) onto server accounts
   const displayAccounts = useMemo(
@@ -228,15 +221,14 @@ export function AccountsView() {
         <AddAccountDialog
           open={addOpen}
           onClose={() => setAddOpen(false)}
-          onSuccess={() => { reexecuteQuery({ requestPolicy: 'network-only' }); flash('Account added.') }}
+          onSuccess={() => { reexecuteQuery({ requestPolicy: 'network-only' }); notify('Account added.') }}
         />
         <EditAccountDialog
           open={editAccount !== null}
           account={editAccount}
           onClose={() => setEditAccount(null)}
-          onSuccess={() => { reexecuteQuery({ requestPolicy: 'network-only' }); flash('Account updated.') }}
+          onSuccess={() => { reexecuteQuery({ requestPolicy: 'network-only' }); notify('Account updated.') }}
         />
-        <Toast message={toast} onClose={() => setToast(null)} />
       </Box>
     )
   }
@@ -315,15 +307,14 @@ export function AccountsView() {
       <AddAccountDialog
         open={addOpen}
         onClose={() => setAddOpen(false)}
-        onSuccess={() => { reexecuteQuery({ requestPolicy: 'network-only' }); flash('Account added.') }}
+        onSuccess={() => { reexecuteQuery({ requestPolicy: 'network-only' }); notify('Account added.') }}
       />
       <EditAccountDialog
         open={editAccount !== null}
         account={editAccount}
         onClose={() => setEditAccount(null)}
-        onSuccess={() => { reexecuteQuery({ requestPolicy: 'network-only' }); flash('Account updated.') }}
+        onSuccess={() => { reexecuteQuery({ requestPolicy: 'network-only' }); notify('Account updated.') }}
       />
-      <Toast message={toast} onClose={() => setToast(null)} />
     </Box>
   )
 }
