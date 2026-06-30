@@ -52,7 +52,14 @@ export function CumulativeArea({ months, currentIdx }: { months: YearMonth[]; cu
         ))}
       </Row>
 
-      <Box sx={{ position: 'absolute', top: '2px', right: '12px', textAlign: 'right' }}>
+      <Box sx={{
+        position: 'absolute', top: '2px', right: '8px', textAlign: 'right',
+        px: '10px', py: '6px', borderRadius: 2,
+        bgcolor: 'rgba(255,255,255,0.82)',
+        backdropFilter: 'blur(3px)',
+        border: `1px solid ${brand.zinc[200]}`,
+        boxShadow: brand.shadow.sm,
+      }}>
         <Eyebrow sx={{ fontSize: '10px' }}>By year end</Eyebrow>
         <Typography variant="statLg" sx={{ color: brand.anchor[700], mt: '3px' }}>
           {fmtMoney(endTotal)}
