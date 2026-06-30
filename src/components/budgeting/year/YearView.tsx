@@ -22,7 +22,7 @@ export function YearView() {
   const [year, setYear] = useState(now.getFullYear())
   const atMax = year >= now.getFullYear()
 
-  const { fetching, hasData, budgetStartYear, months, catYear, savYear, goalYear, annual, completed, projected, currentLabel, currentIdx } = useBudgetYear(year)
+  const { fetching, hasData, budgetStartYear, months, catYear, savYear, goalYear, annual, completed, projected, currentLabel, currentIdx, effectiveStartMonth } = useBudgetYear(year)
   const atMin = budgetStartYear != null && year <= budgetStartYear
 
   if (fetching && !hasData) {
@@ -56,7 +56,7 @@ export function YearView() {
     <Box sx={{ flex: 1, overflow: 'auto' }}>
       <Topbar title="Year" rightSlot={yearStepper} />
       <Box sx={{ position: 'sticky', top: 0, zIndex: 20, px: 4, pt: 2.75, pb: 1.75, bgcolor: 'background.default' }}>
-        <YearSummary annual={annual} completed={completed} projected={projected} currentLabel={currentLabel} />
+        <YearSummary annual={annual} completed={completed} projected={projected} currentLabel={currentLabel} effectiveStartMonth={effectiveStartMonth} year={year} />
       </Box>
 
       <Stack gap={3} sx={{ px: 4, pb: 5.5 }}>

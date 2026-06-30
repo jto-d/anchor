@@ -44,8 +44,8 @@ export function CumulativeArea({ months, currentIdx }: { months: YearMonth[]; cu
         {months.map((mo) => (
           <Typography key={mo.m} sx={{
             flex: 1, textAlign: 'center', fontSize: 11,
-            fontWeight: mo.status === 'current' ? 700 : 500,
-            color: mo.status === 'current' ? 'text.primary' : 'text.secondary',
+            fontWeight: mo.status === 'current' ? 700 : mo.status === 'no-history' ? 400 : 500,
+            color: mo.status === 'no-history' ? 'text.disabled' : mo.status === 'current' ? 'text.primary' : 'text.secondary',
           }}>
             {MONTHS_SHORT[mo.m]}
           </Typography>

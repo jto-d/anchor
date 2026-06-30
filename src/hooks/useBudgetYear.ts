@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { useQuery } from '@urql/next'
 import { BudgetYearDocument } from './budget.queries'
 
-export type MonthStatus = 'actual' | 'current' | 'assumed' | 'projected'
+export type MonthStatus = 'actual' | 'current' | 'assumed' | 'projected' | 'no-history'
 
 export interface YearMonth {
   m: number
@@ -75,6 +75,8 @@ export function useBudgetYear(year: number) {
     const groups = raw?.groups ?? []
     const savings = raw?.savings ?? []
     const goals = raw?.goals ?? []
+    const budgetStartYear = raw?.budgetStartYear ?? null
+    const budgetStartMonth = raw?.budgetStartMonth ?? null
 
     const allCats = groups.flatMap((g) => g.categories.map((c) => ({ ...c, group: g.label })))
     const monthlyIncome = incomeSources.reduce((s, x) => s + x.amount, 0)
@@ -88,6 +90,20 @@ export function useBudgetYear(year: number) {
       const nowOrd = currentYear * 12 + currentMonth
       const mOrd = year * 12 + m
       const diff = mOrd - nowOrd
+
+      const isBeforeHistory = budgetStartYear != null && (
+        year < budgetStartYear ||
+        (year === budgetStartYear && budgetStartMonth != null && m < budgetStartMonth)
+      )
+
+      if (isBeforeHistory) {
+        return {
+          m, status: 'no-history' as const, estimated: false,
+          income: 0, budgeted: 0, catSpent: 0, savContrib: 0,
+          outflow: 0, allocated: 0, surplus: 0,
+        }
+      }
+
       const mData = monthlyData.find((d) => d.month === m)
       const status: MonthStatus = diff > 0 ? 'projected' : diff === 0 ? 'current' : (mData?.hasData ? 'actual' : 'assumed')
       const estimated = status === 'assumed' || status === 'projected'
@@ -118,8 +134,10 @@ export function useBudgetYear(year: number) {
       }
     })
 
+    const activeMonths = months.filter((mo) => mo.status !== 'no-history')
+
     const catYear: CatYearData[] = allCats.map((c) => {
-      const total = months.reduce((s, mo) => {
+      const total = activeMonths.reduce((s, mo) => {
         const mData = monthlyData.find((d) => d.month === mo.m)
         if (mData?.hasData) {
           const spend = mData.categorySpends.find((sp) => sp.categoryId === c.id)
@@ -132,7 +150,7 @@ export function useBudgetYear(year: number) {
 
     const savYear: SavingsYearData[] = savings.map((sv) => {
       let total = 0, ytd = 0
-      months.forEach((mo) => {
+      activeMonths.forEach((mo) => {
         const mData = monthlyData.find((d) => d.month === mo.m)
         const v = mData?.hasData
           ? (mData.savingsContribs.find((sc) => sc.accountId === sv.id)?.amount ?? 0)
@@ -150,18 +168,24 @@ export function useBudgetYear(year: number) {
     }))
 
     const annual: YearAnnual = {
-      income: monthlyIncome * 12,
+      income: monthlyIncome * activeMonths.length,
       monthlyIncome,
-      spent: months.reduce((s, mo) => s + mo.catSpent, 0),
+      spent: activeMonths.reduce((s, mo) => s + mo.catSpent, 0),
       saved: savYear.reduce((s, sv) => s + sv.total, 0),
-      surplus: months.reduce((s, mo) => s + mo.surplus, 0),
+      surplus: activeMonths.reduce((s, mo) => s + mo.surplus, 0),
     }
 
     const completed = months.filter((mo) => mo.status === 'actual').length
     const projected = months.filter((mo) => mo.status === 'projected').length
     const currentLabel = currentIdx >= 0 && year === currentYear ? currentIdx : null
 
-    return { months, catYear, savYear, goalYear, annual, completed, projected, currentLabel, currentIdx }
+    // First active month index for the current year (null = full year has history)
+    const effectiveStartMonth: number | null =
+      budgetStartYear != null && year === budgetStartYear && budgetStartMonth != null && budgetStartMonth > 0
+        ? budgetStartMonth
+        : null
+
+    return { months, catYear, savYear, goalYear, annual, completed, projected, currentLabel, currentIdx, effectiveStartMonth }
   }, [raw, monthlyData, year, currentYear, currentMonth])
 
   return {

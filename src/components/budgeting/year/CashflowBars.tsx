@@ -30,11 +30,12 @@ export function CashflowBars({ months }: { months: YearMonth[] }) {
           const outH = h(mo.outflow)
           const savH = outH > 0 ? h(mo.savContrib) / outH * outH : 0
 
+          const noHistory = mo.status === 'no-history'
           return (
             <Stack
               key={mo.m}
               align="center"
-              onMouseEnter={() => setHovered(mo.m)}
+              onMouseEnter={() => !noHistory && setHovered(mo.m)}
               onMouseLeave={() => setHovered((p) => p === mo.m ? null : p)}
               sx={{ flex: 1, height: '100%', cursor: 'default' }}
             >
@@ -78,9 +79,9 @@ export function CashflowBars({ months }: { months: YearMonth[] }) {
 
               <Typography sx={{
                 mt: '8px', fontSize: 11,
-                fontWeight: mo.status === 'current' ? 700 : 500,
+                fontWeight: mo.status === 'current' ? 700 : 400,
                 letterSpacing: '-0.01em',
-                color: mo.status === 'current' ? 'text.primary' : 'text.secondary',
+                color: noHistory ? 'text.disabled' : mo.status === 'current' ? 'text.primary' : 'text.secondary',
               }}>
                 {MONTHS_SHORT[mo.m]}
               </Typography>
@@ -89,7 +90,7 @@ export function CashflowBars({ months }: { months: YearMonth[] }) {
         })}
       </Row>
 
-      {hovered != null && (() => {
+      {hovered != null && months[hovered].status !== 'no-history' && (() => {
         const mo = months[hovered]
         const statusLabels: Record<string, string> = {
           actual: 'Logged', current: 'In progress', assumed: 'On-track est.', projected: 'Projected',
