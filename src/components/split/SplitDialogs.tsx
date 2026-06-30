@@ -29,15 +29,15 @@ export interface ExpenseDraft {
   splitThem: number
 }
 
-const EMPTY_DRAFT: ExpenseDraft = {
+const emptyDraft = (): ExpenseDraft => ({
   desc: '',
   amount: '',
-  date: '',
+  date: todayISO(),
   payer: 'you',
   cat: 'other',
   splitYou: 50,
   splitThem: 50,
-}
+})
 
 function ExpenseForm({
   draft,
@@ -204,17 +204,17 @@ export function AddExpenseDialog({
   onClose: () => void
   onAdd: (payload: ReturnType<typeof normalizeDraft>) => void
 }) {
-  const [draft, setDraft] = useState<ExpenseDraft>(EMPTY_DRAFT)
+  const [draft, setDraft] = useState<ExpenseDraft>(emptyDraft)
 
   function handleClose() {
-    setDraft(EMPTY_DRAFT)
+    setDraft(emptyDraft())
     onClose()
   }
 
   function handleAdd() {
     if (!draftValid(draft)) return
     onAdd(normalizeDraft(draft))
-    setDraft(EMPTY_DRAFT)
+    setDraft(emptyDraft())
   }
 
   return (
