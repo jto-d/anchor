@@ -4,6 +4,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 @AGENTS.md
 
+## Ask before acting — use AskUserQuestion liberally
+
+**Before starting any non-trivial task, use `AskUserQuestion` to clarify intent.** Do not assume. The cost of a quick question is far lower than the cost of a wrong implementation. Use it:
+
+- When a feature request could be interpreted more than one way (e.g. "add a filter" — filter where? by what? in place or a new UI panel?).
+- When there are two or more reasonable implementation approaches with real tradeoffs (new component vs. extending existing, mutation vs. query, client state vs. URL state).
+- When adding UI — ask about placement, which view it belongs in, and whether it should be behind a `ComingSoon` wrapper for now.
+- When touching the DB schema — ask whether a migration is expected or if this is exploratory.
+- When the scope is unclear — ask whether the task is a quick prototype or production-quality.
+- When a task could affect multiple views — ask which ones are in scope.
+- When you're unsure about the desired visual style or density (compact vs. spacious, inside a `ListRow` vs. a new panel).
+- When the task touches both frontend and backend — confirm the full intended surface before writing a line.
+
+Use `AskUserQuestion` even when you _think_ you know the answer. Present 2–4 concrete options with previews when the choice is visual. One well-placed question prevents a full rewrite.
+
 ## Stack
 
 Next.js 16 (App Router, Turbopack, React 19) · MUI 9 (Material UI + Emotion) · GraphQL Yoga 5 + Pothos (code-first) · Prisma 7 + `@prisma/adapter-neon` over Neon · urql 5 via `@urql/next` · `graphql-codegen` client-preset · pnpm.
