@@ -1,3 +1,5 @@
+import type { Subscription } from './subscriptionData'
+
 const MONTHS_ABBR = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const MONTHS_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
@@ -27,6 +29,10 @@ export interface SplitExpense {
   splitYou: number
   splitThem: number
   createdAt: string
+  /** 'subscription' for auto-derived, read-only entries; undefined/'manual' for real rows. */
+  source?: 'manual' | 'subscription'
+  /** For subscription-derived entries: the originating subscription id. */
+  subId?: string
 }
 
 export interface SplitSettlement {
@@ -166,4 +172,76 @@ export function currentYearMonth(): { year: number; month: number } {
 
 export function todayISO(): string {
   return new Date().toISOString().slice(0, 10)
+}
+
+// --- auto-split subscriptions ---
+
+/** Subscription category → nearest Split category (for the row glyph/label). */
+const SUB_TO_SPLIT_CAT: Record<string, string> = {
+  streaming: 'entertainment',
+  software: 'other',
+  news: 'other',
+  memberships: 'other',
+  fitness: 'other',
+}
+
+/** The subscription fields needed to derive split entries. */
+export type SharedSubInput = Pick<
+  Subscription,
+  'id' | 'name' | 'cat' | 'cost' | 'period' | 'day' | 'renewM' | 'shared' | 'paused' | 'cancelPending'
+>
+
+function pad2(n: number): string {
+  return String(n).padStart(2, '0')
+}
+
+/** True if a subscription charges in the given 0-based month. */
+function subChargesInMonth(sub: SharedSubInput, month: number): boolean {
+  switch (sub.period) {
+    case 'monthly':
+      return true
+    case 'annual':
+      return (sub.renewM ?? 0) === month
+    case 'semiannual': {
+      const anchor = sub.renewM ?? 0
+      return month === anchor || month === (anchor + 6) % 12
+    }
+    case 'quarterly': {
+      const anchor = sub.renewM ?? 0
+      return (((month - anchor) % 3) + 3) % 3 === 0
+    }
+    default:
+      return sub.period === 'monthly'
+  }
+}
+
+/**
+ * Derive read-only split entries for a given month from shared subscriptions.
+ * Each shared, active subscription that charges in `month` produces one synthetic
+ * expense split 50/50 with "you" as the payer. Paused / cancel-pending subs are excluded.
+ * These are computed on the fly — no rows are stored.
+ */
+export function subscriptionSplits(subs: SharedSubInput[], year: number, month: number): SplitExpense[] {
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  return subs
+    .filter((s) => s.shared && !s.paused && !s.cancelPending && subChargesInMonth(s, month))
+    .map((s) => {
+      const day = Math.min(Math.max(s.day || 1, 1), daysInMonth)
+      const date = `${year}-${pad2(month + 1)}-${pad2(day)}`
+      return {
+        id: `sub:${s.id}:${year}-${month}`,
+        year,
+        month,
+        date,
+        desc: s.name,
+        amount: s.cost,
+        payer: 'you',
+        cat: SUB_TO_SPLIT_CAT[s.cat] ?? 'other',
+        splitYou: 50,
+        splitThem: 50,
+        createdAt: date,
+        source: 'subscription' as const,
+        subId: s.id,
+      }
+    })
 }

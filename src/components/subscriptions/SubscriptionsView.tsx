@@ -43,6 +43,7 @@ function toSub(row: {
   plan?: string | null
   paused: boolean
   cancelPending: boolean
+  shared: boolean
 }): Subscription {
   return {
     id: row.id,
@@ -57,6 +58,7 @@ function toSub(row: {
     plan: row.plan ?? undefined,
     paused: row.paused,
     cancelPending: row.cancelPending,
+    shared: row.shared,
   }
 }
 
@@ -90,6 +92,10 @@ export function SubscriptionsView({ cards }: SubscriptionsViewProps) {
     onToggleCancelPending: (id: string) => {
       const sub = subs.find((s) => s.id === id)
       if (sub) updateSubscription({ id, cancelPending: !sub.cancelPending })
+    },
+    onToggleShared: (id: string) => {
+      const sub = subs.find((s) => s.id === id)
+      if (sub) updateSubscription({ id, shared: !sub.shared })
     },
     onRemove: (id: string) => setRemoveConfirmId(id),
   }
@@ -145,6 +151,7 @@ export function SubscriptionsView({ cards }: SubscriptionsViewProps) {
             renewM: sub.renewM ?? null,
             cardId: sub.cardId,
             plan: sub.plan ?? null,
+            shared: sub.shared ?? false,
           })
         }}
         cards={cards}

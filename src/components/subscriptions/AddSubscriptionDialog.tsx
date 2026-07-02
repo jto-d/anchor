@@ -6,8 +6,12 @@ import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
 import InputAdornment from '@mui/material/InputAdornment'
+import Switch from '@mui/material/Switch'
+import Typography from '@mui/material/Typography'
 import AddIcon from '@mui/icons-material/Add'
+import CallSplitOutlinedIcon from '@mui/icons-material/CallSplitOutlined'
 import { AppDialog, DatePicker, Row, Stack } from '@/components/ui'
+import { brand } from '@/lib/theme'
 import {
   SUB_CATEGORIES,
   PERIOD_LABEL,
@@ -36,6 +40,7 @@ function blankForm(defaultCardId: string) {
     renewDate: '',
     cardId: defaultCardId,
     plan: '',
+    shared: false,
   }
 }
 
@@ -86,6 +91,7 @@ export function AddSubscriptionDialog({ open, onClose, onAdd, cards }: AddSubscr
       renewM,
       cardId: form.cardId,
       plan: form.plan.trim() || undefined,
+      shared: form.shared,
     }
     onAdd(sub)
     onClose()
@@ -206,6 +212,26 @@ export function AddSubscriptionDialog({ open, onClose, onAdd, cards }: AddSubscr
           fullWidth
           slotProps={{ inputLabel: { shrink: true } }}
         />
+        <Row
+          justify="between"
+          gap="12px"
+          sx={{ px: '12px', py: '10px', border: '1px solid', borderColor: 'divider', borderRadius: '10px' }}
+        >
+          <Row gap="10px" sx={{ minWidth: 0 }}>
+            <CallSplitOutlinedIcon sx={{ fontSize: 18, color: brand.anchor[700], flex: 'none' }} />
+            <Box sx={{ minWidth: 0 }}>
+              <Typography sx={{ fontSize: 13, fontWeight: 600 }}>Split with partner</Typography>
+              <Typography sx={{ fontSize: 11.5, color: 'text.secondary' }}>
+                Auto-add this charge 50/50 to your Split ledger.
+              </Typography>
+            </Box>
+          </Row>
+          <Switch
+            checked={form.shared}
+            onChange={(e) => setForm((prev) => ({ ...prev, shared: e.target.checked }))}
+            size="small"
+          />
+        </Row>
       </Stack>
 
       <Row justify="end" gap="10px" sx={{ p: '16px 22px 20px' }}>

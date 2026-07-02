@@ -65,6 +65,7 @@ model User {
   splitPartner       SplitPartner?
   splitExpenses      SplitExpense[]
   splitSettlements   SplitSettlement[]
+  splitExclusions    SubscriptionSplitExclusion[]
 }
 
 model IncomeSource {
@@ -228,9 +229,26 @@ model Subscription {
   plan      String?
   paused        Boolean  @default(false)
   cancelPending Boolean  @default(false)
+  shared        Boolean  @default(false)
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
+  splitExclusions SubscriptionSplitExclusion[]
+}
+
+/** A one-off "don't auto-split this subscription for this month" tombstone. */
+model SubscriptionSplitExclusion {
+  id             String   @id @default(cuid())
+  userId         String
+  subscriptionId String
+  year           Int
+  month          Int
+  createdAt      DateTime @default(now())
+
+  user         User         @relation(fields: [userId], references: [id])
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@unique([subscriptionId, year, month])
 }
 
 model PlaidItem {

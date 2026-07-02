@@ -19,8 +19,9 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined'
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import AutorenewIcon from '@mui/icons-material/Autorenew'
 import Menu from '@mui/material/Menu'
-import { SurfaceCard } from '@/components/ui'
+import { SurfaceCard, Tag } from '@/components/ui'
 import { brand } from '@/lib/theme'
 import { SPLIT_CATS, splitMoney, fmtMonthShort, type SplitMonth, type MonthTotals, type BalanceStatus, type SplitExpense, type SplitSettlement } from '@/data/splitData'
 import { CatBadge, PayerTag, SplitBar, SplitStatusChip, SummaryStat, PersonAvatar } from './SplitPrimitives'
@@ -109,7 +110,7 @@ export function SummaryStrip({
   )
 }
 
-function ExpenseRowMenu({ onEdit, onRemove }: { onEdit: () => void; onRemove: () => void }) {
+function ExpenseRowMenu({ onEdit, onRemove, removeLabel = 'Remove' }: { onEdit?: () => void; onRemove: () => void; removeLabel?: string }) {
   const [anchor, setAnchor] = useState<null | HTMLElement>(null)
   return (
     <>
@@ -117,11 +118,13 @@ function ExpenseRowMenu({ onEdit, onRemove }: { onEdit: () => void; onRemove: ()
         <MoreHorizIcon sx={{ fontSize: 16 }} />
       </IconButton>
       <Menu anchorEl={anchor} open={Boolean(anchor)} onClose={() => setAnchor(null)} slotProps={{ paper: { sx: { borderRadius: '12px', minWidth: 168, p: '6px' } } }}>
-        <MenuItem onClick={() => { setAnchor(null); onEdit() }} sx={{ borderRadius: '8px', gap: 1.25, fontSize: 13.5 }}>
-          <EditIcon sx={{ fontSize: 16, color: 'text.disabled' }} /> Edit
-        </MenuItem>
+        {onEdit && (
+          <MenuItem onClick={() => { setAnchor(null); onEdit() }} sx={{ borderRadius: '8px', gap: 1.25, fontSize: 13.5 }}>
+            <EditIcon sx={{ fontSize: 16, color: 'text.disabled' }} /> Edit
+          </MenuItem>
+        )}
         <MenuItem onClick={() => { setAnchor(null); onRemove() }} sx={{ borderRadius: '8px', gap: 1.25, fontSize: 13.5, color: 'error.main' }}>
-          <DeleteIcon sx={{ fontSize: 16 }} /> Remove
+          <DeleteIcon sx={{ fontSize: 16 }} /> {removeLabel}
         </MenuItem>
       </Menu>
     </>
@@ -228,6 +231,7 @@ function ExpenseRow({
   compact,
   onSave,
   onRemoveRequest,
+  onExcludeRequest,
 }: {
   expense: SplitExpense
   partnerName: string
@@ -235,11 +239,13 @@ function ExpenseRow({
   compact: boolean
   onSave: (id: string, patch: Partial<ExpenseDraft>) => void
   onRemoveRequest: (e: SplitExpense) => void
+  onExcludeRequest: (e: SplitExpense) => void
 }) {
   const [editing, setEditing] = useState(false)
   const cat = SPLIT_CATS[expense.cat] ?? SPLIT_CATS.other
   const youShare = expense.amount * (expense.splitYou / 100)
   const themShare = expense.amount * (expense.splitThem / 100)
+  const isSub = expense.source === 'subscription'
 
   if (editing) {
     return (
@@ -268,9 +274,16 @@ function ExpenseRow({
     >
       <CatBadge cat={expense.cat} size={34} />
       <Box sx={{ minWidth: 0 }}>
-        <Typography sx={{ fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-          {expense.desc}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+          <Typography sx={{ fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            {expense.desc}
+          </Typography>
+          {isSub && (
+            <Tag tone="accent" size="sm" icon={<AutorenewIcon sx={{ fontSize: 12 }} />} sx={{ flex: 'none' }}>
+              Subscription
+            </Tag>
+          )}
+        </Box>
         <Typography sx={{ fontSize: 12, color: 'text.disabled', mt: '2px' }}>
           {expense.date ? fmtMonthShort(expense.date) : 'No date'} · {cat.label}
         </Typography>
@@ -287,7 +300,11 @@ function ExpenseRow({
       <Typography sx={{ fontSize: 14.5, fontWeight: 600, textAlign: 'right', fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.01em' }}>
         {splitMoney(expense.amount, cents)}
       </Typography>
-      <ExpenseRowMenu onEdit={() => setEditing(true)} onRemove={() => onRemoveRequest(expense)} />
+      {isSub ? (
+        <ExpenseRowMenu onRemove={() => onExcludeRequest(expense)} removeLabel="Remove from this month" />
+      ) : (
+        <ExpenseRowMenu onEdit={() => setEditing(true)} onRemove={() => onRemoveRequest(expense)} />
+      )}
     </Box>
   )
 }
@@ -300,6 +317,9 @@ export function ExpenseLedger({
   onAdd,
   onSave,
   onRemoveRequest,
+  onExcludeRequest,
+  hiddenSubs = [],
+  onRestore,
 }: {
   expenses: SplitExpense[]
   partnerName: string
@@ -308,6 +328,9 @@ export function ExpenseLedger({
   onAdd: () => void
   onSave: (id: string, patch: Partial<ExpenseDraft>) => void
   onRemoveRequest: (e: SplitExpense) => void
+  onExcludeRequest: (e: SplitExpense) => void
+  hiddenSubs?: { subId: string; name: string }[]
+  onRestore?: (subId: string) => void
 }) {
   return (
     <SurfaceCard>
@@ -330,8 +353,29 @@ export function ExpenseLedger({
       ) : (
         <Box>
           {expenses.map((e) => (
-            <ExpenseRow key={e.id} expense={e} partnerName={partnerName} cents={cents} compact={compact} onSave={onSave} onRemoveRequest={onRemoveRequest} />
+            <ExpenseRow key={e.id} expense={e} partnerName={partnerName} cents={cents} compact={compact} onSave={onSave} onRemoveRequest={onRemoveRequest} onExcludeRequest={onExcludeRequest} />
           ))}
+        </Box>
+      )}
+      {hiddenSubs.length > 0 && (
+        <Box sx={{ p: '12px 20px', bgcolor: 'background.default', borderTop: '1px solid', borderColor: 'divider' }}>
+          <Typography sx={{ fontSize: 11.5, fontWeight: 600, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: '0.04em', mb: '8px' }}>
+            Hidden this month
+          </Typography>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {hiddenSubs.map((h) => (
+              <Box
+                key={h.subId}
+                sx={{ display: 'inline-flex', alignItems: 'center', gap: '8px', height: 30, pl: '10px', pr: '4px', borderRadius: '999px', border: '1px solid', borderColor: 'divider', bgcolor: '#fff' }}
+              >
+                <AutorenewIcon sx={{ fontSize: 13, color: 'text.disabled' }} />
+                <Typography sx={{ fontSize: 12.5, color: 'text.secondary', fontWeight: 500 }}>{h.name}</Typography>
+                <Button size="small" variant="text" onClick={() => onRestore?.(h.subId)} sx={{ minWidth: 0, height: 24, px: '8px', fontSize: 11.5, color: brand.anchor[700] }}>
+                  Restore
+                </Button>
+              </Box>
+            ))}
+          </Box>
         </Box>
       )}
     </SurfaceCard>

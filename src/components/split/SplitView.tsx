@@ -20,8 +20,11 @@ import {
   monthKey,
   monthLabel,
   currentYearMonth,
+  subscriptionSplits,
   type SplitExpense,
   type SplitSettlement,
+  type SplitMonth,
+  type SharedSubInput,
 } from '@/data/splitData'
 import {
   SplitDataDocument,
@@ -31,6 +34,8 @@ import {
   RemoveSplitExpenseDocument,
   AddSplitSettlementDocument,
   RemoveSplitSettlementDocument,
+  ExcludeSubscriptionSplitDocument,
+  RestoreSubscriptionSplitDocument,
 } from './split.queries'
 import { SummaryStrip, ExpenseLedger, SettlementHistory } from './SplitLedger'
 import { MonthHistory } from './SplitHistory'
@@ -48,6 +53,7 @@ type SplitView = 'dashboard' | 'history'
 type Confirm =
   | { kind: 'expense'; id: string; label: string }
   | { kind: 'settlement'; id: string }
+  | { kind: 'subscription'; subId: string; label: string }
 
 const DEFAULT_PARTNER = 'Your partner'
 
@@ -66,6 +72,21 @@ function toLocalSettlement(s: {
   return { ...s, date: s.date ?? null }
 }
 
+/** Key identifying one subscription's split in one month. */
+function exclusionKey(subId: string, year: number, month: number): string {
+  return `${subId}:${year}:${month}`
+}
+
+/** Merge read-only auto-split subscription entries into a month's expenses,
+ *  skipping any the user has excluded for that month. */
+function withSubscriptions(month: SplitMonth, subs: SharedSubInput[], excluded: Set<string>): SplitMonth {
+  const subExpenses = subscriptionSplits(subs, month.year, month.month).filter(
+    (e) => !excluded.has(exclusionKey(e.subId!, month.year, month.month)),
+  )
+  if (subExpenses.length === 0) return month
+  return { ...month, expenses: [...month.expenses, ...subExpenses] }
+}
+
 export function SplitView() {
   const [{ data, fetching, error }, reexecute] = useQuery({ query: SplitDataDocument })
   const [, setSplitPartner] = useMutation(SetSplitPartnerDocument)
@@ -74,6 +95,8 @@ export function SplitView() {
   const [, removeExpense] = useMutation(RemoveSplitExpenseDocument)
   const [, addSettlement] = useMutation(AddSplitSettlementDocument)
   const [, removeSettlement] = useMutation(RemoveSplitSettlementDocument)
+  const [, excludeSubSplit] = useMutation(ExcludeSubscriptionSplitDocument)
+  const [, restoreSubSplit] = useMutation(RestoreSubscriptionSplitDocument)
 
   const [view, setView] = useState<SplitView>('dashboard')
   const [selectedKey, setSelectedKey] = useState<string>(() => {
@@ -90,6 +113,33 @@ export function SplitView() {
   const expenses = useMemo(() => (data?.splitExpenses ?? []).map(toLocalExpense), [data])
   const settlements = useMemo(() => (data?.splitSettlements ?? []).map(toLocalSettlement), [data])
   const months = useMemo(() => groupByMonth(expenses, settlements), [expenses, settlements])
+  const sharedSubs = useMemo<SharedSubInput[]>(
+    () =>
+      (data?.subscriptions ?? [])
+        .filter((s) => s.shared)
+        .map((s) => ({
+          id: s.id,
+          name: s.name,
+          cat: s.cat,
+          cost: s.cost,
+          period: s.period as SharedSubInput['period'],
+          day: s.day,
+          renewM: s.renewM ?? undefined,
+          shared: s.shared,
+          paused: s.paused,
+          cancelPending: s.cancelPending,
+        })),
+    [data],
+  )
+  const excludedKeys = useMemo(
+    () =>
+      new Set(
+        (data?.subscriptionSplitExclusions ?? []).map((x) =>
+          exclusionKey(x.subscriptionId, x.year, x.month),
+        ),
+      ),
+    [data],
+  )
 
   const currentMonthKey = useMemo(() => {
     const { year, month } = currentYearMonth()
@@ -105,13 +155,30 @@ export function SplitView() {
     settlements: [],
   }
 
+  const selectedMonthWithSubs = useMemo(
+    () => withSubscriptions(selectedMonth, sharedSubs, excludedKeys),
+    [selectedMonth, sharedSubs, excludedKeys],
+  )
+  const monthsWithSubs = useMemo(
+    () => months.map((m) => withSubscriptions(m, sharedSubs, excludedKeys)),
+    [months, sharedSubs, excludedKeys],
+  )
+  // Subscriptions that would charge in the selected month but have been excluded — offered for restore.
+  const hiddenSubs = useMemo(
+    () =>
+      subscriptionSplits(sharedSubs, selectedMonth.year, selectedMonth.month)
+        .filter((e) => excludedKeys.has(exclusionKey(e.subId!, selectedMonth.year, selectedMonth.month)))
+        .map((e) => ({ subId: e.subId!, name: e.desc })),
+    [sharedSubs, selectedMonth.year, selectedMonth.month, excludedKeys],
+  )
+
   const idx = months.findIndex((m) => m.key === selectedKey)
   // idx === -1 means selectedKey is the current (empty) month, not yet in the list.
   // canPrev: there is an older month to go to (higher index in newest-first array),
   //          OR we're on the empty current month and there are actual months below it.
   const canPrev = idx === -1 ? months.length > 0 : idx < months.length - 1
   const canNext = idx > 0
-  const totals = useMemo(() => monthTotals(selectedMonth), [selectedMonth])
+  const totals = useMemo(() => monthTotals(selectedMonthWithSubs), [selectedMonthWithSubs])
   const status = useMemo(() => balanceStatus(totals.net), [totals.net])
 
   async function handleAddExpense(payload: { desc: string; amount: number; date: string | null; payer: string; cat: string; splitYou: number; splitThem: number }) {
@@ -175,6 +242,20 @@ export function SplitView() {
     reexecute({ requestPolicy: 'network-only' })
     setConfirm(null)
     notify('Settlement removed.')
+  }
+
+  async function handleExcludeSubscription() {
+    if (confirm?.kind !== 'subscription') return
+    await excludeSubSplit({ subscriptionId: confirm.subId, year: selectedMonth.year, month: selectedMonth.month })
+    reexecute({ requestPolicy: 'network-only' })
+    setConfirm(null)
+    notify(`Removed from ${selectedMonth.label}.`)
+  }
+
+  async function handleRestoreSubscription(subId: string) {
+    await restoreSubSplit({ subscriptionId: subId, year: selectedMonth.year, month: selectedMonth.month })
+    reexecute({ requestPolicy: 'network-only' })
+    notify('Subscription split restored.')
   }
 
   async function handleSetPartner(name: string) {
@@ -269,7 +350,7 @@ export function SplitView() {
           {view === 'dashboard' ? (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <SummaryStrip
-                month={selectedMonth}
+                month={selectedMonthWithSubs}
                 totals={totals}
                 status={status}
                 partnerName={partnerName}
@@ -281,13 +362,16 @@ export function SplitView() {
                 onSettle={() => setSettleOpen(true)}
               />
               <ExpenseLedger
-                expenses={selectedMonth.expenses}
+                expenses={selectedMonthWithSubs.expenses}
                 partnerName={partnerName}
                 cents
                 compact={false}
                 onAdd={() => setAddOpen(true)}
                 onSave={handleSaveExpense}
                 onRemoveRequest={(e) => setConfirm({ kind: 'expense', id: e.id, label: e.desc })}
+                onExcludeRequest={(e) => setConfirm({ kind: 'subscription', subId: e.subId!, label: e.desc })}
+                hiddenSubs={hiddenSubs}
+                onRestore={handleRestoreSubscription}
               />
               <SettlementHistory
                 settlements={selectedMonth.settlements}
@@ -298,7 +382,7 @@ export function SplitView() {
             </Box>
           ) : (
             <MonthHistory
-              months={months}
+              months={monthsWithSubs}
               cents
               currentKey={currentMonthKey}
               onOpen={(key) => { setSelectedKey(key); setView('dashboard') }}
@@ -326,14 +410,28 @@ export function SplitView() {
 
       <ConfirmRemoveDialog
         open={confirm !== null}
-        title={confirm?.kind === 'expense' ? 'Remove expense?' : 'Remove settlement?'}
+        title={
+          confirm?.kind === 'expense'
+            ? 'Remove expense?'
+            : confirm?.kind === 'subscription'
+            ? 'Remove from this month?'
+            : 'Remove settlement?'
+        }
         body={
           confirm?.kind === 'expense'
             ? <>"{confirm.label}" will be removed from {selectedMonth.label}. This can't be undone.</>
+            : confirm?.kind === 'subscription'
+            ? <>"{confirm.label}" won't be auto-split for {selectedMonth.label}. Other months and the subscription itself are unaffected — you can restore it below.</>
             : <>This settlement will be removed and the balance for {selectedMonth.label} will be recalculated.</>
         }
         onClose={() => setConfirm(null)}
-        onConfirm={confirm?.kind === 'expense' ? handleRemoveExpense : handleRemoveSettlement}
+        onConfirm={
+          confirm?.kind === 'expense'
+            ? handleRemoveExpense
+            : confirm?.kind === 'subscription'
+            ? handleExcludeSubscription
+            : handleRemoveSettlement
+        }
       />
 
       <SetPartnerDialog

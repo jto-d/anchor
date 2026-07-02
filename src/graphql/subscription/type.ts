@@ -14,6 +14,7 @@ builder.prismaObject('Subscription', {
     plan: t.exposeString('plan', { nullable: true }),
     paused: t.exposeBoolean('paused'),
     cancelPending: t.exposeBoolean('cancelPending'),
+    shared: t.exposeBoolean('shared'),
     createdAt: t.field({ type: 'String', resolve: (s) => s.createdAt.toISOString() }),
   }),
 })

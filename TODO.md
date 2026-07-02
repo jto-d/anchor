@@ -29,10 +29,9 @@ Points
  - Current point totals 
 Accounts
  - Plaid linking
-Subscriptions
- - Ability to split autmomatically
 Split
  - Ability to split rent automatically
+ - Revisit subscription split exclusions
 Notifications
  - Reminder to cancel credit card, subscription, etc.
 

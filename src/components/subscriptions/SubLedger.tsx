@@ -18,6 +18,7 @@ import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined'
 import NotificationsOffOutlinedIcon from '@mui/icons-material/NotificationsOffOutlined'
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined'
+import CallSplitOutlinedIcon from '@mui/icons-material/CallSplitOutlined'
 import { brand } from '@/lib/theme'
 import { Row, SurfaceCard, Eyebrow, CatGlyph } from '@/components/ui'
 import { EditableMoney } from '@/components/ui'
@@ -38,6 +39,7 @@ interface LedgerHandlers {
   onRename: (id: string, name: string) => void
   onTogglePause: (id: string) => void
   onToggleCancelPending: (id: string) => void
+  onToggleShared: (id: string) => void
   onRemove: (id: string) => void
 }
 
@@ -70,6 +72,23 @@ function CancelPendingChip() {
   )
 }
 
+// --- shared (auto-split) chip ---
+function SharedChip() {
+  return (
+    <Chip
+      size="small"
+      icon={<CallSplitOutlinedIcon />}
+      label="Split"
+      sx={{
+        height: 22, fontSize: 11.5,
+        bgcolor: brand.anchor[50], color: brand.anchor[700],
+        '& .MuiChip-icon': { fontSize: 12, ml: '6px', mr: '-2px', color: brand.anchor[700] },
+        '& .MuiChip-label': { px: '8px' },
+      }}
+    />
+  )
+}
+
 // --- card pill ---
 function CardPill({ cardId, cardMap }: { cardId: string; cardMap: Map<string, SubCard> }) {
   const card = cardMap.get(cardId)
@@ -96,6 +115,7 @@ function OverflowMenu({ sub, handlers }: { sub: Subscription; handlers: LedgerHa
   const [anchor, setAnchor] = useState<HTMLElement | null>(null)
   const paused = !!sub.paused
   const cancelPending = !!sub.cancelPending
+  const shared = !!sub.shared
 
   return (
     <>
@@ -120,6 +140,15 @@ function OverflowMenu({ sub, handlers }: { sub: Subscription; handlers: LedgerHa
             {paused ? <PlayArrowOutlinedIcon fontSize="small" /> : <PauseOutlinedIcon fontSize="small" />}
           </ListItemIcon>
           {paused ? 'Resume' : 'Pause'}
+        </MenuItem>
+        <MenuItem
+          onClick={() => { setAnchor(null); handlers.onToggleShared(sub.id) }}
+          sx={{ fontSize: 13.5, fontWeight: 500, gap: 1.25, py: 1 }}
+        >
+          <ListItemIcon sx={{ minWidth: 0, color: 'grey.500' }}>
+            <CallSplitOutlinedIcon fontSize="small" />
+          </ListItemIcon>
+          {shared ? 'Stop splitting' : 'Split with partner'}
         </MenuItem>
         <MenuItem
           onClick={() => { setAnchor(null); handlers.onToggleCancelPending(sub.id) }}
@@ -171,6 +200,7 @@ function LedgerRow({ sub, last, handlers, cardMap }: { sub: Subscription; last: 
             <EditableLabel value={sub.name} onChange={(v) => handlers.onRename(sub.id, v)} weight={600} />
             {paused && <PausedChip />}
             {sub.cancelPending && <CancelPendingChip />}
+            {sub.shared && <SharedChip />}
           </Row>
           <Row gap={1} sx={{ flexWrap: 'wrap' }}>
             <CardPill cardId={sub.cardId} cardMap={cardMap} />

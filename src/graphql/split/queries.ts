@@ -28,4 +28,13 @@ builder.queryFields((t) => ({
         orderBy: [{ year: 'desc' }, { month: 'desc' }, { createdAt: 'asc' }],
       }),
   }),
+
+  subscriptionSplitExclusions: t.prismaField({
+    type: ['SubscriptionSplitExclusion'],
+    resolve: (query, _root, _args, ctx) =>
+      prisma.subscriptionSplitExclusion.findMany({
+        ...query,
+        where: { userId: ctx.userId },
+      }),
+  }),
 }))

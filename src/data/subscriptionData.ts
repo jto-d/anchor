@@ -39,6 +39,8 @@ export interface Subscription {
   earns?: string
   paused?: boolean
   cancelPending?: boolean
+  /** When true, this subscription is auto-split 50/50 into the Split ledger. */
+  shared?: boolean
 }
 
 export interface SubCategory {

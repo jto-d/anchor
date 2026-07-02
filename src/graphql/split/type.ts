@@ -34,3 +34,12 @@ builder.prismaObject('SplitSettlement', {
     createdAt: t.field({ type: 'String', resolve: (s) => s.createdAt.toISOString() }),
   }),
 })
+
+builder.prismaObject('SubscriptionSplitExclusion', {
+  fields: (t) => ({
+    id: t.exposeID('id'),
+    subscriptionId: t.exposeString('subscriptionId'),
+    year: t.exposeInt('year'),
+    month: t.exposeInt('month'),
+  }),
+})

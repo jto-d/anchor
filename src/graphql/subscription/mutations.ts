@@ -17,6 +17,7 @@ builder.mutationFields((t) => ({
       renewM: t.arg.int(),
       cardId: t.arg.string({ required: true }),
       plan: t.arg.string(),
+      shared: t.arg.boolean(),
     },
     resolve: (query, _root, args, ctx) => {
       if (args.name.length > MAX_NAME_LENGTH) {
@@ -35,6 +36,7 @@ builder.mutationFields((t) => ({
           renewM: args.renewM ?? null,
           cardId: args.cardId,
           plan: args.plan ?? null,
+          shared: args.shared ?? false,
         },
       })
     },
@@ -57,8 +59,9 @@ builder.mutationFields((t) => ({
       cost: t.arg.float(),
       paused: t.arg.boolean(),
       cancelPending: t.arg.boolean(),
+      shared: t.arg.boolean(),
     },
-    resolve: (query, _root, { id, name, cost, paused, cancelPending }, ctx) => {
+    resolve: (query, _root, { id, name, cost, paused, cancelPending, shared }, ctx) => {
       if (name && name.length > MAX_NAME_LENGTH) {
         throw new Error('Name must be less than 50 characters')
       }
@@ -70,6 +73,7 @@ builder.mutationFields((t) => ({
           ...(cost != null && { cost: roundCents(cost) }),
           ...(paused != null && { paused }),
           ...(cancelPending != null && { cancelPending }),
+          ...(shared != null && { shared }),
         },
       })
     },

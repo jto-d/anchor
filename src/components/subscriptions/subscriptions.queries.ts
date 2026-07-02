@@ -15,6 +15,7 @@ export const SubscriptionsDocument = graphql(`
       plan
       paused
       cancelPending
+      shared
     }
   }
 `)
@@ -30,6 +31,7 @@ export const AddSubscriptionDocument = graphql(`
     $renewM: Int
     $cardId: String!
     $plan: String
+    $shared: Boolean
   ) {
     addSubscription(
       name: $name
@@ -41,6 +43,7 @@ export const AddSubscriptionDocument = graphql(`
       renewM: $renewM
       cardId: $cardId
       plan: $plan
+      shared: $shared
     ) {
       id
       name
@@ -53,6 +56,7 @@ export const AddSubscriptionDocument = graphql(`
       cardId
       plan
       paused
+      shared
     }
   }
 `)
@@ -64,13 +68,14 @@ export const RemoveSubscriptionDocument = graphql(`
 `)
 
 export const UpdateSubscriptionDocument = graphql(`
-  mutation UpdateSubscription($id: String!, $name: String, $cost: Float, $paused: Boolean, $cancelPending: Boolean) {
-    updateSubscription(id: $id, name: $name, cost: $cost, paused: $paused, cancelPending: $cancelPending) {
+  mutation UpdateSubscription($id: String!, $name: String, $cost: Float, $paused: Boolean, $cancelPending: Boolean, $shared: Boolean) {
+    updateSubscription(id: $id, name: $name, cost: $cost, paused: $paused, cancelPending: $cancelPending, shared: $shared) {
       id
       name
       cost
       paused
       cancelPending
+      shared
     }
   }
 `)

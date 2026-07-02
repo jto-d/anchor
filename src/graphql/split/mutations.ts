@@ -121,4 +121,38 @@ builder.mutationFields((t) => ({
       return true
     },
   }),
+
+  excludeSubscriptionSplit: t.field({
+    type: 'Boolean',
+    args: {
+      subscriptionId: t.arg.string({ required: true }),
+      year: t.arg.int({ required: true }),
+      month: t.arg.int({ required: true }),
+    },
+    resolve: async (_root, { subscriptionId, year, month }, ctx) => {
+      const sub = await prisma.subscription.findFirst({ where: { id: subscriptionId, userId: ctx.userId } })
+      if (!sub) throw new Error('Not found')
+      await prisma.subscriptionSplitExclusion.upsert({
+        where: { subscriptionId_year_month: { subscriptionId, year, month } },
+        create: { userId: ctx.userId, subscriptionId, year, month },
+        update: {},
+      })
+      return true
+    },
+  }),
+
+  restoreSubscriptionSplit: t.field({
+    type: 'Boolean',
+    args: {
+      subscriptionId: t.arg.string({ required: true }),
+      year: t.arg.int({ required: true }),
+      month: t.arg.int({ required: true }),
+    },
+    resolve: async (_root, { subscriptionId, year, month }, ctx) => {
+      await prisma.subscriptionSplitExclusion.deleteMany({
+        where: { subscriptionId, year, month, userId: ctx.userId },
+      })
+      return true
+    },
+  }),
 }))

@@ -28,6 +28,36 @@ export const SplitDataDocument = graphql(`
       fromPayer
       createdAt
     }
+    subscriptions {
+      id
+      name
+      cat
+      cost
+      period
+      day
+      renewM
+      paused
+      cancelPending
+      shared
+    }
+    subscriptionSplitExclusions {
+      id
+      subscriptionId
+      year
+      month
+    }
+  }
+`)
+
+export const ExcludeSubscriptionSplitDocument = graphql(`
+  mutation ExcludeSubscriptionSplit($subscriptionId: String!, $year: Int!, $month: Int!) {
+    excludeSubscriptionSplit(subscriptionId: $subscriptionId, year: $year, month: $month)
+  }
+`)
+
+export const RestoreSubscriptionSplitDocument = graphql(`
+  mutation RestoreSubscriptionSplit($subscriptionId: String!, $year: Int!, $month: Int!) {
+    restoreSubscriptionSplit(subscriptionId: $subscriptionId, year: $year, month: $month)
   }
 `)
 
