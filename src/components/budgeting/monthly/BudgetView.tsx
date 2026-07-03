@@ -23,7 +23,7 @@ function stepMonth(sel: MonthSel, dir: number): MonthSel {
   return { y: date.getFullYear(), m: date.getMonth() }
 }
 
-export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
+export function BudgetView({ userEmail: _userEmail, onNavigateToSubscriptions }: { userEmail: string; onNavigateToSubscriptions?: () => void }) {
   const now = new Date()
   const [sel, setSel] = useState<MonthSel>({ y: now.getFullYear(), m: now.getMonth() })
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
@@ -97,6 +97,7 @@ export function BudgetView({ userEmail: _userEmail }: { userEmail: string }) {
             onAddGroup={budget.addGroup} onRenameGroup={budget.renameGroup} onRemoveGroup={budget.removeGroup}
             totals={budget.totals}
             subscriptionsMonthly={budget.subscriptionsMonthly}
+            onNavigateToSubscriptions={onNavigateToSubscriptions}
           />
           <SurplusPanel
             goals={budget.goals} totals={budget.totals} sel={sel}

@@ -36,6 +36,7 @@ interface BudgetLedgerProps {
   onRemoveGroup: (id: string) => void
   totals: Totals
   subscriptionsMonthly?: number
+  onNavigateToSubscriptions?: () => void
 }
 
 const SAVINGS_GROUP: GroupData = { id: '__savings', label: 'Savings', icon: 'savings', position: 999, categories: [] }
@@ -46,7 +47,7 @@ export function BudgetLedger({
   onBudget, onSpent, onRenameCategory, onRemoveCategory,
   onSavingsMonthly, onContribute, onRenameSavings, onRemoveSavings,
   onAddCategory, onAddSavings, onAddGroup, onRenameGroup, onRemoveGroup, totals,
-  subscriptionsMonthly = 0,
+  subscriptionsMonthly = 0, onNavigateToSubscriptions,
 }: BudgetLedgerProps) {
   const [pendingDelete, setPendingDelete] = useState<GroupData | null>(null)
 
@@ -111,6 +112,7 @@ export function BudgetLedger({
                 spent={subscriptionsMonthly}
                 autoFilled
                 last
+                onClick={onNavigateToSubscriptions}
               />
             </Collapse>
           </Box>

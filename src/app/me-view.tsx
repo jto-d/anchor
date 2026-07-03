@@ -126,7 +126,7 @@ export function MeView() {
         ) : route === 'split' ? (
           <SplitView />
         ) : route === 'budgeting' ? (
-          <BudgetingView userEmail={userEmail} />
+          <BudgetingView userEmail={userEmail} onNavigateToSubscriptions={() => setRoute('subscriptions')} />
         ) : (
           <>
             <Topbar title="Dashboard" subtitle="Track every perk before it expires." />

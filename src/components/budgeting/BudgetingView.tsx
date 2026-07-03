@@ -6,7 +6,7 @@ import { Segmented } from '@/components/ui'
 import { BudgetView } from './monthly/BudgetView'
 import { YearView } from './year/YearView'
 
-export function BudgetingView({ userEmail }: { userEmail: string }) {
+export function BudgetingView({ userEmail, onNavigateToSubscriptions }: { userEmail: string; onNavigateToSubscriptions?: () => void }) {
   const [budgetView, setBudgetView] = useState<'monthly' | 'yearly'>('monthly')
 
   return (
@@ -23,7 +23,7 @@ export function BudgetingView({ userEmail }: { userEmail: string }) {
           />
         }
       />
-      {budgetView === 'monthly' ? <BudgetView userEmail={userEmail} /> : <YearView />}
+      {budgetView === 'monthly' ? <BudgetView userEmail={userEmail} onNavigateToSubscriptions={onNavigateToSubscriptions} /> : <YearView />}
     </>
   )
 }

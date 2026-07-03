@@ -2,6 +2,7 @@ import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import AutorenewIcon from '@mui/icons-material/Autorenew'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import { brand } from '@/lib/theme'
 import { CatGlyph, EditableLabel, EditableMoney, ListRow, ProgressBar, Row } from '@/components/ui'
@@ -25,9 +26,11 @@ interface LedgerRowProps {
   onSpent?: (v: number) => void
   onRename?: (v: string) => void
   onRemove?: () => void
+  /** When set, the row navigates elsewhere on click (e.g. the subscriptions total → Subscriptions section). */
+  onClick?: () => void
 }
 
-export function LedgerRow({ id, label, icon, budget, spent, isSavings, autoFilled, ytd, annualLimit, last, onBudget, onSpent, onRename, onRemove }: LedgerRowProps) {
+export function LedgerRow({ id, label, icon, budget, spent, isSavings, autoFilled, ytd, annualLimit, last, onBudget, onSpent, onRename, onRemove, onClick }: LedgerRowProps) {
   const remaining = budget - spent
   const over = remaining < -0.001
 
@@ -50,7 +53,7 @@ export function LedgerRow({ id, label, icon, budget, spent, isSavings, autoFille
   }
 
   return (
-    <ListRow last={last} direction="column" sx={{ py: 1.375 }}>
+    <ListRow last={last} direction="column" hover={!!onClick} onClick={onClick} sx={{ py: 1.375 }}>
       <Row gap={1}>
         <Row gap={1.375} min0 sx={{ flex: 1 }}>
           <CatGlyph icon={icon} size={32} tone={isSavings ? 'accent' : 'neutral'} />
@@ -91,6 +94,7 @@ export function LedgerRow({ id, label, icon, budget, spent, isSavings, autoFille
               <DeleteOutlinedIcon sx={{ fontSize: 15 }} />
             </IconButton>
           )}
+          {onClick && <ChevronRightIcon sx={{ fontSize: 18, color: 'text.disabled' }} />}
         </Box>
       </Row>
       {irsBar}
