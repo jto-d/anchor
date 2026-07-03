@@ -17,6 +17,15 @@ export interface IncomeSource {
   amount: number
 }
 
+export interface LineItemData {
+  id: string
+  label: string
+  icon: string
+  budget: number
+  position: number
+  monthSpent: number
+}
+
 export interface CategoryData {
   id: string
   label: string
@@ -24,6 +33,7 @@ export interface CategoryData {
   budget: number
   position: number
   monthSpent: number
+  lineItems: LineItemData[]
 }
 
 export interface GroupData {

@@ -1,9 +1,11 @@
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
+import AddIcon from '@mui/icons-material/Add'
 import AutorenewIcon from '@mui/icons-material/Autorenew'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { brand } from '@/lib/theme'
 import { CatGlyph, EditableLabel, EditableMoney, ListRow, ProgressBar, Row } from '@/components/ui'
 import { COL_W } from './ColHeader'
@@ -28,9 +30,21 @@ interface LedgerRowProps {
   onRemove?: () => void
   /** When set, the row navigates elsewhere on click (e.g. the subscriptions total → Subscriptions section). */
   onClick?: () => void
+  /** Adds a "+" affordance next to remove (e.g. "add a line item to this category"). */
+  onAdd?: () => void
+  /** When true, shows a collapse chevron and the row toggles it on click instead of navigating. */
+  expandable?: boolean
+  collapsed?: boolean
+  onToggleExpand?: () => void
+  /** Visually nests this row under a parent (used for line items under a category). */
+  indent?: boolean
 }
 
-export function LedgerRow({ id, label, icon, budget, spent, isSavings, autoFilled, ytd, annualLimit, last, onBudget, onSpent, onRename, onRemove, onClick }: LedgerRowProps) {
+export function LedgerRow({
+  id, label, icon, budget, spent, isSavings, autoFilled, ytd, annualLimit, last,
+  onBudget, onSpent, onRename, onRemove, onClick,
+  onAdd, expandable, collapsed, onToggleExpand, indent,
+}: LedgerRowProps) {
   const remaining = budget - spent
   const over = remaining < -0.001
 
@@ -53,12 +67,30 @@ export function LedgerRow({ id, label, icon, budget, spent, isSavings, autoFille
   }
 
   return (
-    <ListRow last={last} direction="column" hover={!!onClick} onClick={onClick} sx={{ py: 1.375 }}>
+    <ListRow
+      last={last} direction="column"
+      hover={!!onClick || !!expandable}
+      onClick={onClick ?? onToggleExpand}
+      sx={{ py: 1.375, pl: indent ? 5 : 2.5 }}
+    >
       <Row gap={1}>
         <Row gap={1.375} min0 sx={{ flex: 1 }}>
-          <CatGlyph icon={icon} size={32} tone={isSavings ? 'accent' : 'neutral'} />
+          {expandable && (
+            <ExpandMoreIcon
+              sx={{
+                fontSize: 16, color: 'text.secondary', flexShrink: 0,
+                transform: collapsed ? 'rotate(-90deg)' : 'none',
+                transition: 'transform 0.18s ease',
+              }}
+            />
+          )}
+          <CatGlyph icon={icon} size={indent ? 28 : 32} tone={isSavings ? 'accent' : 'neutral'} />
           {onRename
-            ? <EditableLabel value={label} onChange={onRename} size={14} weight={500} />
+            ? (
+              <Box onClick={(e) => e.stopPropagation()}>
+                <EditableLabel value={label} onChange={onRename} size={14} weight={500} />
+              </Box>
+            )
             : <Typography sx={{ fontSize: 14, fontWeight: 500 }}>{label}</Typography>
           }
         </Row>
@@ -83,11 +115,21 @@ export function LedgerRow({ id, label, icon, budget, spent, isSavings, autoFille
             {fmtSigned(remaining)}
           </Typography>
         </Row>
-        <Box sx={{ width: 28, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Row gap={0.25} sx={{ minWidth: 28, justifyContent: 'center' }}>
+          {onAdd && (
+            <IconButton
+              size="small"
+              onClick={(e) => { e.stopPropagation(); onAdd() }}
+              title="Add line item"
+              sx={{ width: 24, height: 24, borderRadius: '6px', color: 'text.disabled', '&:hover': { color: 'text.secondary', bgcolor: 'grey.100' } }}
+            >
+              <AddIcon sx={{ fontSize: 15 }} />
+            </IconButton>
+          )}
           {onRemove && (
             <IconButton
               size="small"
-              onClick={onRemove}
+              onClick={(e) => { e.stopPropagation(); onRemove() }}
               title="Remove"
               sx={{ width: 24, height: 24, borderRadius: '6px', color: 'text.disabled', '&:hover': { color: brand.red[500], bgcolor: brand.red[50] } }}
             >
@@ -95,7 +137,7 @@ export function LedgerRow({ id, label, icon, budget, spent, isSavings, autoFille
             </IconButton>
           )}
           {onClick && <ChevronRightIcon sx={{ fontSize: 18, color: 'text.disabled' }} />}
-        </Box>
+        </Row>
       </Row>
       {irsBar}
     </ListRow>

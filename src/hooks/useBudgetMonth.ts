@@ -18,6 +18,12 @@ import {
   AddBudgetCategoryDocument,
   RenameCategoryDocument,
   RemoveBudgetCategoryDocument,
+  AddBudgetLineItemDocument,
+  SetLineItemBudgetDocument,
+  SetLineItemMonthBudgetDocument,
+  SetMonthlyLineSpendDocument,
+  RenameLineItemDocument,
+  RemoveBudgetLineItemDocument,
   AddSavingsAccountDocument,
   RenameSavingsAccountDocument,
   RemoveSavingsAccountDocument,
@@ -85,6 +91,12 @@ export function useBudgetMonth(sel: MonthSel) {
   const [, addBudgetCategory] = useMutation(AddBudgetCategoryDocument)
   const [, renameCategoryMut] = useMutation(RenameCategoryDocument)
   const [, removeBudgetCategoryMut] = useMutation(RemoveBudgetCategoryDocument)
+  const [, addBudgetLineItem] = useMutation(AddBudgetLineItemDocument)
+  const [, setLineItemBudget] = useMutation(SetLineItemBudgetDocument)
+  const [, setLineItemMonthBudget] = useMutation(SetLineItemMonthBudgetDocument)
+  const [, setMonthlyLineSpend] = useMutation(SetMonthlyLineSpendDocument)
+  const [, renameLineItemMut] = useMutation(RenameLineItemDocument)
+  const [, removeBudgetLineItemMut] = useMutation(RemoveBudgetLineItemDocument)
   const [, addSavingsAccount] = useMutation(AddSavingsAccountDocument)
   const [, renameSavingsAccountMut] = useMutation(RenameSavingsAccountDocument)
   const [, removeSavingsAccountMut] = useMutation(RemoveSavingsAccountDocument)
@@ -115,6 +127,11 @@ export function useBudgetMonth(sel: MonthSel) {
         ...c,
         budget: localBudgets[c.id] ?? c.budget,
         monthSpent: localSpends[c.id] ?? c.monthSpent,
+        lineItems: c.lineItems.map((l) => ({
+          ...l,
+          budget: localBudgets[l.id] ?? l.budget,
+          monthSpent: localSpends[l.id] ?? l.monthSpent,
+        })),
       })),
     })), [raw, localBudgets, localSpends])
 
@@ -204,6 +221,47 @@ export function useBudgetMonth(sel: MonthSel) {
     await removeBudgetCategoryMut({ id }); refetch()
   }, [removeBudgetCategoryMut, refetch])
 
+  const addLineItem = useCallback(async (categoryId: string) => {
+    await addBudgetLineItem({ categoryId, year: sel.y, month: sel.m, label: 'New line', icon: 'banknote' })
+    refetch()
+    notify('Line item added — name it and set a budget.')
+  }, [addBudgetLineItem, sel, refetch, notify])
+
+  // Keeps the parent category's optimistic total in sync with its lines, mirroring how
+  // group totals already recompute reactively from their (possibly overridden) categories.
+  const setLineBudget = useCallback(async (lineId: string, categoryId: string, v: number) => {
+    setLocalBudgets((p) => {
+      const next = { ...p, [lineId]: v }
+      const cat = groups.flatMap((g) => g.categories).find((c) => c.id === categoryId)
+      if (cat) next[categoryId] = cat.lineItems.reduce((s, l) => s + (l.id === lineId ? v : next[l.id] ?? l.budget), 0)
+      return next
+    })
+    await Promise.all([
+      setLineItemMonthBudget({ id: lineId, year: sel.y, month: sel.m, budget: v }),
+      setLineItemBudget({ id: lineId, budget: v }),
+    ])
+    refetch()
+  }, [groups, setLineItemMonthBudget, setLineItemBudget, sel, refetch])
+
+  const setLineSpent = useCallback(async (lineId: string, categoryId: string, v: number) => {
+    setLocalSpends((p) => {
+      const next = { ...p, [lineId]: v }
+      const cat = groups.flatMap((g) => g.categories).find((c) => c.id === categoryId)
+      if (cat) next[categoryId] = cat.lineItems.reduce((s, l) => s + (l.id === lineId ? v : next[l.id] ?? l.monthSpent), 0)
+      return next
+    })
+    await setMonthlyLineSpend({ lineItemId: lineId, year: sel.y, month: sel.m, amount: v })
+    refetch()
+  }, [groups, setMonthlyLineSpend, sel, refetch])
+
+  const renameLineItem = useCallback(async (id: string, label: string) => {
+    await renameLineItemMut({ id, label }); refetch()
+  }, [renameLineItemMut, refetch])
+
+  const removeLineItem = useCallback(async (id: string) => {
+    await removeBudgetLineItemMut({ id, year: sel.y, month: sel.m }); refetch()
+  }, [removeBudgetLineItemMut, sel, refetch])
+
   const addSavings = useCallback(async () => {
     await addSavingsAccount({ label: 'New account', accountType: 'Custom', icon: 'banknote', monthly: 0 })
     refetch()
@@ -286,6 +344,11 @@ export function useBudgetMonth(sel: MonthSel) {
     addCategory,
     renameCategory,
     removeCategory,
+    addLineItem,
+    setLineBudget,
+    setLineSpent,
+    renameLineItem,
+    removeLineItem,
     addSavings,
     renameSavings,
     removeSavings,

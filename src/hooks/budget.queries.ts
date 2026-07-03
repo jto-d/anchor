@@ -29,6 +29,14 @@ export const BudgetMonthDocument = graphql(`
           budget
           position
           monthSpent
+          lineItems {
+            id
+            label
+            icon
+            budget
+            position
+            monthSpent
+          }
         }
       }
       savings {
@@ -91,6 +99,12 @@ export const SetSurplusAllocationDocument = graphql(`mutation SetSurplusAllocati
 export const AddBudgetCategoryDocument = graphql(`mutation AddBudgetCategory($groupId: String!, $label: String!, $icon: String!, $budget: Float!) { addBudgetCategory(groupId: $groupId, label: $label, icon: $icon, budget: $budget) }`)
 export const RenameCategoryDocument = graphql(`mutation RenameCategory($id: String!, $label: String!) { renameCategory(id: $id, label: $label) }`)
 export const RemoveBudgetCategoryDocument = graphql(`mutation RemoveBudgetCategory($id: String!) { removeBudgetCategory(id: $id) }`)
+export const AddBudgetLineItemDocument = graphql(`mutation AddBudgetLineItem($categoryId: String!, $year: Int!, $month: Int!, $label: String!, $icon: String!) { addBudgetLineItem(categoryId: $categoryId, year: $year, month: $month, label: $label, icon: $icon) }`)
+export const SetLineItemBudgetDocument = graphql(`mutation SetLineItemBudget($id: String!, $budget: Float!) { setLineItemBudget(id: $id, budget: $budget) }`)
+export const SetLineItemMonthBudgetDocument = graphql(`mutation SetLineItemMonthBudget($id: String!, $year: Int!, $month: Int!, $budget: Float!) { setLineItemMonthBudget(id: $id, year: $year, month: $month, budget: $budget) }`)
+export const SetMonthlyLineSpendDocument = graphql(`mutation SetMonthlyLineSpend($lineItemId: String!, $year: Int!, $month: Int!, $amount: Float!) { setMonthlyLineSpend(lineItemId: $lineItemId, year: $year, month: $month, amount: $amount) }`)
+export const RenameLineItemDocument = graphql(`mutation RenameLineItem($id: String!, $label: String!) { renameLineItem(id: $id, label: $label) }`)
+export const RemoveBudgetLineItemDocument = graphql(`mutation RemoveBudgetLineItem($id: String!, $year: Int!, $month: Int!) { removeBudgetLineItem(id: $id, year: $year, month: $month) }`)
 export const AddSavingsAccountDocument = graphql(`mutation AddSavingsAccount($label: String!, $accountType: String!, $icon: String!, $monthly: Float!) { addSavingsAccount(label: $label, accountType: $accountType, icon: $icon, monthly: $monthly) }`)
 export const RenameSavingsAccountDocument = graphql(`mutation RenameSavingsAccount($id: String!, $label: String!) { renameSavingsAccount(id: $id, label: $label) }`)
 export const RemoveSavingsAccountDocument = graphql(`mutation RemoveSavingsAccount($id: String!) { removeSavingsAccount(id: $id) }`)

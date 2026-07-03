@@ -99,6 +99,7 @@ model BudgetCategory {
   group    BudgetGroup    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   spends   MonthlySpend[]
   monthlyBudgets MonthlyBudget[]
+  lineItems BudgetLineItem[]
 }
 
 model MonthlyBudget {
@@ -121,6 +122,44 @@ model MonthlySpend {
   category   BudgetCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   @@unique([categoryId, year, month])
+}
+
+/// Optional finer-grained breakdown of a BudgetCategory (e.g. Utilities -> water, electricity).
+/// A category with no line items behaves exactly as before; once it has any,
+/// the category's own MonthlyBudget/MonthlySpend rows are kept in sync (sum of lines)
+/// by the mutations that edit line items, so existing category-level reads stay correct.
+model BudgetLineItem {
+  id             String              @id @default(cuid())
+  categoryId     String
+  label          String
+  icon           String
+  budget         Decimal             @db.Decimal(10, 2) @default(0)
+  position       Int                 @default(0)
+  category       BudgetCategory      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  spends         MonthlyLineSpend[]
+  monthlyBudgets MonthlyLineBudget[]
+}
+
+model MonthlyLineBudget {
+  id         String         @id @default(cuid())
+  lineItemId String
+  year       Int
+  month      Int
+  budget     Decimal        @db.Decimal(10, 2)
+  lineItem   BudgetLineItem @relation(fields: [lineItemId], references: [id], onDelete: Cascade)
+
+  @@unique([lineItemId, year, month])
+}
+
+model MonthlyLineSpend {
+  id         String         @id @default(cuid())
+  lineItemId String
+  year       Int
+  month      Int
+  amount     Decimal        @db.Decimal(10, 2)
+  lineItem   BudgetLineItem @relation(fields: [lineItemId], references: [id], onDelete: Cascade)
+
+  @@unique([lineItemId, year, month])
 }
 
 model SavingsAccount {

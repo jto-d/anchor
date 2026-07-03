@@ -54,6 +54,13 @@ builder.queryField('budgetMonth', (t) =>
               include: {
                 spends: { where: { year, month } },
                 monthlyBudgets: { where: { year, month } },
+                lineItems: {
+                  orderBy: { position: 'asc' },
+                  include: {
+                    spends: { where: { year, month } },
+                    monthlyBudgets: { where: { year, month } },
+                  },
+                },
               },
             },
           },
@@ -97,6 +104,14 @@ builder.queryField('budgetMonth', (t) =>
           budget: Number(c.monthlyBudgets[0]?.budget ?? c.budget),
           position: c.position,
           monthSpent: Number(c.spends[0]?.amount ?? 0),
+          lineItems: c.lineItems.map((l) => ({
+            id: l.id,
+            label: l.label,
+            icon: l.icon,
+            budget: Number(l.monthlyBudgets[0]?.budget ?? l.budget),
+            position: l.position,
+            monthSpent: Number(l.spends[0]?.amount ?? 0),
+          })),
         })),
       }))
 
@@ -219,6 +234,7 @@ builder.queryField('budgetYear', (t) =>
         categories: g.categories.map((c) => ({
           id: c.id, label: c.label, icon: c.icon,
           budget: Number(c.budget), position: c.position, monthSpent: 0,
+          lineItems: [],
         })),
       }))
 

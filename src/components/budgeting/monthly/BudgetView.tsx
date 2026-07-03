@@ -95,6 +95,8 @@ export function BudgetView({ userEmail: _userEmail, onNavigateToSubscriptions }:
             onRenameSavings={budget.renameSavings} onRemoveSavings={budget.removeSavings}
             onAddCategory={budget.addCategory} onAddSavings={budget.addSavings}
             onAddGroup={budget.addGroup} onRenameGroup={budget.renameGroup} onRemoveGroup={budget.removeGroup}
+            onAddLineItem={budget.addLineItem} onLineBudget={budget.setLineBudget} onLineSpent={budget.setLineSpent}
+            onRenameLineItem={budget.renameLineItem} onRemoveLineItem={budget.removeLineItem}
             totals={budget.totals}
             subscriptionsMonthly={budget.subscriptionsMonthly}
             onNavigateToSubscriptions={onNavigateToSubscriptions}

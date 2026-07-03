@@ -1,5 +1,43 @@
+import type { Prisma } from '@prisma/client'
 import { builder } from '../builder'
 import { prisma } from '@/lib/prisma'
+
+/**
+ * Keeps a category's stored MonthlyBudget/MonthlySpend rows for (year, month) equal to the
+ * sum of its line items, so every existing category-level read (totals, group headers, the
+ * category row itself) stays correct without special-casing "does this category have lines".
+ * No-op once a category has no line items left — its last-known rollup is left in place
+ * rather than reverting to a stale pre-breakdown value.
+ */
+async function syncCategoryMonthTotals(
+  tx: Prisma.TransactionClient,
+  categoryId: string,
+  year: number,
+  month: number,
+) {
+  const lineItems = await tx.budgetLineItem.findMany({
+    where: { categoryId },
+    include: {
+      monthlyBudgets: { where: { year, month } },
+      spends: { where: { year, month } },
+    },
+  })
+  if (lineItems.length === 0) return
+
+  const budgetTotal = lineItems.reduce((s, l) => s + Number(l.monthlyBudgets[0]?.budget ?? l.budget), 0)
+  const spentTotal = lineItems.reduce((s, l) => s + Number(l.spends[0]?.amount ?? 0), 0)
+
+  await tx.monthlyBudget.upsert({
+    where: { categoryId_year_month: { categoryId, year, month } },
+    create: { categoryId, year, month, budget: budgetTotal },
+    update: { budget: budgetTotal },
+  })
+  await tx.monthlySpend.upsert({
+    where: { categoryId_year_month: { categoryId, year, month } },
+    create: { categoryId, year, month, amount: spentTotal },
+    update: { amount: spentTotal },
+  })
+}
 
 // ---- Income ---------------------------------------------------------------
 
@@ -175,6 +213,149 @@ builder.mutationFields((t) => ({
         where: { categoryId_year_month: { categoryId, year, month } },
         create: { categoryId, year, month, amount },
         update: { amount },
+      })
+      return true
+    },
+  }),
+
+  // ---- Line items ------------------------------------------------------------
+
+  addBudgetLineItem: t.field({
+    type: 'Boolean',
+    args: {
+      categoryId: t.arg.string({ required: true }),
+      year: t.arg.int({ required: true }),
+      month: t.arg.int({ required: true }),
+      label: t.arg.string({ required: true }),
+      icon: t.arg.string({ required: true }),
+    },
+    resolve: async (_root, { categoryId, year, month, label, icon }, ctx) => {
+      const cat = await prisma.budgetCategory.findFirst({
+        where: { id: categoryId, group: { userId: ctx.userId } },
+        include: {
+          lineItems: true,
+          monthlyBudgets: { where: { year, month } },
+          spends: { where: { year, month } },
+        },
+      })
+      if (!cat) throw new Error('Category not found')
+
+      // The first line item inherits the category's current budget/spend so the
+      // category's displayed total doesn't drop to zero the moment it's broken out.
+      const isFirst = cat.lineItems.length === 0
+      const seedBudget = isFirst ? Number(cat.monthlyBudgets[0]?.budget ?? cat.budget) : 0
+      const seedSpent = isFirst ? Number(cat.spends[0]?.amount ?? 0) : 0
+
+      await prisma.$transaction(async (tx) => {
+        const line = await tx.budgetLineItem.create({
+          data: { categoryId, label, icon, budget: seedBudget, position: cat.lineItems.length },
+        })
+        if (isFirst && seedSpent > 0) {
+          await tx.monthlyLineSpend.create({ data: { lineItemId: line.id, year, month, amount: seedSpent } })
+        }
+        await syncCategoryMonthTotals(tx, categoryId, year, month)
+      })
+      return true
+    },
+  }),
+
+  setLineItemBudget: t.field({
+    type: 'Boolean',
+    args: {
+      id: t.arg.string({ required: true }),
+      budget: t.arg.float({ required: true }),
+    },
+    resolve: async (_root, { id, budget }, ctx) => {
+      const line = await prisma.budgetLineItem.findFirst({
+        where: { id, category: { group: { userId: ctx.userId } } },
+      })
+      if (!line) throw new Error('Line item not found')
+      await prisma.budgetLineItem.update({ where: { id }, data: { budget } })
+      return true
+    },
+  }),
+
+  setLineItemMonthBudget: t.field({
+    type: 'Boolean',
+    args: {
+      id: t.arg.string({ required: true }),
+      year: t.arg.int({ required: true }),
+      month: t.arg.int({ required: true }),
+      budget: t.arg.float({ required: true }),
+    },
+    resolve: async (_root, { id, year, month, budget }, ctx) => {
+      const line = await prisma.budgetLineItem.findFirst({
+        where: { id, category: { group: { userId: ctx.userId } } },
+      })
+      if (!line) throw new Error('Line item not found')
+      await prisma.$transaction(async (tx) => {
+        await tx.monthlyLineBudget.upsert({
+          where: { lineItemId_year_month: { lineItemId: id, year, month } },
+          create: { lineItemId: id, year, month, budget },
+          update: { budget },
+        })
+        await syncCategoryMonthTotals(tx, line.categoryId, year, month)
+      })
+      return true
+    },
+  }),
+
+  setMonthlyLineSpend: t.field({
+    type: 'Boolean',
+    args: {
+      lineItemId: t.arg.string({ required: true }),
+      year: t.arg.int({ required: true }),
+      month: t.arg.int({ required: true }),
+      amount: t.arg.float({ required: true }),
+    },
+    resolve: async (_root, { lineItemId, year, month, amount }, ctx) => {
+      const line = await prisma.budgetLineItem.findFirst({
+        where: { id: lineItemId, category: { group: { userId: ctx.userId } } },
+      })
+      if (!line) throw new Error('Line item not found')
+      await prisma.$transaction(async (tx) => {
+        await tx.monthlyLineSpend.upsert({
+          where: { lineItemId_year_month: { lineItemId, year, month } },
+          create: { lineItemId, year, month, amount },
+          update: { amount },
+        })
+        await syncCategoryMonthTotals(tx, line.categoryId, year, month)
+      })
+      return true
+    },
+  }),
+
+  renameLineItem: t.field({
+    type: 'Boolean',
+    args: {
+      id: t.arg.string({ required: true }),
+      label: t.arg.string({ required: true }),
+    },
+    resolve: async (_root, { id, label }, ctx) => {
+      const line = await prisma.budgetLineItem.findFirst({
+        where: { id, category: { group: { userId: ctx.userId } } },
+      })
+      if (!line) throw new Error('Line item not found')
+      await prisma.budgetLineItem.update({ where: { id }, data: { label } })
+      return true
+    },
+  }),
+
+  removeBudgetLineItem: t.field({
+    type: 'Boolean',
+    args: {
+      id: t.arg.string({ required: true }),
+      year: t.arg.int({ required: true }),
+      month: t.arg.int({ required: true }),
+    },
+    resolve: async (_root, { id, year, month }, ctx) => {
+      const line = await prisma.budgetLineItem.findFirst({
+        where: { id, category: { group: { userId: ctx.userId } } },
+      })
+      if (!line) throw new Error('Line item not found')
+      await prisma.$transaction(async (tx) => {
+        await tx.budgetLineItem.delete({ where: { id } })
+        await syncCategoryMonthTotals(tx, line.categoryId, year, month)
       })
       return true
     },

@@ -60,7 +60,10 @@ export const BudgetYearPayload = builder.objectRef<{
   incomeSources: { id: string; label: string; sub: string | null; amount: number; position: number }[]
   groups: {
     id: string; label: string; icon: string; position: number;
-    categories: { id: string; label: string; icon: string; budget: number; position: number; monthSpent: number }[]
+    categories: {
+      id: string; label: string; icon: string; budget: number; position: number; monthSpent: number
+      lineItems: { id: string; label: string; icon: string; budget: number; position: number; monthSpent: number }[]
+    }[]
   }[]
   savings: {
     id: string; label: string; accountType: string; icon: string; monthly: number;
@@ -94,6 +97,26 @@ builder.objectType(BudgetYearPayload, {
 
 // ---- Month query shapes --------------------------------------------------
 
+export const BudgetLineItemPayload = builder.objectRef<{
+  id: string
+  label: string
+  icon: string
+  budget: number
+  position: number
+  monthSpent: number
+}>('BudgetLineItemPayload')
+
+builder.objectType(BudgetLineItemPayload, {
+  fields: (t) => ({
+    id: t.string({ resolve: (l) => l.id }),
+    label: t.string({ resolve: (l) => l.label }),
+    icon: t.string({ resolve: (l) => l.icon }),
+    budget: t.float({ resolve: (l) => l.budget }),
+    position: t.int({ resolve: (l) => l.position }),
+    monthSpent: t.float({ resolve: (l) => l.monthSpent }),
+  }),
+})
+
 export const BudgetCategoryPayload = builder.objectRef<{
   id: string
   label: string
@@ -101,6 +124,7 @@ export const BudgetCategoryPayload = builder.objectRef<{
   budget: number
   position: number
   monthSpent: number
+  lineItems: { id: string; label: string; icon: string; budget: number; position: number; monthSpent: number }[]
 }>('BudgetCategoryPayload')
 
 builder.objectType(BudgetCategoryPayload, {
@@ -111,6 +135,7 @@ builder.objectType(BudgetCategoryPayload, {
     budget: t.float({ resolve: (c) => c.budget }),
     position: t.int({ resolve: (c) => c.position }),
     monthSpent: t.float({ resolve: (c) => c.monthSpent }),
+    lineItems: t.field({ type: [BudgetLineItemPayload], resolve: (c) => c.lineItems }),
   }),
 })
 
@@ -126,6 +151,7 @@ export const BudgetGroupPayload = builder.objectRef<{
     budget: number
     position: number
     monthSpent: number
+    lineItems: { id: string; label: string; icon: string; budget: number; position: number; monthSpent: number }[]
   }[]
 }>('BudgetGroupPayload')
 
@@ -216,7 +242,10 @@ export const BudgetMonthPayload = builder.objectRef<{
     label: string
     icon: string
     position: number
-    categories: { id: string; label: string; icon: string; budget: number; position: number; monthSpent: number }[]
+    categories: {
+      id: string; label: string; icon: string; budget: number; position: number; monthSpent: number
+      lineItems: { id: string; label: string; icon: string; budget: number; position: number; monthSpent: number }[]
+    }[]
   }[]
   savings: {
     id: string

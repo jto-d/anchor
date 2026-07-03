@@ -32,6 +32,7 @@ Accounts
 Split
  - Ability to split rent automatically
  - Revisit subscription split exclusions
+ - Share split with another Anchor member
 Notifications
  - Reminder to cancel credit card, subscription, etc.
 

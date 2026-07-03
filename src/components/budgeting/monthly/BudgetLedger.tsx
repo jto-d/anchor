@@ -34,6 +34,11 @@ interface BudgetLedgerProps {
   onAddGroup: () => void
   onRenameGroup: (id: string, label: string) => void
   onRemoveGroup: (id: string) => void
+  onAddLineItem: (categoryId: string) => void
+  onLineBudget: (lineId: string, categoryId: string, v: number) => void
+  onLineSpent: (lineId: string, categoryId: string, v: number) => void
+  onRenameLineItem: (id: string, label: string) => void
+  onRemoveLineItem: (id: string) => void
   totals: Totals
   subscriptionsMonthly?: number
   onNavigateToSubscriptions?: () => void
@@ -47,6 +52,7 @@ export function BudgetLedger({
   onBudget, onSpent, onRenameCategory, onRemoveCategory,
   onSavingsMonthly, onContribute, onRenameSavings, onRemoveSavings,
   onAddCategory, onAddSavings, onAddGroup, onRenameGroup, onRemoveGroup, totals,
+  onAddLineItem, onLineBudget, onLineSpent, onRenameLineItem, onRemoveLineItem,
   subscriptionsMonthly = 0, onNavigateToSubscriptions,
 }: BudgetLedgerProps) {
   const [pendingDelete, setPendingDelete] = useState<GroupData | null>(null)
@@ -71,13 +77,42 @@ export function BudgetLedger({
                 onRemove={() => setPendingDelete(g)}
               />
               <Collapse in={!isCollapsed}>
-                {g.categories.map((c, i) => (
-                  <LedgerRow key={c.id} {...c} budget={c.budget} spent={c.monthSpent}
-                    onBudget={(v) => onBudget(c.id, v)} onSpent={(v) => onSpent(c.id, v)}
-                    onRename={(label) => onRenameCategory(c.id, label)}
-                    onRemove={() => onRemoveCategory(c.id)}
-                    last={i === g.categories.length - 1} />
-                ))}
+                {g.categories.map((c, i) => {
+                  const hasLines = c.lineItems.length > 0
+                  const catCollapsed = !!collapsed[c.id]
+                  const isLastCategory = i === g.categories.length - 1
+                  return (
+                    <Box key={c.id}>
+                      <LedgerRow
+                        id={c.id} label={c.label} icon={c.icon}
+                        budget={c.budget} spent={c.monthSpent}
+                        onBudget={hasLines ? undefined : (v) => onBudget(c.id, v)}
+                        onSpent={hasLines ? undefined : (v) => onSpent(c.id, v)}
+                        onRename={(label) => onRenameCategory(c.id, label)}
+                        onRemove={() => onRemoveCategory(c.id)}
+                        onAdd={() => onAddLineItem(c.id)}
+                        expandable={hasLines}
+                        collapsed={catCollapsed}
+                        onToggleExpand={() => onToggle(c.id)}
+                        last={isLastCategory && (!hasLines || catCollapsed)}
+                      />
+                      {hasLines && (
+                        <Collapse in={!catCollapsed}>
+                          {c.lineItems.map((li, j) => (
+                            <LedgerRow key={li.id} id={li.id} label={li.label} icon={li.icon}
+                              budget={li.budget} spent={li.monthSpent}
+                              onBudget={(v) => onLineBudget(li.id, c.id, v)}
+                              onSpent={(v) => onLineSpent(li.id, c.id, v)}
+                              onRename={(label) => onRenameLineItem(li.id, label)}
+                              onRemove={() => onRemoveLineItem(li.id)}
+                              indent
+                              last={isLastCategory && j === c.lineItems.length - 1} />
+                          ))}
+                        </Collapse>
+                      )}
+                    </Box>
+                  )
+                })}
               </Collapse>
             </Box>
           )
