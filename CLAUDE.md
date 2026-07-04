@@ -84,12 +84,14 @@ The chain is one-way and must run in this order whenever Prisma models or Pothos
 - `src/graphql/creditCard/` — type, queries, mutations (`addCard`, `removeCard`)
 - `src/graphql/perk/` — type, queries (`perks`, `perkCredits` — both scoped to `ctx.userId` via a `creditCard: { userId }` filter)
 - `src/graphql/perkCredit/` — type, mutations (`logPerkCredit`)
+- `src/graphql/budget/` — `types.ts` (payload shapes), `queries.ts` (`budgetMonth`, `budgetYear` — both scoped via `ctx.userId`)
 
 ## Pothos conventions
 
 - `builder.defaultFieldNullability = false` (and the matching `DefaultFieldNullability: false` generic) — every field is non-null unless you opt in.
 - `Decimal` and `DateTime` fields are exposed as `String` to avoid registering custom scalars.
 - The Pothos Prisma plugin warns against putting the Prisma client into Context — keep it as a module singleton (`src/lib/prisma.ts`).
+- **Plain (non-Prisma) payload objects** — e.g. the aggregate shapes in `src/graphql/budget/types.ts` that a resolver builds up by hand from several queries — use `builder.simpleObject('Name', { fields: (t) => ({ ... }) })` (`@pothos/plugin-simple-objects`), not `builder.objectRef<T>() + builder.objectType()`. `simpleObject` infers the TS shape from the field list and defaults every resolver to a same-named property lookup, so you declare each field once instead of three times (TS interface + field type + identity `resolve`). Only fall back to `objectRef`/`objectType` when a field needs a real resolver (computed value, renamed property, args).
 
 ## Auth / user context
 
@@ -160,3 +162,4 @@ Real Google OAuth now gates `/` (see Auth / user context) — headless browser s
 - **`Failed to parse URL from /api/graphql`** → urql is fetching server-side with a relative URL. See the urql client section.
 - **Prisma CLI error about `url`/`directUrl`** → those properties were removed from `datasource` in Prisma 7. They belong in `prisma.config.ts`.
 - **MUI styles flash unstyled or hydration class mismatch** → `AppRouterCacheProvider` must still wrap the app in `layout.tsx`, above `ThemeProvider`.
+- **`builder.simpleObject is not a function`** → `SimpleObjectsPlugin` was dropped from the `plugins` array in `builder.ts`.

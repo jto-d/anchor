@@ -1,5 +1,6 @@
 import SchemaBuilder from '@pothos/core'
 import PrismaPlugin from '@pothos/plugin-prisma'
+import SimpleObjectsPlugin from '@pothos/plugin-simple-objects'
 import type PrismaTypes from '@pothos/plugin-prisma/generated'
 import { getDatamodel } from '@pothos/plugin-prisma/generated'
 import { prisma } from '@/lib/prisma'
@@ -10,7 +11,7 @@ export const builder = new SchemaBuilder<{
   Context: { userId: string }
 }>({
   defaultFieldNullability: false,
-  plugins: [PrismaPlugin],
+  plugins: [PrismaPlugin, SimpleObjectsPlugin],
   prisma: {
     client: prisma,
     dmmf: getDatamodel(),

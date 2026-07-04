@@ -38,6 +38,9 @@ importers:
       '@pothos/plugin-prisma':
         specifier: ^4.14.3
         version: 4.14.3(@pothos/core@4.12.0(graphql@16.14.0))(@prisma/client@7.8.0(prisma@7.8.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3))(typescript@5.9.3))(graphql@16.14.0)(typescript@5.9.3)
+      '@pothos/plugin-simple-objects':
+        specifier: ^4.1.3
+        version: 4.1.3(@pothos/core@4.12.0(graphql@16.14.0))(graphql@16.14.0)
       '@prisma/adapter-neon':
         specifier: ^7.8.0
         version: 7.8.0
@@ -1240,6 +1243,12 @@ packages:
       '@prisma/client': '*'
       graphql: ^16.10.0
       typescript: '>=4.7.2'
+
+  '@pothos/plugin-simple-objects@4.1.3':
+    resolution: {integrity: sha512-D2JFecUY9a8VwplsNidEYlws2nYGjABIk8WNykHYuBoTPK6mngQfgY5Og8VL+a3sU/Z3pof5qz+Eg+6GJ4j7lw==}
+    peerDependencies:
+      '@pothos/core': '*'
+      graphql: ^16.10.0
 
   '@prisma/adapter-neon@7.8.0':
     resolution: {integrity: sha512-9MoOjRuY53sQNyji87u1NivsK0tIacoUE3PqTxdG95b7ORn1pzwribH2z83j4Vh3eb9nQ/UC+MTfVW7jCFnXlA==}
@@ -4186,6 +4195,11 @@ snapshots:
       '@prisma/generator-helper': 7.8.0
       graphql: 16.14.0
       typescript: 5.9.3
+
+  '@pothos/plugin-simple-objects@4.1.3(@pothos/core@4.12.0(graphql@16.14.0))(graphql@16.14.0)':
+    dependencies:
+      '@pothos/core': 4.12.0(graphql@16.14.0)
+      graphql: 16.14.0
 
   '@prisma/adapter-neon@7.8.0':
     dependencies:
