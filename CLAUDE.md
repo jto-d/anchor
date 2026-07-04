@@ -88,7 +88,8 @@ The chain is one-way and must run in this order whenever Prisma models or Pothos
 ## Pothos conventions
 
 - `builder.defaultFieldNullability = false` (and the matching `DefaultFieldNullability: false` generic) — every field is non-null unless you opt in.
-- `Decimal` and `DateTime` fields are exposed as `String` to avoid registering custom scalars.
+- `Decimal` fields are exposed as `Float` via `.toNumber()` — this is the app's deliberate money policy (see `src/utils/money.ts`), not a placeholder for a future `String` migration. `DateTime` fields are exposed as `String` to avoid registering custom scalars.
+- On the server, never `reduce()` a list of amounts already at cent precision with plain `+` — use `sumCents()` from `src/utils/money.ts`, which accumulates in integer cents so repeated summation can't drift off a cent boundary. All server-side money rollups (`src/utils/perk.ts`, `src/utils/card.ts`, `src/graphql/budget/*`) go through it. (Exception: terms that are themselves fractions of a cent, e.g. a prorated `(cost * 4) / 12`, should sum at full float precision and round only the final total via `roundCents()` — rounding each such term first destroys real precision.) Client-side rollups (`src/components/**`, `src/hooks/**`) still sum with plain `reduce()` and have not been migrated — a known gap, not a deliberate exception.
 - The Pothos Prisma plugin warns against putting the Prisma client into Context — keep it as a module singleton (`src/lib/prisma.ts`).
 
 ## Auth / user context

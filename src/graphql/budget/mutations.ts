@@ -1,6 +1,7 @@
 import type { Prisma } from '@prisma/client'
 import { builder } from '../builder'
 import { prisma } from '@/lib/prisma'
+import { sumCents } from '@/utils/money'
 
 /**
  * Keeps a category's stored MonthlyBudget/MonthlySpend rows for (year, month) equal to the
@@ -24,8 +25,8 @@ async function syncCategoryMonthTotals(
   })
   if (lineItems.length === 0) return
 
-  const budgetTotal = lineItems.reduce((s, l) => s + Number(l.monthlyBudgets[0]?.budget ?? l.budget), 0)
-  const spentTotal = lineItems.reduce((s, l) => s + Number(l.spends[0]?.amount ?? 0), 0)
+  const budgetTotal = sumCents(lineItems, (l) => Number(l.monthlyBudgets[0]?.budget ?? l.budget))
+  const spentTotal = sumCents(lineItems, (l) => Number(l.spends[0]?.amount ?? 0))
 
   await tx.monthlyBudget.upsert({
     where: { categoryId_year_month: { categoryId, year, month } },

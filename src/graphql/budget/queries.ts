@@ -1,6 +1,7 @@
 import { builder } from '../builder'
 import { prisma } from '@/lib/prisma'
 import { BudgetMonthPayload, BudgetYearPayload } from './types'
+import { sumCents, roundCents } from '@/utils/money'
 import {
   DEFAULT_GROUPS,
   DEFAULT_INCOME,
@@ -118,9 +119,10 @@ builder.queryField('budgetMonth', (t) =>
       // Shape savings with this month's contribution and YTD
       const savingsOut = savings.map((s) => {
         const monthContrib = s.contributions.find((c) => c.month === month)?.amount ?? 0
-        const ytd = s.contributions
-          .filter((c) => c.month <= month)
-          .reduce((sum, c) => sum + Number(c.amount), 0)
+        const ytd = sumCents(
+          s.contributions.filter((c) => c.month <= month),
+          (c) => Number(c.amount)
+        )
         return {
           id: s.id,
           label: s.label,
@@ -139,9 +141,10 @@ builder.queryField('budgetMonth', (t) =>
         const monthAlloc = g.allocations.find((a) => a.year === year && a.month === month)
         const running =
           Number(g.base) +
-          g.allocations
-            .filter((a) => !(a.year === year && a.month === month))
-            .reduce((sum, a) => sum + Number(a.amount), 0)
+          sumCents(
+            g.allocations.filter((a) => !(a.year === year && a.month === month)),
+            (a) => Number(a.amount)
+          )
         return {
           id: g.id,
           name: g.name,
@@ -158,7 +161,10 @@ builder.queryField('budgetMonth', (t) =>
       // month is 0-based. Annual/semiannual charge in their specific renewal month(s);
       // quarterly has no tracked start month so we use the monthly equivalent;
       // monthly charges every month.
-      const subscriptionsMonthly = subscriptions.reduce((sum, s) => {
+      // The quarterly term (cost * 4) / 12 is a genuine fraction of a cent, not a stored
+      // money value, so terms are summed at full float precision and only the final total
+      // is rounded to cents — rounding each term first would throw away real precision.
+      const subscriptionsMonthlyRaw = subscriptions.reduce((sum, s) => {
         const cost = Number(s.cost)
         switch (s.period) {
           case 'monthly':
@@ -167,18 +173,17 @@ builder.queryField('budgetMonth', (t) =>
             return sum + (cost * 4) / 12
           case 'semiannual': {
             const renewM = s.renewM ?? 0
-            if (month === renewM || month === (renewM + 6) % 12) return sum + cost
-            return sum
+            return sum + (month === renewM || month === (renewM + 6) % 12 ? cost : 0)
           }
           case 'annual': {
             const renewM = s.renewM ?? 0
-            if (month === renewM) return sum + cost
-            return sum
+            return sum + (month === renewM ? cost : 0)
           }
           default:
             return sum
         }
       }, 0)
+      const subscriptionsMonthly = roundCents(subscriptionsMonthlyRaw)
 
       return {
         incomeSources: incomeSourcesOut,
@@ -246,7 +251,7 @@ builder.queryField('budgetYear', (t) =>
 
       // Goals: running = base + all allocations this year
       const goalsOut = goals.map((g) => {
-        const running = Number(g.base) + g.allocations.reduce((sum, a) => sum + Number(a.amount), 0)
+        const running = Number(g.base) + sumCents(g.allocations, (a) => Number(a.amount))
         return {
           id: g.id, name: g.name, icon: g.icon, target: g.target == null ? null : Number(g.target),
           base: Number(g.base), targetYear: g.targetYear, targetMonth: g.targetMonth,
