@@ -155,8 +155,6 @@ builder.mutationFields((t) => ({
       isEmergencyFund: t.arg.boolean(),
     },
     resolve: async (query, _root, { id, nick, type, isEmergencyFund }, ctx) => {
-      const account = await prisma.account.findUnique({ where: { id } })
-      if (!account || account.userId !== ctx.userId) throw new Error('Not found')
       if (type) {
         const validTypes = Object.values(AccountType)
         if (!validTypes.includes(type as AccountType)) throw new Error(`Invalid type: ${type}`)
@@ -166,7 +164,7 @@ builder.mutationFields((t) => ({
       }
       return prisma.account.update({
         ...query,
-        where: { id },
+        where: { id, userId: ctx.userId },
         data: {
           ...(nick != null ? { nick } : {}),
           ...(type != null ? { type: type as AccountType } : {}),
@@ -182,9 +180,8 @@ builder.mutationFields((t) => ({
       id: t.arg.string({ required: true }),
     },
     resolve: async (_root, { id }, ctx) => {
-      const account = await prisma.account.findUnique({ where: { id } })
-      if (!account || account.userId !== ctx.userId) throw new Error('Not found')
-
+      const account = await prisma.account.findFirst({ where: { id, userId: ctx.userId } })
+      if (!account) throw new Error('Account not found')
       const plaidItemId = account.plaidItemId
       await prisma.account.delete({ where: { id } })
 

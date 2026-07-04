@@ -19,10 +19,12 @@ builder.mutationFields((t) => ({
       plan: t.arg.string(),
       shared: t.arg.boolean(),
     },
-    resolve: (query, _root, args, ctx) => {
+    resolve: async (query, _root, args, ctx) => {
       if (args.name.length > MAX_NAME_LENGTH) {
         throw new Error('Name must be less than 50 characters')
       }
+      const card = await prisma.creditCard.findFirst({ where: { id: args.cardId, userId: ctx.userId } })
+      if (!card) throw new Error('Card not found')
       return prisma.subscription.create({
         ...query,
         data: {
@@ -46,7 +48,7 @@ builder.mutationFields((t) => ({
     type: 'Boolean',
     args: { id: t.arg.string({ required: true }) },
     resolve: async (_root, { id }, ctx) => {
-      await prisma.subscription.delete({ where: { id, userId: ctx.userId } })
+      await prisma.subscription.deleteMany({ where: { id, userId: ctx.userId } })
       return true
     },
   }),
