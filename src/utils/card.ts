@@ -1,24 +1,25 @@
 import { annualValue, capturedInCycle, capturedYTD, perkCoverage } from './perk'
+import { sumCents } from './money'
 import { CARD_CATALOG } from '@/data/cardCatalog'
 import type { Card, VerdictKey } from './types'
 
 export function cardCaptured(card: Card): number {
-  return card.perks.reduce((s, p) => s + capturedInCycle(p, card.openedDate), 0)
+  return sumCents(card.perks, (p) => capturedInCycle(p, card.openedDate))
 }
 
 export function cardCapturedYTD(card: Card): number {
-  return card.perks.reduce((s, p) => s + capturedYTD(p), 0)
+  return sumCents(card.perks, (p) => capturedYTD(p))
 }
 
 export function cardAvailable(card: Card): number {
-  return card.perks.reduce((s, p) => s + annualValue(p), 0)
+  return sumCents(card.perks, (p) => annualValue(p))
 }
 
 // Sum of unused budget remaining in each perk's active cycle. Open-ended perks (totalAmount === 0) have no cap to miss.
 export function cardOnTheTable(card: Card): number {
-  return card.perks.reduce(
-    (s, p) => s + perkCoverage(p, { basis: 'cycle', cardOpenedDate: card.openedDate }).remaining,
-    0
+  return sumCents(
+    card.perks,
+    (p) => perkCoverage(p, { basis: 'cycle', cardOpenedDate: card.openedDate }).remaining
   )
 }
 
