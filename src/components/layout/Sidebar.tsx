@@ -21,20 +21,29 @@ import PieChartOutlineIcon from '@mui/icons-material/PieChartOutlined'
 import RepeatIcon from '@mui/icons-material/Repeat'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import type { SvgIconComponent } from '@mui/icons-material'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import { brand } from '@/lib/theme'
 import { ComingSoon, Row } from '@/components/ui'
 
 export const SIDEBAR_WIDTH = 220
 
-const NAV_ITEMS: { key: string; label: string; Icon: SvgIconComponent }[] = [
-  { key: 'perks', label: 'Perks', Icon: CardGiftcardOutlinedIcon },
-  { key: 'cards', label: 'Cards', Icon: CreditCardIcon },
-  { key: 'budgeting', label: 'Budgeting', Icon: PieChartOutlineIcon },
-  { key: 'subscriptions', label: 'Subscriptions', Icon: RepeatIcon },
-  { key: 'accounts', label: 'Accounts', Icon: AccountBalanceOutlinedIcon },
-  { key: 'split', label: 'Split', Icon: CallSplitIcon },
+const NAV_ITEMS: { key: string; label: string; href: string; Icon: SvgIconComponent }[] = [
+  { key: 'perks', label: 'Perks', href: '/', Icon: CardGiftcardOutlinedIcon },
+  { key: 'cards', label: 'Cards', href: '/cards', Icon: CreditCardIcon },
+  { key: 'budgeting', label: 'Budgeting', href: '/budgeting', Icon: PieChartOutlineIcon },
+  { key: 'subscriptions', label: 'Subscriptions', href: '/subscriptions', Icon: RepeatIcon },
+  { key: 'accounts', label: 'Accounts', href: '/accounts', Icon: AccountBalanceOutlinedIcon },
+  { key: 'split', label: 'Split', href: '/split', Icon: CallSplitIcon },
 ]
+
+/** Which nav item the current URL belongs to. Card detail (`/card/:id`) lives under Cards. */
+function isNavActive(pathname: string, item: { key: string; href: string }): boolean {
+  if (item.href === '/') return pathname === '/'
+  if (item.key === 'cards') return pathname === '/cards' || pathname.startsWith('/card/')
+  return pathname === item.href || pathname.startsWith(item.href + '/')
+}
 
 const COMING_SOON_ITEMS: { key: string; label: string; Icon: SvgIconComponent }[] = [
   { key: 'chatbot', label: 'Chatbot', Icon: ChatBubbleOutlineIcon },
@@ -49,12 +58,11 @@ const navItemSx = (active: boolean) => ({
 })
 
 interface SidebarProps {
-  route: string
   userEmail: string
-  onNavigate: (key: string) => void
 }
 
-export function Sidebar({ route, userEmail, onNavigate }: SidebarProps) {
+export function Sidebar({ userEmail }: SidebarProps) {
+  const pathname = usePathname()
   const initials = userEmail.slice(0, 2).toUpperCase()
 
   return (
@@ -97,13 +105,14 @@ export function Sidebar({ route, userEmail, onNavigate }: SidebarProps) {
 
       {/* Nav */}
       <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
-        {NAV_ITEMS.map(({ key, label, Icon }) => {
-          const active = route === key
+        {NAV_ITEMS.map(({ key, label, href, Icon }) => {
+          const active = isNavActive(pathname, { key, href })
           return (
             <ListItemButton
               key={key}
+              component={Link}
+              href={href}
               selected={active}
-              onClick={() => onNavigate(key)}
               sx={navItemSx(active)}
             >
               <ListItemIcon sx={{ minWidth: 0, mr: 1.25, color: 'inherit' }}>

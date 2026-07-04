@@ -35,6 +35,7 @@ Split
  - Share split with another Anchor member
 Notifications
  - Reminder to cancel credit card, subscription, etc.
+Cool UI loading state while me-view fetches
 
 Bilt Calculator (could just be a link)
   maybe make this a skill for the chatbot
