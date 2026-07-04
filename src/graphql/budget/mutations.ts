@@ -64,10 +64,7 @@ builder.mutationFields((t) => ({
       amount: t.arg.float({ required: true }),
     },
     resolve: async (_root, { id, amount }, ctx) => {
-      await prisma.incomeSource.updateMany({
-        where: { id, userId: ctx.userId },
-        data: { amount },
-      })
+      await prisma.incomeSource.updateMany({ where: { id, userId: ctx.userId }, data: { amount } })
       return true
     },
   }),
@@ -79,10 +76,7 @@ builder.mutationFields((t) => ({
       label: t.arg.string({ required: true }),
     },
     resolve: async (_root, { id, label }, ctx) => {
-      await prisma.incomeSource.updateMany({
-        where: { id, userId: ctx.userId },
-        data: { label },
-      })
+      await prisma.incomeSource.updateMany({ where: { id, userId: ctx.userId }, data: { label } })
       return true
     },
   }),
@@ -158,11 +152,10 @@ builder.mutationFields((t) => ({
       budget: t.arg.float({ required: true }),
     },
     resolve: async (_root, { id, budget }, ctx) => {
-      const cat = await prisma.budgetCategory.findFirst({
+      await prisma.budgetCategory.updateMany({
         where: { id, group: { userId: ctx.userId } },
+        data: { budget },
       })
-      if (!cat) throw new Error('Category not found')
-      await prisma.budgetCategory.update({ where: { id }, data: { budget } })
       return true
     },
   }),
@@ -174,11 +167,10 @@ builder.mutationFields((t) => ({
       label: t.arg.string({ required: true }),
     },
     resolve: async (_root, { id, label }, ctx) => {
-      const cat = await prisma.budgetCategory.findFirst({
+      await prisma.budgetCategory.updateMany({
         where: { id, group: { userId: ctx.userId } },
+        data: { label },
       })
-      if (!cat) throw new Error('Category not found')
-      await prisma.budgetCategory.update({ where: { id }, data: { label } })
       return true
     },
   }),
@@ -187,11 +179,7 @@ builder.mutationFields((t) => ({
     type: 'Boolean',
     args: { id: t.arg.string({ required: true }) },
     resolve: async (_root, { id }, ctx) => {
-      const cat = await prisma.budgetCategory.findFirst({
-        where: { id, group: { userId: ctx.userId } },
-      })
-      if (!cat) throw new Error('Category not found')
-      await prisma.budgetCategory.delete({ where: { id } })
+      await prisma.budgetCategory.deleteMany({ where: { id, group: { userId: ctx.userId } } })
       return true
     },
   }),
@@ -266,11 +254,10 @@ builder.mutationFields((t) => ({
       budget: t.arg.float({ required: true }),
     },
     resolve: async (_root, { id, budget }, ctx) => {
-      const line = await prisma.budgetLineItem.findFirst({
+      await prisma.budgetLineItem.updateMany({
         where: { id, category: { group: { userId: ctx.userId } } },
+        data: { budget },
       })
-      if (!line) throw new Error('Line item not found')
-      await prisma.budgetLineItem.update({ where: { id }, data: { budget } })
       return true
     },
   }),
@@ -332,11 +319,10 @@ builder.mutationFields((t) => ({
       label: t.arg.string({ required: true }),
     },
     resolve: async (_root, { id, label }, ctx) => {
-      const line = await prisma.budgetLineItem.findFirst({
+      await prisma.budgetLineItem.updateMany({
         where: { id, category: { group: { userId: ctx.userId } } },
+        data: { label },
       })
-      if (!line) throw new Error('Line item not found')
-      await prisma.budgetLineItem.update({ where: { id }, data: { label } })
       return true
     },
   }),

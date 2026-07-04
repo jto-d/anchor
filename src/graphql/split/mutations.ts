@@ -58,12 +58,10 @@ builder.mutationFields((t) => ({
       splitYou: t.arg.int(),
       splitThem: t.arg.int(),
     },
-    resolve: async (query, _root, { id, date, desc, amount, payer, cat, splitYou, splitThem }, ctx) => {
-      const existing = await prisma.splitExpense.findUnique({ where: { id } })
-      if (!existing || existing.userId !== ctx.userId) throw new Error('Not found')
-      return prisma.splitExpense.update({
+    resolve: (query, _root, { id, date, desc, amount, payer, cat, splitYou, splitThem }, ctx) =>
+      prisma.splitExpense.update({
         ...query,
-        where: { id },
+        where: { id, userId: ctx.userId },
         data: {
           ...(date !== undefined && { date: date ?? null }),
           ...(desc != null && { desc }),
@@ -73,17 +71,14 @@ builder.mutationFields((t) => ({
           ...(splitYou != null && { splitYou }),
           ...(splitThem != null && { splitThem }),
         },
-      })
-    },
+      }),
   }),
 
   removeSplitExpense: t.field({
     type: 'Boolean',
     args: { id: t.arg.string({ required: true }) },
     resolve: async (_root, { id }, ctx) => {
-      const existing = await prisma.splitExpense.findUnique({ where: { id } })
-      if (!existing || existing.userId !== ctx.userId) throw new Error('Not found')
-      await prisma.splitExpense.delete({ where: { id } })
+      await prisma.splitExpense.deleteMany({ where: { id, userId: ctx.userId } })
       return true
     },
   }),
@@ -115,9 +110,7 @@ builder.mutationFields((t) => ({
     type: 'Boolean',
     args: { id: t.arg.string({ required: true }) },
     resolve: async (_root, { id }, ctx) => {
-      const existing = await prisma.splitSettlement.findUnique({ where: { id } })
-      if (!existing || existing.userId !== ctx.userId) throw new Error('Not found')
-      await prisma.splitSettlement.delete({ where: { id } })
+      await prisma.splitSettlement.deleteMany({ where: { id, userId: ctx.userId } })
       return true
     },
   }),
