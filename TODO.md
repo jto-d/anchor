@@ -27,12 +27,18 @@ Preview how a card fits into your spending
 Points
  - History of point redemption (stats)
  - Current point totals 
+Perks
+ - List view for cards
 Accounts
  - Plaid linking
+ - minimum balance fee tracking
 Split
  - Ability to split rent automatically
  - Revisit subscription split exclusions
  - Share split with another Anchor member
+Transactions
+ - List of all transactions on credit cards
+ - Easily assign to budget spending or to be split
 Notifications
  - Reminder to cancel credit card, subscription, etc.
 Cool UI loading state while me-view fetches
