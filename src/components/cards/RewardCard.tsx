@@ -48,7 +48,7 @@ export function CardListRow({ card, density = 'comfortable', onAction }: {
             height: 30,
             borderRadius: '6px',
             flexShrink: 0,
-            background: th.gradient,
+            bgcolor: th.color,
             display: 'grid',
             placeItems: 'center',
             boxShadow: '0 1px 2px rgba(16,24,32,.05)',

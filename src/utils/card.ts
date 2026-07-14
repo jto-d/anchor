@@ -23,6 +23,11 @@ export function cardOnTheTable(card: Card): number {
   )
 }
 
+/** How many of the card's perks have had at least one credit logged this year. */
+export function cardPerksUsed(card: Card): number {
+  return card.perks.filter((p) => capturedYTD(p) > 0).length
+}
+
 export function cardAnnualFee(card: Card): number {
   return CARD_CATALOG[card.design ?? '']?.annualFee ?? 0
 }

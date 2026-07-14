@@ -28,7 +28,7 @@ Points
  - History of point redemption (stats)
  - Current point totals 
 Perks
- - List view for cards
+ - rework single card page
 Accounts
  - Plaid linking
  - minimum balance fee tracking

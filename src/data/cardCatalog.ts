@@ -3,7 +3,7 @@ import type { CategoryKey, CardType } from '@/utils/cardRewards'
 export interface CardCatalogEntry {
   name: string
   issuer: string
-  gradient: string
+  color: string
   text: string
   type: CardType
   network: string
@@ -18,7 +18,7 @@ const BILT_GREY = '#CBC8C2'
 export const FALLBACK_CARD: CardCatalogEntry = {
   name: '',
   issuer: '',
-  gradient: 'linear-gradient(150deg, #0D7A78, #083E3C)',
+  color: '#0D7A78',
   text: WHITE,
   type: 'cashback',
   network: '',
@@ -36,7 +36,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'amex-gold': {
     name: 'Gold Card',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #D2BF70, #A99941)',
+    color: '#D2BF70',
     text: '#3D3413',
     type: 'points',
     network: 'Amex',
@@ -52,7 +52,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'amex-platinum': {
     name: 'Platinum Card',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #F1F1F3, #BEBEC0)',
+    color: '#F1F1F3',
     text: '#27272A',
     type: 'points',
     network: 'Amex',
@@ -66,7 +66,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'amex-blue-cash-preferred': {
     name: 'Blue Cash Preferred',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #2E4367, #0C1326)',
+    color: '#2E4367',
     text: WHITE,
     type: 'cashback',
     network: 'Amex',
@@ -82,7 +82,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'amex-blue-cash-everyday': {
     name: 'Blue Cash Everyday',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #6BA8DF, #073883)',
+    color: '#6BA8DF',
     text: WHITE,
     type: 'cashback',
     network: 'Amex',
@@ -97,7 +97,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'amex-green': {
     name: 'Green Card',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #DFECDB, #A7CFAC)',
+    color: '#DFECDB',
     text: BLACK,
     type: 'points',
     network: 'Amex',
@@ -115,7 +115,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'delta-sky-miles-gold': {
     name: 'Delta Sky Miles Gold',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #CAB179, #957740)',
+    color: '#CAB179',
     text: BLACK,
     type: 'points',
     network: 'American Express',
@@ -130,7 +130,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'delta-sky-miles-platinum': {
     name: 'Delta Sky Miles Platinum',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #E0E1E0, #99A1A3)',
+    color: '#E0E1E0',
     text: BLACK,
     type: 'points',
     network: 'American Express',
@@ -143,7 +143,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'delta-sky-miles-reserve': {
     name: 'Delta Sky Miles Reserve',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #6B7D89, #2A3740)',
+    color: '#6B7D89',
     text: WHITE,
     type: 'points',
     network: 'American Express',
@@ -156,7 +156,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'delta-sky-miles-blue': {
     name: 'Delta Sky Miles Blue',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #5EA0D5, #105793)',
+    color: '#5EA0D5',
     text: WHITE,
     type: 'points',
     network: 'American Express',
@@ -172,7 +172,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'marriott-bonvoy-bevy': {
     name: 'Marriott Bonvoy Bevy',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #6F6F6D, #494947)',
+    color: '#6F6F6D',
     text: WHITE,
     type: 'points',
     network: 'American Express',
@@ -187,7 +187,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'marriott-bonvoy-brilliant': {
     name: 'Marriott Bonvoy Brilliant',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #313131, #000000)',
+    color: '#313131',
     text: WHITE,
     type: 'points',
     network: 'American Express',
@@ -208,7 +208,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'amex-business-gold': {
     name: 'Business Gold Card',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #D4C27A, #A69A45)',
+    color: '#D4C27A',
     text: '#3D3413',
     type: 'points',
     network: 'American Express',
@@ -225,7 +225,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'amex-business-platinum': {
     name: 'Business Platinum Card',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #F1F1F3, #BEBEC0)',
+    color: '#F1F1F3',
     text: '#27272A',
     type: 'points',
     network: 'American Express',
@@ -239,7 +239,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'amex-business-green': {
     name: 'Business Green Rewards Card',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #D5E9D1, #9DC5A2)',
+    color: '#D5E9D1',
     text: BLACK,
     type: 'points',
     network: 'American Express',
@@ -252,7 +252,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'amex-graphite-business-cash': {
     name: 'Graphite Business Cash Unlimited',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #4A4A4A, #1C1C1C)',
+    color: '#4A4A4A',
     text: WHITE,
     type: 'cashback',
     network: 'American Express',
@@ -265,7 +265,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'amex-blue-business-cash': {
     name: 'Blue Business Cash',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #3B6EC7, #1B3A7E)',
+    color: '#3B6EC7',
     text: WHITE,
     type: 'cashback',
     network: 'American Express',
@@ -277,7 +277,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'amex-blue-business-plus': {
     name: 'Blue Business Plus',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #2D5BA3, #142C5E)',
+    color: '#2D5BA3',
     text: WHITE,
     type: 'points',
     network: 'American Express',
@@ -291,7 +291,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'amex-marriott-bonvoy-business': {
     name: 'Marriott Bonvoy Business',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #C4A44A, #8C7030)',
+    color: '#C4A44A',
     text: '#2D1A00',
     type: 'points',
     network: 'American Express',
@@ -309,7 +309,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'delta-sky-miles-gold-business': {
     name: 'Delta SkyMiles Gold Business',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #C8AF75, #9A7B3A)',
+    color: '#C8AF75',
     text: BLACK,
     type: 'points',
     network: 'American Express',
@@ -324,7 +324,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'delta-sky-miles-platinum-business': {
     name: 'Delta SkyMiles Platinum Business',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #D6D8D9, #8B9598)',
+    color: '#D6D8D9',
     text: BLACK,
     type: 'points',
     network: 'American Express',
@@ -338,7 +338,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'delta-sky-miles-reserve-business': {
     name: 'Delta SkyMiles Reserve Business',
     issuer: 'American Express',
-    gradient: 'linear-gradient(150deg, #5C6E7A, #20303A)',
+    color: '#5C6E7A',
     text: WHITE,
     type: 'points',
     network: 'American Express',
@@ -358,7 +358,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'bofa-customized-cash': {
     name: 'Customized Cash Rewards',
     issuer: 'Bank of America',
-    gradient: 'linear-gradient(150deg, #C61F2D, #A41422)',
+    color: '#C61F2D',
     text: WHITE,
     type: 'cashback',
     network: 'Visa Signature',
@@ -378,7 +378,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'capital-one-venture-x': {
     name: 'Venture X',
     issuer: 'Capital One',
-    gradient: 'linear-gradient(150deg, #0A4E71, #08233D)',
+    color: '#0A4E71',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -391,7 +391,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'capital-one-venture': {
     name: 'Venture',
     issuer: 'Capital One',
-    gradient: 'linear-gradient(150deg, #052850, #041435)',
+    color: '#052850',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -404,7 +404,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'capital-one-venture-one': {
     name: 'Venture One',
     issuer: 'Capital One',
-    gradient: 'linear-gradient(150deg, #053A74, #003772)',
+    color: '#053A74',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -417,7 +417,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'capital-one-quicksilver': {
     name: 'Quicksilver',
     issuer: 'Capital One',
-    gradient: 'linear-gradient(150deg, #97A4AC, #525D69)',
+    color: '#97A4AC',
     text: WHITE,
     type: 'cashback',
     network: 'Mastercard',
@@ -430,7 +430,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'capital-one-savor': {
     name: 'Savor',
     issuer: 'Capital One',
-    gradient: 'linear-gradient(150deg, #B55834, #963625)',
+    color: '#B55834',
     text: WHITE,
     type: 'cashback',
     network: 'Mastercard',
@@ -450,7 +450,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'capital-one-venture-x-business': {
     name: 'Venture X Business',
     issuer: 'Capital One',
-    gradient: 'linear-gradient(150deg, #0A4E71, #08233D)',
+    color: '#0A4E71',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -463,7 +463,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'capital-one-venture-business': {
     name: 'Venture Business',
     issuer: 'Capital One',
-    gradient: 'linear-gradient(150deg, #052850, #041435)',
+    color: '#052850',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -476,7 +476,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'capital-one-venture-one-business': {
     name: 'Venture One',
     issuer: 'Capital One',
-    gradient: 'linear-gradient(150deg, #053A74, #003772)',
+    color: '#053A74',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -496,7 +496,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'chase-sapphire-preferred': {
     name: 'Sapphire Preferred',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #0671AC, #01082E)',
+    color: '#0671AC',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -516,7 +516,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'chase-sapphire-reserve': {
     name: 'Sapphire Reserve',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #D4C6B6, #0B1325)',
+    color: '#D4C6B6',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -534,7 +534,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'chase-freedom-unlimited': {
     name: 'Freedom Unlimited',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #16498A, #141631)',
+    color: '#16498A',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -549,7 +549,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'chase-freedom-flex': {
     name: 'Freedom Flex',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #2051A3, #122B6E)',
+    color: '#2051A3',
     text: WHITE,
     type: 'cashback',
     network: 'Visa Signature',
@@ -564,7 +564,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'chase-freedom-rise': {
     name: 'Freedom Rise',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #3A8CCF, #1F5D8C)',
+    color: '#3A8CCF',
     text: WHITE,
     type: 'cashback',
     network: 'Visa',
@@ -578,7 +578,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'united-quest': {
     name: 'United Quest',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #461864, #33184A)',
+    color: '#461864',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -596,7 +596,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'united-explorer': {
     name: 'United Explorer',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #034491, #021B3A)',
+    color: '#034491',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -611,7 +611,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'united-gateway': {
     name: 'United Gateway',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #A5BDC5, #83979F)',
+    color: '#A5BDC5',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -626,7 +626,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'united-club': {
     name: 'United Club Card',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #06112E, #030A1A)',
+    color: '#06112E',
     text: WHITE,
     type: 'points',
     network: 'Visa Infinite',
@@ -643,7 +643,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'chase-aeroplan': {
     name: 'Aeroplan',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #515459, #373C40)',
+    color: '#515459',
     text: WHITE,
     type: 'points',
     network: 'Mastercard',
@@ -660,7 +660,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'southwest-priority': {
     name: 'Southwest Rapid Rewards Priority',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #2D4399, #1A277A)',
+    color: '#2D4399',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -676,7 +676,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'southwest-premier': {
     name: 'Southwest Rapid Rewards Premier',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #4560BA, #2D3D99)',
+    color: '#4560BA',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -692,7 +692,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'southwest-plus': {
     name: 'Southwest Rapid Rewards Plus',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #5A77CC, #3A55A8)',
+    color: '#5A77CC',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -710,7 +710,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'world-of-hyatt': {
     name: 'World of Hyatt',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #4A2C17, #2A1508)',
+    color: '#4A2C17',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -728,7 +728,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'marriott-bonvoy-boundless': {
     name: 'Marriott Bonvoy Boundless',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #003B75, #001F40)',
+    color: '#003B75',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -744,7 +744,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'marriott-bonvoy-bold': {
     name: 'Marriott Bonvoy Bold',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #1A4A80, #0D2A50)',
+    color: '#1A4A80',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -760,7 +760,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'ihg-one-rewards-premier': {
     name: 'IHG One Rewards Premier',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #BF3D10, #832805)',
+    color: '#BF3D10',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -778,7 +778,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'amazon-prime-rewards': {
     name: 'Amazon Prime Rewards Visa',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #131921, #070C11)',
+    color: '#131921',
     text: WHITE,
     type: 'cashback',
     network: 'Visa Signature',
@@ -801,7 +801,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'chase-sapphire-reserve-business': {
     name: 'Sapphire Reserve for Business',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #1A1A2E, #0A0A14)',
+    color: '#1A1A2E',
     text: WHITE,
     type: 'points',
     network: 'Visa Infinite',
@@ -818,7 +818,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'chase-ink-preferred': {
     name: 'Ink Business Preferred',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #0D3B6E, #06203F)',
+    color: '#0D3B6E',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -833,7 +833,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'chase-ink-cash': {
     name: 'Ink Business Cash',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #1B4B8C, #0D2952)',
+    color: '#1B4B8C',
     text: WHITE,
     type: 'cashback',
     network: 'Visa Signature',
@@ -849,7 +849,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'chase-ink-unlimited': {
     name: 'Ink Business Unlimited',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #5B7A9E, #384F6A)',
+    color: '#5B7A9E',
     text: WHITE,
     type: 'cashback',
     network: 'Visa Signature',
@@ -861,7 +861,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'chase-ink-premier': {
     name: 'Ink Business Premier',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #242424, #0A0A0A)',
+    color: '#242424',
     text: WHITE,
     type: 'points',
     network: 'Visa Infinite',
@@ -876,7 +876,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'united-business': {
     name: 'United Business Card',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #1C3B6A, #0C1F3E)',
+    color: '#1C3B6A',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -893,7 +893,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'united-club-business': {
     name: 'United Club Business Card',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #0A1A3C, #050D1F)',
+    color: '#0A1A3C',
     text: WHITE,
     type: 'points',
     network: 'Visa Infinite',
@@ -909,7 +909,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'southwest-performance-business': {
     name: 'Southwest Rapid Rewards Performance Business',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #304CB2, #1D3080)',
+    color: '#304CB2',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -926,7 +926,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'southwest-premier-business': {
     name: 'Southwest Rapid Rewards Premier Business',
     issuer: 'Chase',
-    gradient: 'linear-gradient(150deg, #4267C3, #2E4EA0)',
+    color: '#4267C3',
     text: WHITE,
     type: 'points',
     network: 'Visa Signature',
@@ -946,7 +946,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'bilt-blue': {
     name: 'Bilt Blue',
     issuer: 'Bilt',
-    gradient: 'linear-gradient(150deg, #1A3045, #182736)',
+    color: '#1A3045',
     text: BILT_GREY,
     type: 'points',
     network: 'Mastercard',
@@ -958,7 +958,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'bilt-obsidian': {
     name: 'Bilt Obsidian',
     issuer: 'Bilt',
-    gradient: 'linear-gradient(150deg, #3D3D3D, #111111)',
+    color: '#3D3D3D',
     text: BILT_GREY,
     type: 'points',
     network: 'Mastercard',
@@ -973,7 +973,7 @@ export const CARD_CATALOG: Record<string, CardCatalogEntry> = {
   'bilt-palladium': {
     name: 'Bilt Palladium',
     issuer: 'Bilt',
-    gradient: 'linear-gradient(150deg, #B1ACA6, #63625E)',
+    color: '#B1ACA6',
     text: BILT_GREY,
     type: 'points',
     network: 'Mastercard',

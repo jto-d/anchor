@@ -56,11 +56,11 @@ There is no linter wired up — `--no-eslint` was passed to `create-next-app`, a
 
 **DB Card → UI shape:** `dbCardToRewardCard()` in `src/utils/cardRewards.ts` merges a DB `CreditCard` (id, name, issuer, lastFour, design) with the static `CARD_CATALOG` entry for its `design` slug to produce `RewardCardData` (adds type, network, rewards). The DB never stores multipliers — they come entirely from the catalog.
 
-**Annual fee / net value:** `src/utils/card.ts` derives `cardAnnualFee` (looked up from `CARD_CATALOG[card.design].annualFee`, not stored in the DB), `cardNet` (YTD captured value minus the fee), and `cardVerdict` (`noFee` | `worthIt` | `marginal` | `reviewIt`, thresholded on `cardNet`). `CardValue.tsx` and `StatusChip` render these on the dashboard.
+**Annual fee / net value:** `src/utils/card.ts` derives `cardAnnualFee` (looked up from `CARD_CATALOG[card.design].annualFee`, not stored in the DB), `cardNet` (YTD captured value minus the fee), and `cardVerdict` (`noFee` | `worthIt` | `marginal` | `reviewIt`, thresholded on `cardNet`). `WalletCard.tsx` (the dashboard's "Your cards" ledger row) and `StatusChip` render these, alongside `cardPerksUsed` for the "3/5 perks used" figure. `SummaryFigures.tsx` rolls the same numbers up across the wallet inside the headline panel.
 
 ## Static data catalogs
 
-`src/data/cardCatalog.ts` — the master product registry. Each key is a `design` slug (e.g. `chase-sapphire-preferred`). Entries define `name`, `issuer`, gradient/text for rendering, `type` (cashback | points), `network`, `annualFee` (dollars/yr, drives the verdict calc above), and `rewards` (category → multiplier, with an optional per-entry `note` — e.g. caps or exclusions — surfaced as an info-icon tooltip on `RewardCard`/`SuggestMatrix`/`SuggestPicker`). **Multipliers and fees live here only**, not in the DB.
+`src/data/cardCatalog.ts` — the master product registry. Each key is a `design` slug (e.g. `chase-sapphire-preferred`). Entries define `name`, `issuer`, a single `color` + `text` for rendering (flat colors, not gradients), `type` (cashback | points), `network`, `annualFee` (dollars/yr, drives the verdict calc above), and `rewards` (category → multiplier, with an optional per-entry `note` — e.g. caps or exclusions — surfaced as an info-icon tooltip on `RewardCard`/`SuggestMatrix`/`SuggestPicker`). **Multipliers and fees live here only**, not in the DB.
 
 `src/data/perkCatalog.ts` — perk templates keyed by the same design slug. When `addCard` runs, it bulk-creates the template perks from this file onto the new card. Users can log credits against those perks but cannot create or edit perks or multipliers through the UI.
 
@@ -126,7 +126,7 @@ Real auth via **Auth.js v5** (`next-auth@5.0.0-beta.31`), Google OAuth only, JWT
 The UI is built entirely with **Material UI v9** (`@mui/material`, `@mui/icons-material`) on the Emotion engine. There is **no Tailwind**.
 
 - **Theme** — `src/lib/theme.ts` holds the single `createTheme`: the "Anchor" brand (teal `primary`, Switzer typography, soft radii). It also exports a `brand` object of raw scales (anchor/zinc, `shadow`, `accentSoft`). Use theme tokens (`sx`, `palette.*`) first; use `brand` only when no token fits.
-- **Card designs** — `src/utils/cardDesigns.ts` maps a `design` slug to `{ gradient, text }`. `resolveCardDesign(slug)` falls back to the teal design. `CardTile` drives every on-surface tint from the single `text` color via `alpha()`.
+- **Card designs** — `src/utils/cardDesigns.ts` maps a `design` slug to `{ color, text }` — a single flat color per card, never a gradient. `resolveCardDesign(slug)` falls back to the teal design. `CardTile` drives every on-surface tint from the single `text` color via `alpha()`.
 - **Providers** — `src/app/layout.tsx` wraps the tree in `AppRouterCacheProvider` (from `@mui/material-nextjs/v16-appRouter` — import path is version-pinned) → `ThemeProvider` → `CssBaseline`. Drop the cache provider and you get hydration class mismatches.
 - **Icons** come from `@mui/icons-material` at call sites.
 
@@ -144,7 +144,7 @@ Folder layout:
 **The golden rule: inline `sx` should be mostly spacing (margin/padding) and the occasional one-off position.** Do **not** hand-roll `display: 'flex'`, `alignItems`, `justifyContent`, `gap`, dividers, dots, pills, or stat blocks — reach for a primitive:
 
 - **Layout** — `Flex` (props: `direction`, `align`, `justify` with `between`/`center`/`end`/`start`, `gap`, `wrap`, `inline`, `min0`). `Row` = `Flex` defaulting to a vertically-centered row; `Stack` = `Flex` defaulting to a column. These accept all `Box` props (`component`, `onClick`, `sx`, …). Use `align="stretch"` when children rely on the parent stretching (full-height columns, vertical dividers, segmented bars). `VDivider` is the 1px vertical rule.
-- **Data display** — `PanelHeader` (icon + title + subtitle + optional `action`, with bottom border) for card/panel headers; `ListRow` for padded list items (handles last-row borders + optional hover; `direction="column"` for stacked rows); `Stat` for the eyebrow-label + value + sub-line pattern (`hero` bumps the size, `color` tints the value); `Dot` for legend/indicator swatches (square via `square`, and it auto-detects gradient strings); `Tag` for compact pills (`tone`, `variant`, optional `dot`/`icon`).
+- **Data display** — `PanelHeader` (icon + title + subtitle + optional `action`, with bottom border) for card/panel headers; `ListRow` for padded list items (handles last-row borders + optional hover; `direction="column"` for stacked rows); `Stat` for the eyebrow-label + value + sub-line pattern (`hero` bumps the size, `color` tints the value); `Dot` for legend/indicator swatches (square via `square`); `Tag` for compact pills (`tone`, `variant`, optional `dot`/`icon`).
 
 When you add a new repeated styling pattern, add a primitive here rather than copying `sx` across call sites, and export it from the barrel.
 

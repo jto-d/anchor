@@ -36,14 +36,14 @@ interface CatalogCard {
   key: string
   name: string
   issuer: string
-  gradient: string
+  color: string
   perks: PerkTemplate[]
 }
 
-/* Compact gradient swatch — credit-card proportioned, 40×28 */
-function Swatch({ gradient }: { gradient: string }) {
+/* Compact card swatch — credit-card proportioned, 40×28 */
+function Swatch({ color }: { color: string }) {
   return (
-    <Box sx={{ width: 40, height: 28, borderRadius: '5px', flex: 'none', background: gradient, position: 'relative', overflow: 'hidden', boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.12)' }}>
+    <Box sx={{ width: 40, height: 28, borderRadius: '5px', flex: 'none', bgcolor: color, position: 'relative', overflow: 'hidden', boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.12)' }}>
       <Box sx={{ position: 'absolute', inset: 0, background: 'linear-gradient(125deg, rgba(255,255,255,0.16), rgba(255,255,255,0) 55%)' }} />
       <Box sx={{ position: 'absolute', left: '5.6px', bottom: '5.6px', width: '13.6px', height: '2px', borderRadius: '2px', background: 'rgba(255,255,255,0.45)' }} />
       <Box sx={{ position: 'absolute', left: '5.6px', bottom: '10.6px', width: '8.8px', height: '2px', borderRadius: '2px', background: 'rgba(255,255,255,0.28)' }} />
@@ -67,7 +67,7 @@ function CardRow({ card, selected, onSelect }: { card: CatalogCard; selected: bo
         '&:hover': { background: selected ? brand.accentSoft : brand.zinc[50] },
       }}
     >
-      <Swatch gradient={card.gradient} />
+      <Swatch color={card.color} />
       <Box sx={{ flex: 1, minWidth: 0 }}>
         <Typography sx={{ ...truncate, fontSize: '14px', fontWeight: 600, letterSpacing: '-0.01em', color: 'text.primary' }}>
           {card.name}
@@ -162,7 +162,7 @@ export function AddCardDialog({ open, existingDesigns, onClose, onAdd }: AddCard
     () =>
       Object.entries(CARD_CATALOG)
         .filter(([key]) => !existingDesigns.includes(key))
-        .map(([key, entry]) => ({ key, name: entry.name, issuer: entry.issuer, gradient: entry.gradient, perks: PERK_CATALOG[key] ?? [] })),
+        .map(([key, entry]) => ({ key, name: entry.name, issuer: entry.issuer, color: entry.color, perks: PERK_CATALOG[key] ?? [] })),
     [existingDesigns],
   )
 

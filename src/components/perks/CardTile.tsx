@@ -1,7 +1,6 @@
 'use client'
 
 import Box from '@mui/material/Box'
-import CardActionArea from '@mui/material/CardActionArea'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
@@ -11,7 +10,7 @@ import { Dot, ProgressBar, Row } from '@/components/ui'
 import { truncate, tabularNums } from '@/lib/sx'
 import { resolveCardDesign } from '@/utils/cardDesigns'
 import { cardCapturedYTD, cardAvailable, cardNet, cardVerdict } from '@/utils/card'
-import { fmtDollars, fmtSigned } from '@/utils/format'
+import { fmtDollars, fmtMonthYear, fmtSigned } from '@/utils/format'
 import type { Card } from '@/utils/types'
 
 const VERDICT_DOT: Record<string, string> = {
@@ -21,12 +20,7 @@ const VERDICT_DOT: Record<string, string> = {
   noFee: '#A1A1AA',
 }
 
-interface CardTileProps {
-  card: Card
-  onOpen?: (card: Card) => void
-}
-
-export function CardTile({ card, onOpen }: CardTileProps) {
+export function CardTile({ card }: { card: Card }) {
   const captured = cardCapturedYTD(card)
   const available = cardAvailable(card)
   const pct = available ? Math.min(1, captured / available) : 0
@@ -70,7 +64,7 @@ export function CardTile({ card, onOpen }: CardTileProps) {
         >
           {card.lastFour ? `•••• •••• •••• ${card.lastFour}` : ''}
           {card.lastFour && card.openedDate ? '  ·  ' : ''}
-          {card.openedDate ? `Opened ${new Date(card.openedDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}` : ''}
+          {card.openedDate ? `Opened ${fmtMonthYear(card.openedDate)}` : ''}
         </Typography>
       )}
       <Box sx={{ mt: 2 }}>
@@ -103,25 +97,9 @@ export function CardTile({ card, onOpen }: CardTileProps) {
     position: 'relative',
     overflow: 'hidden',
     borderRadius: '16px',
-    background: design.gradient,
+    bgcolor: design.color,
     boxShadow: brand.shadow.md,
   } as const
-
-  if (onOpen) {
-    return (
-      <Paper
-        sx={{
-          ...surfaceSx,
-          transition: 'transform 180ms, box-shadow 180ms',
-          '&:hover': { transform: 'translateY(-2px)', boxShadow: brand.shadow.lg },
-        }}
-      >
-        <CardActionArea onClick={() => onOpen(card)} sx={{ p: '18px 20px' }}>
-          {content}
-        </CardActionArea>
-      </Paper>
-    )
-  }
 
   return <Paper sx={{ ...surfaceSx, p: '18px 20px' }}>{content}</Paper>
 }

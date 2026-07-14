@@ -73,7 +73,7 @@ export function SuggestMatrix({ cards }: SuggestMatrixProps) {
                           width: 34,
                           height: 23,
                           borderRadius: '5px',
-                          background: th.gradient,
+                          bgcolor: th.color,
                           display: 'grid',
                           placeItems: 'center',
                         }}

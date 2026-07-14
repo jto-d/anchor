@@ -12,7 +12,6 @@ interface DotProps {
 
 /** A small colored swatch — legend marker, status indicator, card-color chip. */
 export function Dot({ size = 9, color = 'currentColor', square = false, sx }: DotProps) {
-  const isGradient = color.includes('gradient')
   return (
     <Box
       sx={[
@@ -20,7 +19,7 @@ export function Dot({ size = 9, color = 'currentColor', square = false, sx }: Do
           width: size,
           height: size,
           borderRadius: square ? '3px' : '999px',
-          ...(isGradient ? { background: color } : { bgcolor: color }),
+          bgcolor: color,
           flexShrink: 0,
         },
         ...(Array.isArray(sx) ? sx : sx ? [sx] : []),

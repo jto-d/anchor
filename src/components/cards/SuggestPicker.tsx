@@ -108,7 +108,7 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
                         height: 52,
                         borderRadius: '13px',
                         flexShrink: 0,
-                        background: th.gradient,
+                        bgcolor: th.color,
                         display: 'grid',
                         placeItems: 'center',
                         boxShadow: brand.shadow.sm,
@@ -277,7 +277,7 @@ export function SuggestPicker({ cards }: SuggestPickerProps) {
               >
                 {i + 1}
               </Typography>
-              <Dot size={10} color={themeOf(card).gradient} />
+              <Dot size={10} color={themeOf(card).color} />
               <Box sx={{ flex: 1, minWidth: 0 }}>
                 <Typography
                   noWrap

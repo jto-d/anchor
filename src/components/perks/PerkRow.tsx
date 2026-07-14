@@ -63,7 +63,7 @@ export function PerkRow({ perk, card, cardOpenedDate, onLog }: PerkRowProps) {
             <StatusChip status={status.key} label={status.label} icon={statusIcon} />
             {card && (
               <Row inline gap="5px" sx={{ px: '7px', py: '2px', borderRadius: '99px', border: 1, borderColor: 'divider', bgcolor: 'grey.50', whiteSpace: 'nowrap' }}>
-                <Dot size={8} color={resolveCardDesign(card.design).gradient} />
+                <Dot size={8} color={resolveCardDesign(card.design).color} />
                 <Typography sx={{ fontSize: 11, fontWeight: 600, color: 'text.secondary' }}>{card.name}</Typography>
               </Row>
             )}

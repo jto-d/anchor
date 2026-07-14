@@ -21,6 +21,12 @@ export function fmtMoney(n: number): string {
   return '$' + Math.round(Math.abs(n)).toLocaleString('en-US')
 }
 
+/** `Mar 2021` from an ISO timestamp. Reads UTC parts — the stored dates are midnight UTC, so local getters would slip to the previous month. */
+export function fmtMonthYear(iso: string): string {
+  const d = new Date(iso)
+  return monthShort(d.getUTCFullYear(), d.getUTCMonth())
+}
+
 export function monthLabel(y: number, m: number): string {
   return `${MONTHS_LONG[m]} ${y}`
 }

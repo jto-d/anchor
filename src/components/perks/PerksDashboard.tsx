@@ -6,9 +6,9 @@ import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import { Eyebrow, ProgressBar, Row } from '@/components/ui'
-import { CardTile } from './CardTile'
 import { PerkRow } from './PerkRow'
-import { SummaryFigures, CardValueSection } from './CardValue'
+import { SummaryFigures } from './SummaryFigures'
+import { WalletSection } from './WalletCard'
 import { brand } from '@/lib/theme'
 import { tabularNums } from '@/lib/sx'
 import { cardOnTheTable } from '@/utils/card'
@@ -71,16 +71,8 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
         </Box>
       </Paper>
 
-      {/* Card value */}
-      <CardValueSection cards={cards} onOpenCard={onOpenCard} />
-
-      {/* Card tiles */}
-      <Eyebrow sx={{ mb: 1.5 }}>Your cards</Eyebrow>
-      <Row align="stretch" wrap gap={1.75} sx={{ mb: 4 }}>
-        {cards.map((c) => (
-          <CardTile key={c.id} card={c} onOpen={onOpenCard} />
-        ))}
-      </Row>
+      {/* Your cards */}
+      <WalletSection cards={cards} onOpenCard={onOpenCard} />
 
       {/* Needs attention */}
       <Eyebrow sx={{ mb: '4px' }}>Needs attention</Eyebrow>
