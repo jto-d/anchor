@@ -13,6 +13,7 @@ export { ListRow } from './data-display/ListRow'
 export { Stat } from './data-display/Stat'
 export { Eyebrow } from './data-display/Eyebrow'
 export { ProgressBar } from './data-display/ProgressBar'
+export { Dial } from './data-display/Dial'
 export { StatusChip } from './data-display/StatusChip'
 export { CatGlyph } from './data-display/CatGlyph'
 

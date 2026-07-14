@@ -5,15 +5,11 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
-import { Eyebrow, ProgressBar, Row } from '@/components/ui'
+import { Eyebrow, Row } from '@/components/ui'
 import { PerkRow } from './PerkRow'
-import { SummaryFigures } from './SummaryFigures'
+import { ThisYearBanner } from './ThisYearBanner'
 import { WalletSection } from './WalletCard'
-import { brand } from '@/lib/theme'
-import { tabularNums } from '@/lib/sx'
-import { cardOnTheTable } from '@/utils/card'
-import { capturedYTD, perkStatus } from '@/utils/perk'
-import { fmtDollars } from '@/utils/format'
+import { perkStatus } from '@/utils/perk'
 import type { Card, Perk } from '@/utils/types'
 
 const AT_RISK_INITIAL = 10
@@ -26,9 +22,6 @@ interface PerksDashboardProps {
 
 export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps) {
   const [atRiskExpanded, setAtRiskExpanded] = useState(false)
-  const captured = cards.reduce((s, c) => c.perks.reduce((ps, p) => ps + capturedYTD(p), s), 0)
-  const onTheTable = cards.reduce((s, c) => s + cardOnTheTable(c), 0)
-  const pct = (captured + onTheTable) ? captured / (captured + onTheTable) : 0
 
   const atRisk: { card: Card; perk: Perk }[] = []
   const used: { card: Card; perk: Perk }[] = []
@@ -48,28 +41,7 @@ export function PerksDashboard({ cards, onOpenCard, onLog }: PerksDashboardProps
   return (
     <Box sx={{ p: '26px 30px' }}>
       {/* Headline */}
-      <Paper sx={{ bgcolor: brand.accentSoft, border: 1, borderColor: brand.anchor[100], borderRadius: '18px', p: '22px 24px', mb: '22px' }}>
-        <Eyebrow sx={{ color: 'primary.main' }}>This year</Eyebrow>
-        <Row align="baseline" gap={1.5} wrap sx={{ mt: 1.25 }}>
-          <Typography
-            sx={{ ...tabularNums, fontSize: 42, fontWeight: 600, letterSpacing: '-0.03em', color: brand.anchor[800], lineHeight: 1 }}
-          >
-            {fmtDollars(captured)}
-          </Typography>
-          <Typography sx={{ fontSize: 16, color: 'primary.main', fontWeight: 500 }}>
-            recovered · {fmtDollars(onTheTable)} still available
-          </Typography>
-        </Row>
-        <Box sx={{ mt: 2, maxWidth: 500 }}>
-          <ProgressBar value={pct} track="rgba(11,99,96,0.15)" sx={{ height: 7 }} />
-          <Typography sx={{ fontSize: 12, color: 'primary.main', mt: '7px', fontWeight: 500 }}>
-            {Math.round(pct * 100)}% of active cycles captured
-          </Typography>
-        </Box>
-        <Box sx={{ mt: '22px', pt: '20px', borderTop: '1px solid rgba(11,99,96,0.18)', maxWidth: 560 }}>
-          <SummaryFigures cards={cards} tone="headline" />
-        </Box>
-      </Paper>
+      <ThisYearBanner cards={cards} />
 
       {/* Your cards */}
       <WalletSection cards={cards} onOpenCard={onOpenCard} />
