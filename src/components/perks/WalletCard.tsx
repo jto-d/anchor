@@ -113,9 +113,18 @@ function WalletCard({ card, onOpenCard }: { card: Card; onOpenCard?: (c: Card) =
   )
 }
 
+/* Oldest card first, by the date it was opened — not the order it was added to Anchor.
+   Cards with no opened date have nothing to place them by, so they sink to the bottom. */
+function byOpenedDate(a: Card, b: Card): number {
+  if (!a.openedDate) return b.openedDate ? 1 : 0
+  if (!b.openedDate) return -1
+  return a.openedDate.localeCompare(b.openedDate)
+}
+
 /* The dashboard's "Your cards" section — one ledger row per card. */
 export function WalletSection({ cards, onOpenCard }: { cards: Card[]; onOpenCard?: (c: Card) => void }) {
   if (cards.length === 0) return null
+  const ordered = [...cards].sort(byOpenedDate)
   return (
     <Box sx={{ mb: '34px' }}>
       <Eyebrow sx={{ mb: '6px' }}>Your cards</Eyebrow>
@@ -123,7 +132,7 @@ export function WalletSection({ cards, onOpenCard }: { cards: Card[]; onOpenCard
         When you opened each card, its last four digits, and how the annual fee stacks up against the perks you&rsquo;re actually using.
       </Typography>
       <Stack gap="14px">
-        {cards.map((c) => (
+        {ordered.map((c) => (
           <WalletCard key={c.id} card={c} onOpenCard={onOpenCard} />
         ))}
       </Stack>
